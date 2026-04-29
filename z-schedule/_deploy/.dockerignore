@@ -1,0 +1,68 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+.settings
+
+# Build
+target/
+build/
+dist/
+*.jar
+*.war
+*.ear
+
+# Dependencies
+node_modules/
+.npm
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.docker/
+
+# Documentation
+_doc/
+README.md
+CHANGELOG.md
+LICENSE
+
+# Misc
+*.md
+*.txt
+!.mvn/wrapper/maven-wrapper.properties

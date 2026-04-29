@@ -1,0 +1,64 @@
+{
+  "properties": [
+    {
+      "name": "z.rpc.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "是否启用 Z-RPC。"
+    },
+    {
+      "name": "z.rpc.application",
+      "type": "java.lang.String",
+      "defaultValue": "z-rpc-app",
+      "description": "应用名称。"
+    },
+    {
+      "name": "z.rpc.registry.address",
+      "type": "java.lang.String",
+      "defaultValue": "127.0.0.1:8084",
+      "description": "注册中心地址。"
+    },
+    {
+      "name": "z.rpc.registry.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "是否启用注册中心。"
+    },
+    {
+      "name": "z.rpc.server.port",
+      "type": "java.lang.Integer",
+      "defaultValue": 20880,
+      "description": "服务端口。"
+    },
+    {
+      "name": "z.rpc.server.enabled",
+      "type": "java.lang.Boolean",
+      "defaultValue": true,
+      "description": "是否启用服务端。"
+    },
+    {
+      "name": "z.rpc.consumer.timeout",
+      "type": "java.lang.Integer",
+      "defaultValue": 3000,
+      "description": "调用超时（毫秒）。"
+    },
+    {
+      "name": "z.rpc.consumer.retries",
+      "type": "java.lang.Integer",
+      "defaultValue": 2,
+      "description": "重试次数。"
+    },
+    {
+      "name": "z.rpc.consumer.loadbalance",
+      "type": "java.lang.String",
+      "defaultValue": "random",
+      "description": "负载均衡策略。"
+    },
+    {
+      "name": "z.rpc.consumer.cluster",
+      "type": "java.lang.String",
+      "defaultValue": "failover",
+      "description": "集群容错策略。"
+    }
+  ]
+}

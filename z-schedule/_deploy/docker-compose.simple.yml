@@ -1,0 +1,37 @@
+# Z-Job Docker Compose 简单配置
+# 适用于快速启动测试环境
+
+version: '3.8'
+
+services:
+  z-schedule:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: z-schedule:latest
+    container_name: z-schedule
+    restart: always
+    ports:
+      - "80:80"      # 前端访问
+      - "8080:8080"  # 后端API
+    environment:
+      # 数据库配置（使用内置H2数据库，无需MySQL）
+      - SPRING_DATASOURCE_URL=jdbc:h2:file:/data/z-schedule;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.h2.Driver
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.H2Dialect
+      - SPRING_H2_CONSOLE_ENABLED=true
+    volumes:
+      - z_job_data:/data
+      - z_job_logs:/var/log/z-schedule
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/z-schedule-admin/actuator/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 60s
+      retries: 3
+
+volumes:
+  z_job_data:
+  z_job_logs:

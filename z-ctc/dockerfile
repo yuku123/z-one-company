@@ -1,0 +1,36 @@
+# 基础镜像：使用 OpenJDK 8
+FROM openjdk:8-jdk-slim
+
+# 维护者信息
+LABEL maintainer="zifang <zifang@example.com>"
+LABEL description="CTC - Comprehensive Tissue Centre (4A + SSO Platform)"
+
+# 安装必要的工具
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    netcat-traditional \
+    && rm -rf /var/lib/apt/lists/*
+
+# 设定工作目录
+WORKDIR /app
+
+# 创建日志目录
+RUN mkdir -p /app/logs
+
+# 复制 Spring Boot 打包后的 jar 文件到容器中
+COPY ctc-starter/target/*.jar app.jar
+
+# 复制启动脚本
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
+# 暴露端口
+EXPOSE 8080
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8080/actuator/health || exit 1
+
+# 启动命令
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

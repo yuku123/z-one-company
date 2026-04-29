@@ -1,0 +1,3 @@
+import xx.aa.ss;
+
+export ss as Table;

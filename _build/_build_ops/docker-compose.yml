@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  nginx-ops:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /Users/zifang/workplace/idea_workplace/z-one-company/z-one-company-frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      - app-dev
+    networks:
+      - ops-network
+
+  app-dev:
+    image: z-one-company:task001
+    ports:
+      - "8888:8888"
+    networks:
+      - ops-network
+
+networks:
+  ops-network:
+    driver: bridge
