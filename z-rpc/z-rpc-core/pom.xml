@@ -22,7 +22,7 @@
         <!-- 基础工具 -->
         <dependency>
             <groupId>com.zifang</groupId>
-            <artifactId>util-core</artifactId>
+            <artifactId>z-util-core</artifactId>
             <version>1.0.2-SNAPSHOT</version>
         </dependency>
 
