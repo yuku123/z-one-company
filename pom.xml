@@ -12,6 +12,13 @@
     <name>z-one-company</name>
     <description>One Company Unified Service - All-in-one deployment for small teams</description>
 
+    <repositories>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/yuku123/z-util</url>
+        </repository>
+    </repositories>
+
     <modules>
         <module>z-config</module>
         <module>z-ctc</module>
