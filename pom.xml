@@ -32,7 +32,7 @@
         <module>z-oss</module>
         <module>z-rpc</module>
         <module>z-schedule</module>
-        <module>z-cache</module>
+        <module>z-caches</module>
         <module>z-boot</module>
         <module>bootstraps</module>
     </modules>

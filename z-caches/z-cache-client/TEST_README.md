@@ -4,20 +4,20 @@
 
 本模块为 z-cache-client 提供了全量的单元测试和集成测试，共包含 **11 个测试类**，**1764 行测试代码**，覆盖 **171+ 个测试方法**。
 
-## 测试类列表  
+## 测试类列表    
 
-| 测试类 | 说明 | 测试方法数 |
-|--------|------|-----------|
-| `ZCacheClientConfigTest` | 客户端配置测试 | 15+ |
-| `ConnectionStateTest` | 连接状态枚举测试 | 10+ |
-| `ZCacheClientExceptionTest` | 异常类测试 | 12+ |
-| `ZCacheConnectionTest` | 连接管理测试 | 12+ |
-| `ZCachePoolTest` | 连接池测试 | 15+ |
-| `PooledClientTest` | 池化客户端测试 | 10+ |
-| `ClientRespEncoderTest` | RESP 协议编码器测试 | 15+ |
-| `ClientRespDecoderTest` | RESP 协议解码器测试 | 14+ |
-| `ZCacheClientTest` | 主客户端测试 | 14+ |
-| `ZCacheClientIntegrationTest` | 集成测试 | 30+ |
+| 测试类                           | 说明 | 测试方法数 |
+|-------------------------------|------|-------|
+| `ZCacheClientConfigTest`      | 客户端配置测试 | 155+  |
+| `ConnectionStateTest`         | 连接状态枚举测试 | 10+   |
+| `ZCacheClientExceptionTest`   | 异常类测试 | 12+   |
+| `ZCacheConnectionTest`        | 连接管理测试 | 12+   |
+| `ZCachePoolTest`              | 连接池测试 | 15+   |
+| `PooledClientTestsssss`       | 池化客户端测试 | 10+   |
+| `ClientRespEncoderTest`       | RESP 协议编码器测试 | 15+   |
+| `ClientRespDecoderTest`       | RESP 协议解码器测试 | 14+   |
+| `ZCacheClientTest`            | 主客户端测试 | 14+   |
+| `ZCacheClientIntegrationTest` | 集成测试 | 30+   |
 
 ## 运行测试
 
