@@ -5,12 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.zifang</groupId>
-        <artifactId>z-one-company</artifactId>
+        <artifactId>z-ext</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>z-etx-web</artifactId>
+    <artifactId>z-ext-web</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

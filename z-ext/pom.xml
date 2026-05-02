@@ -13,6 +13,7 @@
         <module>z-ext-core</module>
         <module>z-ext-spring-boot-starter</module>
         <module>z-ext-admin</module>
+        <module>z-ext-web</module>
     </modules>
 
     <properties>
