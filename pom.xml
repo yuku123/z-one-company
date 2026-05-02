@@ -32,8 +32,9 @@
         <module>z-oss</module>
         <module>z-rpc</module>
         <module>z-schedule</module>
-        <module>bootstraps</module>
+        <module>z-cache</module>
         <module>z-boot</module>
+        <module>bootstraps</module>
     </modules>
 
     <properties>
