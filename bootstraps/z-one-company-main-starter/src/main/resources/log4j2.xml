@@ -1,16 +1,251 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATH">logs</Property>
+        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</Property>
+    </Properties>
+
     <Appenders>
+        <!-- 控制台输出 -->
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
         </Console>
+
+        <!-- ==================== 各模块独立日志文件 ==================== -->
+
+        <!-- z-config 模块日志 -->
+        <RollingFile name="ConfigLog"
+                     fileName="${LOG_PATH}/config.log"
+                     filePattern="${LOG_PATH}/config-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-ctc 模块日志 -->
+        <RollingFile name="CtcLog"
+                     fileName="${LOG_PATH}/ctc.log"
+                     filePattern="${LOG_PATH}/ctc-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-task 模块日志 -->
+        <RollingFile name="TaskLog"
+                     fileName="${LOG_PATH}/task.log"
+                     filePattern="${LOG_PATH}/task-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-wf 模块日志 -->
+        <RollingFile name="WfLog"
+                     fileName="${LOG_PATH}/wf.log"
+                     filePattern="${LOG_PATH}/wf-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-schedule 模块日志 -->
+        <RollingFile name="ScheduleLog"
+                     fileName="${LOG_PATH}/schedule.log"
+                     filePattern="${LOG_PATH}/schedule-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-mist 模块日志 -->
+        <RollingFile name="MistLog"
+                     fileName="${LOG_PATH}/mist.log"
+                     filePattern="${LOG_PATH}/mist-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-meta 模块日志 -->
+        <RollingFile name="MetaLog"
+                     fileName="${LOG_PATH}/meta.log"
+                     filePattern="${LOG_PATH}/meta-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-oss 模块日志 -->
+        <RollingFile name="OssLog"
+                     fileName="${LOG_PATH}/oss.log"
+                     filePattern="${LOG_PATH}/oss-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-gw 模块日志 -->
+        <RollingFile name="GwLog"
+                     fileName="${LOG_PATH}/gw.log"
+                     filePattern="${LOG_PATH}/gw-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- z-mq 模块日志 -->
+        <RollingFile name="MqLog"
+                     fileName="${LOG_PATH}/mq.log"
+                     filePattern="${LOG_PATH}/mq-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- ==================== 全局日志 ==================== -->
+
+        <!-- 统一应用日志 -->
+        <RollingFile name="AppLog"
+                     fileName="${LOG_PATH}/app.log"
+                     filePattern="${LOG_PATH}/app-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- 错误日志单独文件 -->
+        <RollingFile name="ErrorLog"
+                     fileName="${LOG_PATH}/error.log"
+                     filePattern="${LOG_PATH}/error-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="60" compressionMode="GZ"/>
+        </RollingFile>
+
+        <!-- SQL 日志文件 -->
+        <RollingFile name="SqlLog"
+                     fileName="${LOG_PATH}/sql.log"
+                     filePattern="${LOG_PATH}/sql-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="15" compressionMode="GZ"/>
+        </RollingFile>
     </Appenders>
+
     <Loggers>
+        <!-- ==================== 各模块 Logger ==================== -->
+
+        <Logger name="com.zifang.z.config" level="info" additivity="false">
+            <AppenderRef ref="ConfigLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.ctc" level="info" additivity="false">
+            <AppenderRef ref="CtcLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.task" level="info" additivity="false">
+            <AppenderRef ref="TaskLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.wf" level="info" additivity="false">
+            <AppenderRef ref="WfLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.schedule" level="info" additivity="false">
+            <AppenderRef ref="ScheduleLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.mist" level="info" additivity="false">
+            <AppenderRef ref="MistLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.meta" level="info" additivity="false">
+            <AppenderRef ref="MetaLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.oss" level="info" additivity="false">
+            <AppenderRef ref="OssLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.gw" level="info" additivity="false">
+            <AppenderRef ref="GwLog"/>
+        </Logger>
+
+        <Logger name="com.zifang.z.mq" level="info" additivity="false">
+            <AppenderRef ref="MqLog"/>
+        </Logger>
+
+        <!-- ==================== SQL 日志 ==================== -->
+
+        <Logger name="com.zifang.z.ctc.mapper" level="debug" additivity="false">
+            <AppenderRef ref="SqlLog"/>
+        </Logger>
+
+        <Logger name="com.baomidou.mybatisplus" level="debug" additivity="false">
+            <AppenderRef ref="SqlLog"/>
+        </Logger>
+
+        <!-- ==================== 第三方框架日志 ==================== -->
+
+        <Logger name="org.springframework" level="warn" additivity="false">
+            <AppenderRef ref="AppLog"/>
+        </Logger>
+
+        <Logger name="com.alibaba.druid" level="warn" additivity="false">
+            <AppenderRef ref="AppLog"/>
+        </Logger>
+
+        <Logger name="io.netty" level="warn" additivity="false">
+            <AppenderRef ref="AppLog"/>
+        </Logger>
+
+        <!-- ==================== Root Logger ==================== -->
+
         <Root level="info">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="AppLog"/>
+            <AppenderRef ref="ErrorLog"/>
         </Root>
-        <Logger name="com.zifang" level="info" additivity="false">
-            <AppenderRef ref="Console"/>
-        </Logger>
     </Loggers>
 </Configuration>
