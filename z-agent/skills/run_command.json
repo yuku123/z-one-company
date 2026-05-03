@@ -1,0 +1,12 @@
+{
+  "name": "run_command",
+  "description": "Run a shell command",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "command": { "type": "string" }
+    },
+    "required": ["command"]
+  },
+  "is_composite": false
+}

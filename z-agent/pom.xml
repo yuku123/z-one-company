@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.zifang</groupId>
+    <artifactId>z-agentddd</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>z-agent-core</module>
+        <module>z-agent-bot</module>
+        <module>z-agent-mcp-center</module>
+        <module>z-agent-common</module>
+        <module>z-agent-center</module>
+        <module>z-agent-engine</module>
+
+        <module>z-agent-skill-center</module>
+        <module>z-agent-skill-center/z-agent-skill-core</module>
+        <module>z-agent-skill-center/z-agent-skill-starter</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+    </dependencyManagement>
+
+    <dependencies>
+    </dependencies>
+
+</project>
