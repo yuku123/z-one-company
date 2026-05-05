@@ -1,7 +1,5 @@
 package com.zifang.z.ctc.web.api;
 
-
-import com.zifang.ctc.core.domain.entity.User;
 import com.zifang.ctc.core.service.dto.UserDTO;
 import com.zifang.ctc.core.service.UserBizService;
 import com.zifang.ctc.core.service.model.request.LoginRequest;
@@ -21,7 +19,7 @@ import java.util.Map;
  * 登录认证控制器 - 4A中心认证模块
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @Tag(name = "认证管理")
 public class LoginController {
 

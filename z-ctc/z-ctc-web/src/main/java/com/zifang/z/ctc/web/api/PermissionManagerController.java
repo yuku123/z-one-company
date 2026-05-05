@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * 权限管理控制器 - 4A授权模块
  */
 @RestController
-@RequestMapping("/permission")
+@RequestMapping("/api/permission")
 @Tag(name = "权限管理")
 public class PermissionManagerController {
 

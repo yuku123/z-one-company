@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * 账号管理控制器 - 4A账户管理模块
  */
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/api/account")
 @Tag(name = "账号管理")
 public class AccountManagerController {
 
