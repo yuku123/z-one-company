@@ -1,11 +1,11 @@
-package com.zifang.ctc.core.service;
+package com.zifang.ctc.core.domain.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zifang.ctc.core.domain.entity.Tenant;
 
-public interface TenantService extends IService<Tenant> {
+public interface ITenantService extends IService<Tenant> {
 
     IPage<Tenant> page(Page<Tenant> page, Tenant tenant);
 

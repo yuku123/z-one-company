@@ -1,9 +1,8 @@
 package com.zifang.z.ctc.web.api;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zifang.ctc.core.domain.entity.OrgDO;
-import com.zifang.ctc.core.service.OrgService;
+import com.zifang.ctc.core.service.OrgBizService;
+import com.zifang.ctc.core.service.dto.OrgDTO;
 import com.zifang.z.ctc.web.api.request.OrgReq;
 import com.zifang.z.ctc.web.api.response.OrgResp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,78 +14,72 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Tag(name = "组织管理")
 @RestController
-@RequestMapping("/org")
-@Tag(name = "003_组织管理")
+@RequestMapping("/api/org")
 public class OrgManagerController {
 
     @Resource
-    private OrgService orgService;
+    private OrgBizService orgBizService;
 
-    @GetMapping("/list")
     @Operation(summary = "列表")
+    @GetMapping("/list")
     public List<OrgResp> list() {
-        return orgService.list().stream().map(this::toResp).collect(Collectors.toList());
+        return orgBizService.list().stream().map(this::toResp).collect(Collectors.toList());
     }
 
-    @GetMapping("/page")
-    @Operation(summary = "分页列表")
-    public IPage<OrgResp> page(
-            @RequestParam(defaultValue = "1") Integer current,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            OrgReq req) {
-        OrgDO entity = toEntity(req);
-        IPage<OrgDO> page = orgService.page(new Page<>(current, pageSize), entity);
-        return page.convert(this::toResp);
+    @Operation(summary = "分页查询")
+    @PostMapping("/page")
+    public IPage<OrgResp> page(@RequestBody OrgReq req) {
+        return orgBizService.page(toDto(req)).convert(this::toResp);
     }
 
+    @Operation(summary = "根据租户ID查询")
     @GetMapping("/tenant/{tenantId}")
-    @Operation(summary = "根据租户ID查询组织列表")
     public List<OrgResp> listByTenantId(@PathVariable Long tenantId) {
-        return orgService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+        return orgBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
     }
 
+    @Operation(summary = "根据域ID查询")
     @GetMapping("/domain/{domainId}")
-    @Operation(summary = "根据域ID查询组织列表")
     public List<OrgResp> listByDomainId(@PathVariable Long domainId) {
-        return orgService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
+        return orgBizService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
     }
 
+    @Operation(summary = "根据ID查询")
     @GetMapping("/{id}")
-    @Operation(summary = "详情")
     public OrgResp getById(@PathVariable Long id) {
-        return toResp(orgService.getById(id));
+        return toResp(orgBizService.getById(id));
     }
 
-    @PostMapping
     @Operation(summary = "新增")
-    public boolean add(@RequestBody OrgReq req) {
-        return orgService.add(toEntity(req));
+    @PostMapping
+    public void add(@RequestBody OrgReq req) {
+        orgBizService.add(toDto(req));
     }
 
-    @PutMapping
     @Operation(summary = "更新")
-    public boolean update(@RequestBody OrgReq req) {
-        return orgService.update(toEntity(req));
+    @PutMapping
+    public void update(@RequestBody OrgReq req) {
+        orgBizService.update(toDto(req));
     }
 
-    @DeleteMapping("/{id}")
     @Operation(summary = "删除")
-    public boolean delete(@PathVariable Long id) {
-        return orgService.delete(id);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        orgBizService.delete(id);
     }
 
-    private OrgResp toResp(OrgDO entity) {
-        if (entity == null) return null;
+    private OrgResp toResp(OrgDTO dto) {
+        if (dto == null) return null;
         OrgResp resp = new OrgResp();
-        BeanUtils.copyProperties(entity, resp);
+        BeanUtils.copyProperties(dto, resp);
         return resp;
     }
 
-    private OrgDO toEntity(OrgReq req) {
-        if (req == null) return null;
-        OrgDO entity = new OrgDO();
-        BeanUtils.copyProperties(req, entity);
-        return entity;
+    private OrgDTO toDto(OrgReq req) {
+        OrgDTO dto = new OrgDTO();
+        BeanUtils.copyProperties(req, dto);
+        return dto;
     }
 }

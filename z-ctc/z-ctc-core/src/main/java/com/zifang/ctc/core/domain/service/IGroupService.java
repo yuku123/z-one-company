@@ -1,4 +1,4 @@
-package com.zifang.ctc.core.service;
+package com.zifang.ctc.core.domain.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -7,7 +7,7 @@ import com.zifang.ctc.core.domain.entity.GroupDO;
 
 import java.util.List;
 
-public interface GroupService extends IService<GroupDO> {
+public interface IGroupService extends IService<GroupDO> {
 
     IPage<GroupDO> page(Page<GroupDO> page, GroupDO groupDO);
 

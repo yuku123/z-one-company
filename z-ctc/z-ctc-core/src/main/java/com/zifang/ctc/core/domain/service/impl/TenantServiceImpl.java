@@ -1,4 +1,4 @@
-package com.zifang.ctc.core.service.impl;
+package com.zifang.ctc.core.domain.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -6,14 +6,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zifang.ctc.core.domain.entity.Tenant;
 import com.zifang.ctc.core.domain.mapper.TenantMapper;
-import com.zifang.ctc.core.service.TenantService;
+import com.zifang.ctc.core.domain.service.ITenantService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
 @Service
-public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> implements TenantService {
+public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> implements ITenantService {
 
     @Override
     public IPage<Tenant> page(Page<Tenant> page, Tenant tenant) {

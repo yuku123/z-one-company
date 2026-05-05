@@ -1,4 +1,4 @@
-package com.zifang.ctc.core.service.impl;
+package com.zifang.ctc.core.domain.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zifang.ctc.core.domain.entity.GroupDO;
 import com.zifang.ctc.core.domain.mapper.GroupMapper;
-import com.zifang.ctc.core.service.GroupService;
+import com.zifang.ctc.core.domain.service.IGroupService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements GroupService {
+public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements IGroupService {
 
     @Override
     public IPage<GroupDO> page(Page<GroupDO> page, GroupDO groupDO) {

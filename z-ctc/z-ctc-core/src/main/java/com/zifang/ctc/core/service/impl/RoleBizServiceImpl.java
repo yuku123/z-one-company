@@ -3,18 +3,22 @@ package com.zifang.ctc.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zifang.ctc.core.domain.entity.Permission;
 import com.zifang.ctc.core.domain.entity.Role;
+import com.zifang.ctc.core.service.model.request.RolePageReq;
 import com.zifang.ctc.core.domain.service.IPermissionService;
 import com.zifang.ctc.core.domain.service.IRoleService;
 import com.zifang.ctc.core.service.RoleBizService;
-import com.zifang.ctc.core.service.model.request.RolePageReq;
+import com.zifang.ctc.core.service.dto.PermissionDTO;
+import com.zifang.ctc.core.service.dto.RoleDTO;
+import com.zifang.ctc.core.service.dto.converter.PermissionDtoConverter;
+import com.zifang.ctc.core.service.dto.converter.RoleDtoConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleBizServiceImpl implements RoleBizService {
@@ -26,16 +30,18 @@ public class RoleBizServiceImpl implements RoleBizService {
     private IPermissionService permissionService;
 
     @Override
-    public List<Role> list() {
+    public List<RoleDTO> list() {
         return roleService.list(
                 new LambdaQueryWrapper<Role>()
                         .eq(Role::getStatus, 1)
                         .orderByDesc(Role::getGmtCreate)
-        );
+        ).stream()
+                .map(RoleDtoConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public IPage<Role> page(RolePageReq req) {
+    public IPage<RoleDTO> page(RolePageReq req) {
         LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<Role>()
                 .orderByDesc(Role::getGmtCreate);
 
@@ -50,12 +56,12 @@ public class RoleBizServiceImpl implements RoleBizService {
         }
 
         Page<Role> page = new Page<>(req.getCurrent(), req.getSize());
-        return roleService.page(page, wrapper);
+        return roleService.page(page, wrapper).convert(RoleDtoConverter::toDTO);
     }
 
     @Override
-    public Role getById(Long id) {
-        return roleService.getById(id);
+    public RoleDTO getById(Long id) {
+        return RoleDtoConverter.toDTO(roleService.getById(id));
     }
 
     @Override
@@ -100,10 +106,13 @@ public class RoleBizServiceImpl implements RoleBizService {
     @Override
     @Transactional
     public void assignPermissions(Long roleId, List<Long> permissionIds) {
+        roleService.assignPermissions(roleId, permissionIds);
     }
 
     @Override
-    public List<Permission> getRolePermissions(Long roleId) {
-        return permissionService.selectPermissionsByRoleId(roleId);
+    public List<PermissionDTO> getRolePermissions(Long roleId) {
+        return permissionService.selectPermissionsByRoleId(roleId).stream()
+                .map(PermissionDtoConverter::toDTO)
+                .collect(Collectors.toList());
     }
 }

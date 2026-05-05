@@ -2,6 +2,7 @@ package com.zifang.z.ctc.web.api;
 
 
 import com.zifang.ctc.core.domain.entity.User;
+import com.zifang.ctc.core.service.dto.UserDTO;
 import com.zifang.ctc.core.service.UserBizService;
 import com.zifang.ctc.core.service.model.request.LoginRequest;
 import com.zifang.ctc.core.service.model.request.RegisterRequest;
@@ -37,14 +38,14 @@ public class LoginController {
     @Operation(summary = "用户登录")
     public LoginResponse login(@RequestBody LoginRequest request) {
         // 验证用户凭据
-        User user = userBizService.authenticate(request.getUserName(), request.getPassword());
+        UserDTO user = userBizService.authenticate(request.getUserName(), request.getPassword());
 
         // 生成JWT令牌
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", user.getId());
         claims.put("username", user.getUserName());
         claims.put("tenantId", user.getTenantCode());
-        claims.put("roles", userBizService.getUserRoles(user.getId()));
+        claims.put("roles", user.getRoles());
 
         String token = jwtUtil.generateToken(claims, 86400); // 24小时过期
 

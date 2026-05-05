@@ -1,9 +1,8 @@
 package com.zifang.z.ctc.web.api;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zifang.ctc.core.domain.entity.DomainDO;
-import com.zifang.ctc.core.service.DomainService;
+import com.zifang.ctc.core.service.DomainBizService;
+import com.zifang.ctc.core.service.dto.DomainDTO;
 import com.zifang.z.ctc.web.api.request.DomainReq;
 import com.zifang.z.ctc.web.api.response.DomainResp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,78 +14,72 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Tag(name = "域管理")
 @RestController
-@RequestMapping("/domain")
-@Tag(name = "002_域管理")
+@RequestMapping("/api/domain")
 public class DomainManagerController {
 
     @Resource
-    private DomainService domainService;
+    private DomainBizService domainBizService;
 
-    @GetMapping("/list")
     @Operation(summary = "列表")
+    @GetMapping("/list")
     public List<DomainResp> list() {
-        return domainService.list().stream().map(this::toResp).collect(Collectors.toList());
+        return domainBizService.list().stream().map(this::toResp).collect(Collectors.toList());
     }
 
-    @GetMapping("/page")
-    @Operation(summary = "分页列表")
-    public IPage<DomainResp> page(
-            @RequestParam(defaultValue = "1") Integer current,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            DomainReq req) {
-        DomainDO entity = toEntity(req);
-        IPage<DomainDO> page = domainService.page(new Page<>(current, pageSize), entity);
-        return page.convert(this::toResp);
+    @Operation(summary = "分页查询")
+    @PostMapping("/page")
+    public IPage<DomainResp> page(@RequestBody DomainReq req) {
+        return domainBizService.page(toDto(req)).convert(this::toResp);
     }
 
+    @Operation(summary = "根据租户ID查询")
     @GetMapping("/tenant/{tenantId}")
-    @Operation(summary = "根据租户ID查询域列表")
     public List<DomainResp> listByTenantId(@PathVariable Long tenantId) {
-        return domainService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+        return domainBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
     }
 
-    @GetMapping("/code/{domainCode}")
     @Operation(summary = "根据域编码查询")
+    @GetMapping("/code/{domainCode}")
     public DomainResp getByDomainCode(@PathVariable String domainCode) {
-        return toResp(domainService.getByDomainCode(domainCode));
+        return toResp(domainBizService.getByDomainCode(domainCode));
     }
 
+    @Operation(summary = "根据ID查询")
     @GetMapping("/{id}")
-    @Operation(summary = "详情")
     public DomainResp getById(@PathVariable Long id) {
-        return toResp(domainService.getById(id));
+        return toResp(domainBizService.getById(id));
     }
 
-    @PostMapping
     @Operation(summary = "新增")
-    public boolean add(@RequestBody DomainReq req) {
-        return domainService.add(toEntity(req));
+    @PostMapping
+    public void add(@RequestBody DomainReq req) {
+        domainBizService.add(toDto(req));
     }
 
-    @PutMapping
     @Operation(summary = "更新")
-    public boolean update(@RequestBody DomainReq req) {
-        return domainService.update(toEntity(req));
+    @PutMapping
+    public void update(@RequestBody DomainReq req) {
+        domainBizService.update(toDto(req));
     }
 
-    @DeleteMapping("/{id}")
     @Operation(summary = "删除")
-    public boolean delete(@PathVariable Long id) {
-        return domainService.delete(id);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        domainBizService.delete(id);
     }
 
-    private DomainResp toResp(DomainDO entity) {
-        if (entity == null) return null;
+    private DomainResp toResp(DomainDTO dto) {
+        if (dto == null) return null;
         DomainResp resp = new DomainResp();
-        BeanUtils.copyProperties(entity, resp);
+        BeanUtils.copyProperties(dto, resp);
         return resp;
     }
 
-    private DomainDO toEntity(DomainReq req) {
-        if (req == null) return null;
-        DomainDO entity = new DomainDO();
-        BeanUtils.copyProperties(req, entity);
-        return entity;
+    private DomainDTO toDto(DomainReq req) {
+        DomainDTO dto = new DomainDTO();
+        BeanUtils.copyProperties(req, dto);
+        return dto;
     }
 }

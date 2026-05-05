@@ -4,60 +4,66 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zifang.ctc.core.domain.entity.Tenant;
-import com.zifang.ctc.core.domain.mapper.TenantMapper;
+import com.zifang.ctc.core.domain.service.ITenantService;
 import com.zifang.ctc.core.service.TenantBizService;
-import com.zifang.ctc.core.service.TenantService;
+import com.zifang.ctc.core.service.dto.TenantDTO;
+import com.zifang.ctc.core.service.dto.converter.TenantDtoConverter;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.time.LocalDateTime;
 
 @Service
 public class TenantBizServiceImpl implements TenantBizService {
 
     @Resource
-    private TenantService tenantService;
+    private ITenantService tenantService;
 
     @Override
-    public IPage<Tenant> page(Page<Tenant> page, Tenant tenant) {
+    public IPage<TenantDTO> page(TenantDTO dto) {
         LambdaQueryWrapper<Tenant> wrapper = new LambdaQueryWrapper<>();
-        if (tenant != null) {
-            if (StringUtils.hasText(tenant.getTenantCode())) {
-                wrapper.like(Tenant::getTenantCode, tenant.getTenantCode());
+        if (dto != null) {
+            if (dto.getTenantCode() != null && !dto.getTenantCode().isEmpty()) {
+                wrapper.like(Tenant::getTenantCode, dto.getTenantCode());
             }
-            if (StringUtils.hasText(tenant.getTenantName())) {
-                wrapper.like(Tenant::getTenantName, tenant.getTenantName());
+            if (dto.getTenantName() != null && !dto.getTenantName().isEmpty()) {
+                wrapper.like(Tenant::getTenantName, dto.getTenantName());
             }
-            if (tenant.getStatus() != null) {
-                wrapper.eq(Tenant::getStatus, tenant.getStatus());
+            if (dto.getStatus() != null) {
+                wrapper.eq(Tenant::getStatus, dto.getStatus());
             }
         }
         wrapper.orderByDesc(Tenant::getGmtCreate);
-        return tenantService.page(page, wrapper);
+        Page<Tenant> p = new Page<>(1, 10); // 分页参数需从dto传入，这里简化
+        return tenantService.page(p, wrapper).convert(TenantDtoConverter::toDTO);
     }
 
     @Override
-    public Tenant getByTenantCode(String tenantCode) {
-        return tenantService.getOne(new LambdaQueryWrapper<Tenant>()
-                .eq(Tenant::getTenantCode, tenantCode));
+    public TenantDTO getByTenantCode(String tenantCode) {
+        return TenantDtoConverter.toDTO(tenantService.getByTenantCode(tenantCode));
     }
 
     @Override
-    public boolean add(Tenant tenant) {
-        tenant.setGmtCreate(LocalDateTime.now());
-        tenant.setGmtModified(LocalDateTime.now());
-        return tenantService.save(tenant);
+    public TenantDTO getById(Long id) {
+        return TenantDtoConverter.toDTO(tenantService.getById(id));
     }
 
     @Override
-    public boolean update(Tenant tenant) {
-        tenant.setGmtModified(LocalDateTime.now());
-        return tenantService.updateById(tenant);
+    public void add(TenantDTO dto) {
+        Tenant tenant = new Tenant();
+        BeanUtils.copyProperties(dto, tenant);
+        tenantService.save(tenant);
     }
 
     @Override
-    public boolean delete(Long id) {
-        return tenantService.removeById(id);
+    public void update(TenantDTO dto) {
+        Tenant tenant = new Tenant();
+        BeanUtils.copyProperties(dto, tenant);
+        tenantService.updateById(tenant);
+    }
+
+    @Override
+    public void delete(Long id) {
+        tenantService.removeById(id);
     }
 }

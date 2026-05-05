@@ -1,9 +1,8 @@
 package com.zifang.z.ctc.web.api;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zifang.ctc.core.domain.entity.Tenant;
-import com.zifang.ctc.core.service.TenantService;
+import com.zifang.ctc.core.service.TenantBizService;
+import com.zifang.ctc.core.service.dto.TenantDTO;
 import com.zifang.z.ctc.web.api.request.TenantReq;
 import com.zifang.z.ctc.web.api.response.TenantResp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,74 +14,61 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Tag(name = "租户管理")
 @RestController
-@RequestMapping("/tenant")
-@Tag(name = "001_租户管理")
+@RequestMapping("/api/tenant")
 public class TenantManagerController {
 
     @Resource
-    private TenantService tenantService;
+    private TenantBizService tenantBizService;
 
-    @GetMapping("/list")
-    @Operation(summary = "列表")
-    public List<TenantResp> list() {
-        return tenantService.list().stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "分页查询")
+    @PostMapping("/page")
+    public IPage<TenantResp> page(@RequestBody TenantReq req) {
+        TenantDTO dto = toDto(req);
+        return tenantBizService.page(dto).convert(this::toResp);
     }
 
-    @GetMapping("/page")
-    @Operation(summary = "分页列表")
-    public IPage<TenantResp> page(
-            @RequestParam(defaultValue = "1") Integer current,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            TenantReq req) {
-        Tenant tenant = toEntity(req);
-        IPage<Tenant> page = tenantService.page(new Page<>(current, pageSize), tenant);
-        return page.convert(this::toResp);
-    }
-
-    @GetMapping("/code/{tenantCode}")
     @Operation(summary = "根据租户编码查询")
+    @GetMapping("/code/{tenantCode}")
     public TenantResp getByTenantCode(@PathVariable String tenantCode) {
-        return toResp(tenantService.getByTenantCode(tenantCode));
+        return toResp(tenantBizService.getByTenantCode(tenantCode));
     }
 
+    @Operation(summary = "根据ID查询")
     @GetMapping("/{id}")
-    @Operation(summary = "详情")
     public TenantResp getById(@PathVariable Long id) {
-        return toResp(tenantService.getById(id));
+        return toResp(tenantBizService.getById(id));
     }
 
-    @PostMapping
     @Operation(summary = "新增")
-    public boolean add(@RequestBody TenantReq req) {
-        Tenant tenant = toEntity(req);
-        return tenantService.add(tenant);
+    @PostMapping
+    public void add(@RequestBody TenantReq req) {
+        tenantBizService.add(toDto(req));
     }
 
-    @PutMapping
     @Operation(summary = "更新")
-    public boolean update(@RequestBody TenantReq req) {
-        Tenant tenant = toEntity(req);
-        return tenantService.update(tenant);
+    @PutMapping
+    public void update(@RequestBody TenantReq req) {
+        tenantBizService.update(toDto(req));
     }
 
-    @DeleteMapping("/{id}")
     @Operation(summary = "删除")
-    public boolean delete(@PathVariable Long id) {
-        return tenantService.delete(id);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        tenantBizService.delete(id);
     }
 
-    private TenantResp toResp(Tenant tenant) {
-        if (tenant == null) return null;
+    private TenantResp toResp(TenantDTO dto) {
+        if (dto == null) return null;
         TenantResp resp = new TenantResp();
-        BeanUtils.copyProperties(tenant, resp);
+        BeanUtils.copyProperties(dto, resp);
         return resp;
     }
 
-    private Tenant toEntity(TenantReq req) {
-        if (req == null) return null;
-        Tenant tenant = new Tenant();
-        BeanUtils.copyProperties(req, tenant);
-        return tenant;
+    private TenantDTO toDto(TenantReq req) {
+        TenantDTO dto = new TenantDTO();
+        BeanUtils.copyProperties(req, dto);
+        return dto;
     }
 }

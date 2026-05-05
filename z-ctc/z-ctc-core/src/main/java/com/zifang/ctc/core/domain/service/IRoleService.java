@@ -12,4 +12,9 @@ public interface IRoleService extends IService<Role> {
     List<Role> selectRolesByUserId(Long userId);
 
     long countByRoleCode(String roleCode);
+
+    /**
+     * 为角色分配权限
+     */
+    void assignPermissions(Long roleId, List<Long> permissionIds);
 }

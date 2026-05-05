@@ -3,6 +3,8 @@ package com.zifang.ctc.core.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.domain.entity.Permission;
 import com.zifang.ctc.core.domain.entity.Role;
+import com.zifang.ctc.core.service.dto.PermissionDTO;
+import com.zifang.ctc.core.service.dto.RoleDTO;
 import com.zifang.ctc.core.service.model.request.RolePageReq;
 
 import java.util.List;
@@ -15,19 +17,17 @@ public interface RoleBizService {
     /**
      * 获取角色列表
      */
-    List<Role> list();
+    List<RoleDTO> list();
 
     /**
      * 分页查询角色
-     * @param req 分页请求（含 current/size 和搜索字段）
-     * @return 分页结果
      */
-    IPage<Role> page(RolePageReq req);
+    IPage<RoleDTO> page(RolePageReq req);
 
     /**
      * 根据ID获取角色
      */
-    Role getById(Long id);
+    RoleDTO getById(Long id);
 
     /**
      * 创建角色
@@ -52,5 +52,5 @@ public interface RoleBizService {
     /**
      * 获取角色的权限列表
      */
-    List<Permission> getRolePermissions(Long roleId);
+    List<PermissionDTO> getRolePermissions(Long roleId);
 }

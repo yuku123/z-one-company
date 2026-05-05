@@ -1,9 +1,8 @@
 package com.zifang.z.ctc.web.api;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zifang.ctc.core.domain.entity.GroupDO;
-import com.zifang.ctc.core.service.GroupService;
+import com.zifang.ctc.core.service.GroupBizService;
+import com.zifang.ctc.core.service.dto.GroupDTO;
 import com.zifang.z.ctc.web.api.request.GroupReq;
 import com.zifang.z.ctc.web.api.response.GroupResp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,90 +14,84 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Tag(name = "用户组管理")
 @RestController
-@RequestMapping("/group")
-@Tag(name = "005_组管理")
+@RequestMapping("/api/group")
 public class GroupManagerController {
 
     @Resource
-    private GroupService groupService;
+    private GroupBizService groupBizService;
 
-    @GetMapping("/list")
     @Operation(summary = "列表")
+    @GetMapping("/list")
     public List<GroupResp> list() {
-        return groupService.list().stream().map(this::toResp).collect(Collectors.toList());
+        return groupBizService.list().stream().map(this::toResp).collect(Collectors.toList());
     }
 
-    @GetMapping("/page")
-    @Operation(summary = "分页列表")
-    public IPage<GroupResp> page(
-            @RequestParam(defaultValue = "1") Integer current,
-            @RequestParam(defaultValue = "10") Integer pageSize,
-            GroupReq req) {
-        GroupDO entity = toEntity(req);
-        IPage<GroupDO> page = groupService.page(new Page<>(current, pageSize), entity);
-        return page.convert(this::toResp);
+    @Operation(summary = "分页查询")
+    @PostMapping("/page")
+    public IPage<GroupResp> page(@RequestBody GroupReq req) {
+        return groupBizService.page(toDto(req)).convert(this::toResp);
     }
 
+    @Operation(summary = "根据租户ID查询")
     @GetMapping("/tenant/{tenantId}")
-    @Operation(summary = "根据租户ID查询组列表")
     public List<GroupResp> listByTenantId(@PathVariable Long tenantId) {
-        return groupService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+        return groupBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
     }
 
+    @Operation(summary = "根据域ID查询")
     @GetMapping("/domain/{domainId}")
-    @Operation(summary = "根据域ID查询组列表")
     public List<GroupResp> listByDomainId(@PathVariable Long domainId) {
-        return groupService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
+        return groupBizService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
     }
 
+    @Operation(summary = "根据组织ID查询")
     @GetMapping("/org/{orgId}")
-    @Operation(summary = "根据组织ID查询组列表")
     public List<GroupResp> listByOrgId(@PathVariable Long orgId) {
-        return groupService.listByOrgId(orgId).stream().map(this::toResp).collect(Collectors.toList());
+        return groupBizService.listByOrgId(orgId).stream().map(this::toResp).collect(Collectors.toList());
     }
 
+    @Operation(summary = "根据部门ID查询")
     @GetMapping("/dept/{deptId}")
-    @Operation(summary = "根据部门ID查询组列表")
     public List<GroupResp> listByDeptId(@PathVariable Long deptId) {
-        return groupService.listByDeptId(deptId).stream().map(this::toResp).collect(Collectors.toList());
+        return groupBizService.listByDeptId(deptId).stream().map(this::toResp).collect(Collectors.toList());
     }
 
+    @Operation(summary = "根据ID查询")
     @GetMapping("/{id}")
-    @Operation(summary = "详情")
     public GroupResp getById(@PathVariable Long id) {
-        return toResp(groupService.getById(id));
+        return toResp(groupBizService.getById(id));
     }
 
-    @PostMapping
     @Operation(summary = "新增")
-    public boolean add(@RequestBody GroupReq req) {
-        return groupService.add(toEntity(req));
+    @PostMapping
+    public void add(@RequestBody GroupReq req) {
+        groupBizService.add(toDto(req));
     }
 
-    @PutMapping
     @Operation(summary = "更新")
-    public boolean update(@RequestBody GroupReq req) {
-        return groupService.update(toEntity(req));
+    @PutMapping
+    public void update(@RequestBody GroupReq req) {
+        groupBizService.update(toDto(req));
     }
 
-    @DeleteMapping("/{id}")
     @Operation(summary = "删除")
-    public boolean delete(@PathVariable Long id) {
-        return groupService.delete(id);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        groupBizService.delete(id);
     }
 
-    private GroupResp toResp(GroupDO entity) {
-        if (entity == null) return null;
+    private GroupResp toResp(GroupDTO dto) {
+        if (dto == null) return null;
         GroupResp resp = new GroupResp();
-        BeanUtils.copyProperties(entity, resp);
+        BeanUtils.copyProperties(dto, resp);
         return resp;
     }
 
-    private GroupDO toEntity(GroupReq req) {
-        if (req == null) return null;
-        GroupDO entity = new GroupDO();
-        BeanUtils.copyProperties(req, entity);
-        return entity;
+    private GroupDTO toDto(GroupReq req) {
+        GroupDTO dto = new GroupDTO();
+        BeanUtils.copyProperties(req, dto);
+        return dto;
     }
 }

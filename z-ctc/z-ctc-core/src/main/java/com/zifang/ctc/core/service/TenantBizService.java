@@ -1,18 +1,13 @@
 package com.zifang.ctc.core.service;
 
-import com.zifang.ctc.core.domain.entity.Tenant;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zifang.ctc.core.service.dto.TenantDTO;
 
 public interface TenantBizService {
-
-    IPage<Tenant> page(Page<Tenant> page, Tenant tenant);
-
-    Tenant getByTenantCode(String tenantCode);
-
-    boolean add(Tenant tenant);
-
-    boolean update(Tenant tenant);
-
-    boolean delete(Long id);
+    IPage<TenantDTO> page(TenantDTO tenant);
+    TenantDTO getByTenantCode(String tenantCode);
+    TenantDTO getById(Long id);
+    void add(TenantDTO tenant);
+    void update(TenantDTO tenant);
+    void delete(Long id);
 }

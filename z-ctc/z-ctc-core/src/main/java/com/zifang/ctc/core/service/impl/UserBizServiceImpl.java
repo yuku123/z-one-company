@@ -6,15 +6,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zifang.ctc.core.domain.entity.Role;
 import com.zifang.ctc.core.domain.entity.User;
 import com.zifang.ctc.core.domain.entity.UserRole;
-import com.zifang.ctc.core.domain.mapper.RoleMapper;
-import com.zifang.ctc.core.domain.mapper.UserRoleMapper;
 import com.zifang.ctc.core.domain.service.IUserService;
+import com.zifang.ctc.core.domain.service.IRoleService;
 import com.zifang.ctc.core.domain.service.IVerifyCodeService;
 import com.zifang.ctc.core.service.UserBizService;
+import com.zifang.ctc.core.service.dto.UserDTO;
+import com.zifang.ctc.core.service.dto.converter.UserDtoConverter;
 import com.zifang.ctc.core.service.model.request.RegisterRequest;
 import com.zifang.ctc.core.service.model.response.LoginResponse;
-import com.zifang.ctc.sso.JwtUtil;
 import com.zifang.ctc.core.service.model.request.UserPageReq;
+import com.zifang.ctc.sso.JwtUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,10 +35,7 @@ public class UserBizServiceImpl implements UserBizService {
     private IUserService userService;
 
     @Resource
-    private RoleMapper roleMapper;
-
-    @Resource
-    private UserRoleMapper userRoleMapper;
+    private IRoleService roleService;
 
     @Resource
     private IVerifyCodeService verifyCodeService;
@@ -52,7 +50,7 @@ public class UserBizServiceImpl implements UserBizService {
     }
 
     @Override
-    public User authenticate(String userName, String password) {
+    public UserDTO authenticate(String userName, String password) {
         User user = userService.selectByUserName(userName);
         if (user == null) {
             throw new RuntimeException("用户不存在");
@@ -67,7 +65,7 @@ public class UserBizServiceImpl implements UserBizService {
         user.setLastLoginTime(LocalDateTime.now());
         userService.updateById(user);
 
-        return user;
+        return UserDtoConverter.toDTO(user);
     }
 
     @Override
@@ -111,17 +109,21 @@ public class UserBizServiceImpl implements UserBizService {
     }
 
     @Override
-    public User getById(Long id) {
-        return userService.getById(id);
+    public UserDTO getById(Long id) {
+        User user = userService.getById(id);
+        if (user == null) return null;
+        return UserDtoConverter.toDTO(user, getUserRoles(id));
     }
 
     @Override
-    public List<User> list() {
-        return userService.list(new LambdaQueryWrapper<User>().orderByDesc(User::getGmtCreate));
+    public List<UserDTO> list() {
+        return userService.list(new LambdaQueryWrapper<User>().orderByDesc(User::getGmtCreate)).stream()
+                .map(UserDtoConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public IPage<User> page(UserPageReq req) {
+    public IPage<UserDTO> page(UserPageReq req) {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<User>()
                 .orderByDesc(User::getGmtCreate);
 
@@ -139,7 +141,7 @@ public class UserBizServiceImpl implements UserBizService {
         }
 
         Page<User> page = new Page<>(req.getCurrent(), req.getSize());
-        return userService.page(page, wrapper);
+        return userService.page(page, wrapper).convert(u -> UserDtoConverter.toDTO(u, getUserRoles(u.getId())));
     }
 
     @Override
@@ -174,15 +176,7 @@ public class UserBizServiceImpl implements UserBizService {
 
     @Override
     public List<String> getUserRoles(Long userId) {
-        List<Long> roleIds = userRoleMapper.selectByUserId(userId)
-                .stream()
-                .map(UserRole::getRoleId)
-                .collect(Collectors.toList());
-        if (roleIds.isEmpty()) {
-            return new ArrayList<>();
-        }
-        return roleMapper.selectBatchIds(roleIds)
-                .stream()
+        return userService.getUserRoles(userId).stream()
                 .map(Role::getRoleCode)
                 .collect(Collectors.toList());
     }
@@ -190,6 +184,7 @@ public class UserBizServiceImpl implements UserBizService {
     @Override
     @Transactional
     public void assignRoles(Long userId, List<Long> roleIds) {
+        userService.assignUserRoles(userId, roleIds);
     }
 
     @Override

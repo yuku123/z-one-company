@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.zifang.ctc.core.domain.entity.Permission;
 import com.zifang.ctc.core.domain.service.IPermissionService;
 import com.zifang.ctc.core.service.PermissionBizService;
+import com.zifang.ctc.core.service.dto.PermissionDTO;
+import com.zifang.ctc.core.service.dto.converter.PermissionDtoConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PermissionBizServiceImpl implements PermissionBizService {
@@ -18,17 +21,19 @@ public class PermissionBizServiceImpl implements PermissionBizService {
     private IPermissionService permissionService;
 
     @Override
-    public List<Permission> list() {
+    public List<PermissionDTO> list() {
         return permissionService.list(
                 new LambdaQueryWrapper<Permission>()
                         .eq(Permission::getStatus, 1)
                         .orderByAsc(Permission::getSortOrder)
-        );
+        ).stream()
+                .map(PermissionDtoConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Permission getById(Long id) {
-        return permissionService.getById(id);
+    public PermissionDTO getById(Long id) {
+        return PermissionDtoConverter.toDTO(permissionService.getById(id));
     }
 
     @Override
@@ -71,17 +76,23 @@ public class PermissionBizServiceImpl implements PermissionBizService {
     }
 
     @Override
-    public List<Permission> getByParentId(Long parentId) {
-        return permissionService.selectByParentId(parentId);
+    public List<PermissionDTO> getByParentId(Long parentId) {
+        return permissionService.selectByParentId(parentId).stream()
+                .map(PermissionDtoConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Permission> getUserPermissions(Long userId) {
-        return permissionService.selectPermissionsByUserId(userId);
+    public List<PermissionDTO> getUserPermissions(Long userId) {
+        return permissionService.selectPermissionsByUserId(userId).stream()
+                .map(PermissionDtoConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Permission> getRolePermissions(Long roleId) {
-        return permissionService.selectPermissionsByRoleId(roleId);
+    public List<PermissionDTO> getRolePermissions(Long roleId) {
+        return permissionService.selectPermissionsByRoleId(roleId).stream()
+                .map(PermissionDtoConverter::toDTO)
+                .collect(Collectors.toList());
     }
 }

@@ -1,6 +1,7 @@
 package com.zifang.ctc.core.service;
 
 import com.zifang.ctc.core.domain.entity.Permission;
+import com.zifang.ctc.core.service.dto.PermissionDTO;
 
 import java.util.List;
 
@@ -12,12 +13,12 @@ public interface PermissionBizService {
     /**
      * 获取权限列表
      */
-    List<Permission> list();
+    List<PermissionDTO> list();
 
     /**
      * 根据ID获取权限
      */
-    Permission getById(Long id);
+    PermissionDTO getById(Long id);
 
     /**
      * 创建权限
@@ -37,15 +38,15 @@ public interface PermissionBizService {
     /**
      * 根据父ID获取子权限
      */
-    List<Permission> getByParentId(Long parentId);
+    List<PermissionDTO> getByParentId(Long parentId);
 
     /**
      * 根据用户ID获取权限列表
      */
-    List<Permission> getUserPermissions(Long userId);
+    List<PermissionDTO> getUserPermissions(Long userId);
 
     /**
      * 根据角色ID获取权限列表
      */
-    List<Permission> getRolePermissions(Long roleId);
+    List<PermissionDTO> getRolePermissions(Long roleId);
 }
