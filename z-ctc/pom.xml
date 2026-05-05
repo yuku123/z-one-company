@@ -15,6 +15,7 @@
         <module>z-ctc-client</module>
         <module>z-ctc-sdk</module>
         <module>z-ctc-sso</module>
+        <module>z-ctc-audit-starter</module>
         <module>bootstrap</module>
     </modules>
 
