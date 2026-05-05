@@ -3,6 +3,7 @@ package com.zifang.ctc;
 import com.zifang.ctc.core.domain.entity.User;
 import com.zifang.ctc.core.domain.service.IVerifyCodeService;
 import com.zifang.ctc.core.service.UserBizService;
+import com.zifang.ctc.core.service.dto.UserDTO;
 import com.zifang.ctc.core.service.model.response.LoginResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -113,7 +114,7 @@ public class Task001Test {
         userBizService.registerByUsername(username, TEST_PASSWORD);
 
         // 执行登录
-        User user = userBizService.authenticate(username, TEST_PASSWORD);
+        UserDTO user = userBizService.authenticate(username, TEST_PASSWORD);
 
         assertNotNull(user);
         assertEquals(username, user.getUserName());
