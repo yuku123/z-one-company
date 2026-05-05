@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import { Card, Form, Input, Button, message, Switch, Space } from 'antd'
+import { Card, Form, Input, Button, message, Switch, Space, Select } from 'antd'
 import { ArrowLeftOutlined } from '@ant-design/icons'
+import axios from 'axios'
 
 const ConfigEdit = () => {
   const navigate = useNavigate()
@@ -10,6 +11,20 @@ const ConfigEdit = () => {
   const [isEdit, setIsEdit] = useState(false)
   const [searchParams] = useSearchParams()
   const location = useLocation()
+  const [namespaceList, setNamespaceList] = useState([])
+
+  // 获取命名空间列表
+  useEffect(() => {
+    const fetchNamespaceList = async () => {
+      try {
+        const res = await axios.get('/api/cluster/list')
+        setNamespaceList(res.data.map(item => ({ label: item.name, value: item.name })))
+      } catch (e) {
+        console.error('获取命名空间失败', e)
+      }
+    }
+    fetchNamespaceList()
+  }, [])
 
   // 获取 URL 参数中的配置信息
   useEffect(() => {
@@ -21,36 +36,31 @@ const ConfigEdit = () => {
         dataId: state.config.dataId,
         group: state.config.group,
         content: state.config.content,
-        description: state.config.description,
+        appName: state.config.appName,
+        namespace: state.config.namespace,
+        configDesc: state.config.configDesc,
       })
     } else {
       // 新建模式，从 query 参数获取初始值
       const dataId = searchParams.get('dataId')
       const group = searchParams.get('group')
+      const namespace = searchParams.get('namespace')
       if (dataId) form.setFieldsValue({ dataId })
       if (group) form.setFieldsValue({ group })
+      if (namespace) form.setFieldsValue({ namespace })
+      else form.setFieldsValue({ namespace: 'DEFAULT_NAMESPACE' })
     }
   }, [location.state, searchParams, form])
 
   const onFinish = async (values) => {
     setLoading(true)
     try {
-      const url = '/api/config/saveConfig'
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(values),
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
+      const res = await axios.post('/api/config/saveConfig', values)
+      if (res.data.success) {
         message.success(isEdit ? '修改成功' : '保存成功')
         navigate('/config/list')
       } else {
-        message.error(data.message || (isEdit ? '修改失败' : '保存失败'))
+        message.error(res.data.message || (isEdit ? '修改失败' : '保存失败'))
       }
     } catch (error) {
       console.error('保存错误:', error)
@@ -77,6 +87,21 @@ const ConfigEdit = () => {
         onFinish={onFinish}
         style={{ maxWidth: 800 }}
       >
+        <Form.Item
+          name="namespace"
+          label="命名空间"
+          rules={[{ required: true, message: '请选择命名空间' }]}
+        >
+          <Select placeholder="请选择命名空间" options={namespaceList} />
+        </Form.Item>
+
+        <Form.Item
+          name="appName"
+          label="应用名"
+        >
+          <Input placeholder="请输入应用名（可选）" />
+        </Form.Item>
+
         <Form.Item
           name="dataId"
           label="Data ID"
@@ -107,7 +132,7 @@ const ConfigEdit = () => {
         </Form.Item>
 
         <Form.Item
-          name="description"
+          name="configDesc"
           label="描述"
         >
           <Input.TextArea rows={3} placeholder="请输入配置描述（可选）" />

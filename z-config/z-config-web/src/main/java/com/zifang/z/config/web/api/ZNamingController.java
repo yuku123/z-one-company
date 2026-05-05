@@ -253,7 +253,7 @@ public class ZNamingController {
      * @param request 注销请求参数
      * @return Result<String> 操作结果（成功/失败提示）
      */
-    @DeleteMapping("/deregisterInstance")
+    @PostMapping("/deregisterInstance")
     public Result<String> deregisterInstance(@RequestBody ZNamingInstanceDeregisterRequest request) {
         // 手动参数校验
         if (StringUtil.isBlank(request.getServiceName())) {
@@ -283,7 +283,7 @@ public class ZNamingController {
      * @param port 实例端口
      * @return Result<String> 操作结果（成功/失败提示）
      */
-    @DeleteMapping("/deregisterInstance/simple")
+    @PostMapping("/deregisterInstance/simple")
     public Result<String> deregisterInstanceSimple(
             @RequestParam String serviceName,
             @RequestParam String ip,
@@ -315,7 +315,7 @@ public class ZNamingController {
      * @param clusterName 集群名称
      * @return Result<String> 操作结果（成功/失败提示）
      */
-    @DeleteMapping("/deregisterInstance/withCluster")
+    @PostMapping("/deregisterInstance/withCluster")
     public Result<String> deregisterInstanceWithCluster(
             @RequestParam String serviceName,
             @RequestParam String ip,

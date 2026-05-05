@@ -51,9 +51,8 @@ public class ClusterController {
         return Result.success();
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/{id}/delete")
     @Operation(summary = "003_删除集群(命名空间)")
-    
     public Result<String> delete(@PathVariable Long id) {
         UpdateWrapper<ZCluster> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id", id).set("is_deleted", 1);

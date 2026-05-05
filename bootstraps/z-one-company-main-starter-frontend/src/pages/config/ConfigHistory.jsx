@@ -21,7 +21,7 @@ const ConfigHistory = () => {
   const fetchNamespaceList = async () => {
     try {
       const res = await axios.get('/api/cluster/list')
-      setNamespaceList(res.data.map(item => ({ label: item.name, value: item.id })))
+      setNamespaceList(res.data.map(item => ({ label: item.name, value: item.name })))
     } catch (e) {
       console.error('获取命名空间失败', e)
     }

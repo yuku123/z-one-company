@@ -60,7 +60,6 @@ public class OrgManagerController {
 
     @Operation(summary = "更新")
     @PostMapping("/update")
-    
     public void update(@RequestBody OrgReq req) {
         orgBizService.update(toDto(req));
     }
