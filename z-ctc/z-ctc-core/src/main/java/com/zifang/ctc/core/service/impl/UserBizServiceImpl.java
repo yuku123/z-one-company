@@ -14,6 +14,7 @@ import com.zifang.ctc.core.service.UserBizService;
 import com.zifang.ctc.core.service.model.request.RegisterRequest;
 import com.zifang.ctc.core.service.model.response.LoginResponse;
 import com.zifang.ctc.sso.JwtUtil;
+import com.zifang.ctc.core.service.model.request.UserPageReq;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,6 +118,28 @@ public class UserBizServiceImpl implements UserBizService {
     @Override
     public List<User> list() {
         return userService.list(new LambdaQueryWrapper<User>().orderByDesc(User::getGmtCreate));
+    }
+
+    @Override
+    public IPage<User> page(UserPageReq req) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<User>()
+                .orderByDesc(User::getGmtCreate);
+
+        if (req.getUserName() != null && !req.getUserName().isEmpty()) {
+            wrapper.like(User::getUserName, req.getUserName());
+        }
+        if (req.getRealName() != null && !req.getRealName().isEmpty()) {
+            wrapper.like(User::getRealName, req.getRealName());
+        }
+        if (req.getStatus() != null) {
+            wrapper.eq(User::getStatus, req.getStatus());
+        }
+        if (req.getTenantCode() != null && !req.getTenantCode().isEmpty()) {
+            wrapper.eq(User::getTenantCode, req.getTenantCode());
+        }
+
+        Page<User> page = new Page<>(req.getCurrent(), req.getSize());
+        return userService.page(page, wrapper);
     }
 
     @Override

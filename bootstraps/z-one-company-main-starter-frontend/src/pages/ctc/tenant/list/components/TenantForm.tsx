@@ -50,6 +50,7 @@ const TenantForm: React.FC<TenantFormProps> = ({
         layout="vertical"
         initialValues={{
           status: 1,
+          ...initialValues,
         }}
       >
         <Form.Item
@@ -73,11 +74,25 @@ const TenantForm: React.FC<TenantFormProps> = ({
           <Input placeholder="请输入租户名称" />
         </Form.Item>
         <Form.Item
-          name="description"
-          label="描述"
-          rules={[{ max: 500, message: '描述不能超过500个字符' }]}
+          name="contactName"
+          label="联系人"
         >
-          <Input.TextArea rows={3} placeholder="请输入描述" />
+          <Input placeholder="请输入联系人" />
+        </Form.Item>
+        <Form.Item
+          name="contactPhone"
+          label="联系电话"
+        >
+          <Input placeholder="请输入联系电话" />
+        </Form.Item>
+        <Form.Item
+          name="contactEmail"
+          label="联系邮箱"
+          rules={[
+            { type: 'email', message: '请输入有效的邮箱地址' },
+          ]}
+        >
+          <Input placeholder="请输入联系邮箱" />
         </Form.Item>
         <Form.Item
           name="status"

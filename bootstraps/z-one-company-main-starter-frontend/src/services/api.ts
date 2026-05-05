@@ -31,9 +31,10 @@ export const getCurrentUser = () =>
 export const getTenantList = () =>
   authRequest.get('/tenant/list')
 
-export const getUserList = async (params?: any) => {
-  const res = await authRequest.get('/account/list', { params })
-  return { data: { records: res, total: res.length, current: 1 } }
+export const getUserList = (params?: any) => {
+  // IPage<User> 返回结构: { records, total, size, current }
+  // ProTable 通过 responsePath: 'records' 读取
+  return authRequest.post('/account/page', params || {})
 }
 
 export const getUserById = (id: string) =>
@@ -48,9 +49,9 @@ export const updateUser = (id: string, data: any) =>
 export const deleteUser = (id: string) =>
   authRequest.delete(`/account/${id}`)
 
-export const getRoleList = async (params?: any) => {
-  const res = await authRequest.get('/permission/role/list', { params })
-  return { data: { records: res, total: res.length, current: 1 } }
+export const getRoleList = (params?: any) => {
+  // IPage<Role> 返回结构: { records, total, size, current }
+  return authRequest.post('/permission/role/page', params || {})
 }
 
 export const getRoleById = (id: string) =>

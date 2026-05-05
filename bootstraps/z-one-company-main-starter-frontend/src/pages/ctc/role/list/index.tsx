@@ -42,12 +42,11 @@ const RoleList: React.FC = () => {
       },
     },
     {
-      title: '所属租户',
-      dataIndex: 'tenantCode',
-      key: 'tenantCode',
-      render: (_, record) => (
-        <Tag color="blue">{record.tenantCode}</Tag>
-      ),
+      title: '描述',
+      dataIndex: 'description',
+      key: 'description',
+      ellipsis: true,
+      hideInSearch: true,
     },
     {
       title: '创建时间',

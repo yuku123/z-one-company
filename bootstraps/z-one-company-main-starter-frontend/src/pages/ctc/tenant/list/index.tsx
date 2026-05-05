@@ -14,9 +14,17 @@ const TenantList: React.FC = () => {
 
   const columns: ProColumns<any>[] = [
     {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 60,
+      hideInSearch: true,
+    },
+    {
       title: '租户编码',
       dataIndex: 'tenantCode',
       key: 'tenantCode',
+      copyable: true,
       render: (dom, record) => (
         <a onClick={() => handleEdit(record)}>{dom}</a>
       ),
@@ -25,17 +33,31 @@ const TenantList: React.FC = () => {
       title: '租户名称',
       dataIndex: 'tenantName',
       key: 'tenantName',
+      hideInSearch: true,
     },
     {
-      title: '描述',
-      dataIndex: 'description',
-      key: 'description',
-      ellipsis: true,
+      title: '联系人',
+      dataIndex: 'contactName',
+      key: 'contactName',
+      hideInSearch: true,
+    },
+    {
+      title: '联系电话',
+      dataIndex: 'contactPhone',
+      key: 'contactPhone',
+      hideInSearch: true,
+    },
+    {
+      title: '联系邮箱',
+      dataIndex: 'contactEmail',
+      key: 'contactEmail',
+      hideInSearch: true,
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
+      valueType: 'select',
       valueEnum: {
         1: { text: '启用', status: 'Success' },
         0: { text: '禁用', status: 'Error' },

@@ -195,4 +195,4 @@ const PermissionList: React.FC = () => {
   );
 };
 
-export default RoleList;
+export default PermissionList;

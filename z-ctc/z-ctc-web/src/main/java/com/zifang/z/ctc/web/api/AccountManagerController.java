@@ -1,12 +1,14 @@
 package com.zifang.z.ctc.web.api;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.domain.entity.User;
 import com.zifang.ctc.core.service.UserBizService;
 import com.zifang.ctc.core.service.model.request.ChangePasswordRequest;
 import com.zifang.ctc.core.service.model.request.ResetPasswordRequest;
 import com.zifang.ctc.core.service.model.response.UserInfoResponse;
 import com.zifang.ctc.sso.JwtUtil;
+import com.zifang.ctc.core.service.model.request.UserPageReq;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
@@ -68,9 +70,18 @@ public class AccountManagerController {
      */
     @GetMapping("/list")
     @Operation(summary = "获取用户列表")
-    
+
     public List<User> listUsers() {
         return userBizService.list();
+    }
+
+    /**
+     * 分页查询用户
+     */
+    @PostMapping("/page")
+    @Operation(summary = "分页查询用户")
+    public IPage<User> pageUsers(@RequestBody UserPageReq req) {
+        return userBizService.page(req);
     }
 
     /**

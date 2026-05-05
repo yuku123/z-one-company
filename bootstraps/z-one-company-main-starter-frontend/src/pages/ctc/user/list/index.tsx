@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable, PageContainer } from '@ant-design/pro-components';
 import { Button, Switch, Popconfirm, Tag, message } from 'antd';
-import { getUserList, deleteUser, createUser, updateUser } from '@/services/api';
+import { getUserList, getTenantListAll, getDeptListAll, deleteUser, createUser, updateUser, getRoleList } from '@/services/api';
 import UserForm from './components/UserForm';
 
 const UserList: React.FC = () => {
@@ -11,12 +11,42 @@ const UserList: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [modalType, setModalType] = useState<'create' | 'edit'>('create');
+  const [tenantList, setTenantList] = useState<any[]>([]);
+  const [deptList, setDeptList] = useState<any[]>([]);
+  const [roleList, setRoleList] = useState<any[]>([]);
+
+  useEffect(() => {
+    loadLookupData();
+  }, []);
+
+  const loadLookupData = async () => {
+    try {
+      const [tenants, depts, roles] = await Promise.all([
+        getTenantListAll(),
+        getDeptListAll(),
+        getRoleList({}).then(r => r.data?.records || []),
+      ]);
+      setTenantList(Array.isArray(tenants) ? tenants : []);
+      setDeptList(Array.isArray(depts) ? depts : []);
+      setRoleList(Array.isArray(roles) ? roles : []);
+    } catch (e) {
+      console.error('load lookup data failed', e);
+    }
+  };
 
   const columns: ProColumns<any>[] = [
+    {
+      title: 'ID',
+      dataIndex: 'id',
+      key: 'id',
+      width: 60,
+      hideInSearch: true,
+    },
     {
       title: '用户名',
       dataIndex: 'userName',
       key: 'userName',
+      copyable: true,
       render: (dom, record) => (
         <a onClick={() => handleEdit(record)}>{dom}</a>
       ),
@@ -25,43 +55,71 @@ const UserList: React.FC = () => {
       title: '真实姓名',
       dataIndex: 'realName',
       key: 'realName',
+      hideInSearch: true,
     },
     {
       title: '邮箱',
       dataIndex: 'email',
       key: 'email',
       copyable: true,
+      hideInSearch: true,
     },
     {
       title: '手机号',
       dataIndex: 'phone',
       key: 'phone',
       copyable: true,
+      hideInSearch: true,
+    },
+    {
+      title: '租户',
+      dataIndex: 'tenantCode',
+      key: 'tenantCode',
+      hideInSearch: true,
+      render: (_, record) => {
+        const tenant = tenantList.find(t => t.tenantCode === record.tenantCode);
+        return <Tag color="blue">{tenant?.tenantName || record.tenantCode || '-'}</Tag>;
+      },
+    },
+    {
+      title: '部门',
+      dataIndex: 'deptId',
+      key: 'deptId',
+      hideInSearch: true,
+      render: (_, record) => {
+        const dept = deptList.find(d => d.id === record.deptId);
+        return <Tag color="green">{dept?.deptName || '-'}</Tag>;
+      },
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: (_, record) => (
-        <Switch
-          checked={record.status === 1}
-          onChange={(checked) => handleStatusChange(record, checked)}
-        />
-      ),
+      valueType: 'select',
+      valueEnum: {
+        1: { text: '启用', status: 'Success' },
+        0: { text: '禁用', status: 'Error' },
+      },
     },
     {
       title: '角色',
       dataIndex: 'roles',
       key: 'roles',
+      hideInSearch: true,
       render: (_, record) => (
         <span>
-          {record.roles?.map((role: string) => (
-            <Tag key={role} color="blue">
-              {role}
-            </Tag>
+          {(record.roles || []).map((role: string) => (
+            <Tag key={role} color="blue">{role}</Tag>
           ))}
         </span>
       ),
+    },
+    {
+      title: '最后登录',
+      dataIndex: 'lastLoginTime',
+      key: 'lastLoginTime',
+      valueType: 'dateTime',
+      hideInSearch: true,
     },
     {
       title: '创建时间',
@@ -90,16 +148,6 @@ const UserList: React.FC = () => {
       ],
     },
   ];
-
-  const handleStatusChange = async (record: any, checked: boolean) => {
-    try {
-      await updateUser(record.id, { ...record, status: checked ? 1 : 0 });
-      message.success('状态更新成功');
-      actionRef.current?.reload();
-    } catch (error) {
-      message.error('状态更新失败');
-    }
-  };
 
   const handleEdit = (record: any) => {
     setCurrentUser(record);
@@ -171,6 +219,9 @@ const UserList: React.FC = () => {
         onSubmit={handleModalSubmit}
         initialValues={currentUser}
         type={modalType}
+        tenantList={tenantList}
+        deptList={deptList}
+        roleList={roleList}
       />
     </PageContainer>
   );

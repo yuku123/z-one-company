@@ -1,10 +1,12 @@
 package com.zifang.z.ctc.web.api;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.domain.entity.Permission;
 import com.zifang.ctc.core.domain.entity.Role;
 import com.zifang.ctc.core.service.PermissionBizService;
 import com.zifang.ctc.core.service.RoleBizService;
+import com.zifang.ctc.core.service.model.request.RolePageReq;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
@@ -82,6 +84,15 @@ public class PermissionManagerController {
     @Operation(summary = "获取角色列表")
     public List<Role> listRoles() {
         return roleBizService.list();
+    }
+
+    /**
+     * 分页查询角色
+     */
+    @PostMapping("/role/page")
+    @Operation(summary = "分页查询角色")
+    public IPage<Role> pageRoles(@RequestBody RolePageReq req) {
+        return roleBizService.page(req);
     }
 
     /**

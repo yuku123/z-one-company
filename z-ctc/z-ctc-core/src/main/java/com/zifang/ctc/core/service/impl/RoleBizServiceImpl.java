@@ -1,11 +1,14 @@
 package com.zifang.ctc.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zifang.ctc.core.domain.entity.Permission;
 import com.zifang.ctc.core.domain.entity.Role;
 import com.zifang.ctc.core.domain.service.IPermissionService;
 import com.zifang.ctc.core.domain.service.IRoleService;
 import com.zifang.ctc.core.service.RoleBizService;
+import com.zifang.ctc.core.service.model.request.RolePageReq;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,25 @@ public class RoleBizServiceImpl implements RoleBizService {
                         .eq(Role::getStatus, 1)
                         .orderByDesc(Role::getGmtCreate)
         );
+    }
+
+    @Override
+    public IPage<Role> page(RolePageReq req) {
+        LambdaQueryWrapper<Role> wrapper = new LambdaQueryWrapper<Role>()
+                .orderByDesc(Role::getGmtCreate);
+
+        if (req.getRoleName() != null && !req.getRoleName().isEmpty()) {
+            wrapper.like(Role::getRoleName, req.getRoleName());
+        }
+        if (req.getRoleCode() != null && !req.getRoleCode().isEmpty()) {
+            wrapper.like(Role::getRoleCode, req.getRoleCode());
+        }
+        if (req.getStatus() != null) {
+            wrapper.eq(Role::getStatus, req.getStatus());
+        }
+
+        Page<Role> page = new Page<>(req.getCurrent(), req.getSize());
+        return roleService.page(page, wrapper);
     }
 
     @Override

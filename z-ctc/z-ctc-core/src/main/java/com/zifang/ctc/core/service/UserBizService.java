@@ -1,6 +1,8 @@
 package com.zifang.ctc.core.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.domain.entity.User;
+import com.zifang.ctc.core.service.model.request.UserPageReq;
 import com.zifang.ctc.core.service.model.request.RegisterRequest;
 import com.zifang.ctc.core.service.model.response.LoginResponse;
 
@@ -40,6 +42,13 @@ public interface UserBizService {
      * 获取用户列表
      */
     List<User> list();
+
+    /**
+     * 分页查询用户
+     * @param req 分页请求（含 current/size 和搜索字段）
+     * @return 分页结果
+     */
+    IPage<User> page(UserPageReq req);
 
     /**
      * 创建用户
