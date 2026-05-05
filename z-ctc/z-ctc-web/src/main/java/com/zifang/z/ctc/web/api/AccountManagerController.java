@@ -92,7 +92,7 @@ public class AccountManagerController {
     /**
      * 更新用户
      */
-    @PutMapping("/{id}")
+    @PostMapping("/{id}/update")
     @Operation(summary = "更新用户")
     public void updateUser(@PathVariable Long id, @RequestBody UserReq req) {
         User user = toEntity(req);
@@ -103,7 +103,7 @@ public class AccountManagerController {
     /**
      * 删除用户
      */
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/delete")
     @Operation(summary = "删除用户")
     public void deleteUser(@PathVariable Long id) {
         userBizService.delete(id);
@@ -112,7 +112,7 @@ public class AccountManagerController {
     /**
      * 分配角色给用户
      */
-    @PostMapping("/{userId}/roles")
+    @PostMapping("/{userId}/assign-role")
     @Operation(summary = "分配角色给用户")
     public void assignRoles(@PathVariable Long userId, @RequestBody List<Long> roleIds) {
         userBizService.assignRoles(userId, roleIds);

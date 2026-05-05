@@ -71,13 +71,14 @@ public class GroupManagerController {
     }
 
     @Operation(summary = "更新")
-    @PutMapping
+    @PostMapping("/update")
+    
     public void update(@RequestBody GroupReq req) {
         groupBizService.update(toDto(req));
     }
 
     @Operation(summary = "删除")
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/delete")
     public void delete(@PathVariable Long id) {
         groupBizService.delete(id);
     }

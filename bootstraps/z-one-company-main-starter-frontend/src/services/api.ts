@@ -44,10 +44,10 @@ export const createUser = (data: any) =>
   authRequest.post('/account', data)
 
 export const updateUser = (id: string, data: any) =>
-  authRequest.put(`/account/${id}`, data)
+  authRequest.post(`/account/${id}/update`, data)
 
 export const deleteUser = (id: string) =>
-  authRequest.delete(`/account/${id}`)
+  authRequest.post(`/account/${id}/delete`, { id })
 
 export const getRoleList = (params?: any) => {
   // IPage<Role> 返回结构: { records, total, size, current }
@@ -61,10 +61,10 @@ export const createRole = (data: any) =>
   authRequest.post('/permission/role', data)
 
 export const updateRole = (id: string, data: any) =>
-  authRequest.put(`/permission/role/${id}`, data)
+  authRequest.post(`/permission/role/${id}/update`, data)
 
 export const deleteRole = (id: string) =>
-  authRequest.delete(`/permission/role/${id}`)
+  authRequest.post(`/permission/role/${id}/delete`, { id })
 
 export const getPermissionList = async (params?: any) => {
   const res = await authRequest.get('/permission/list', { params })
@@ -75,10 +75,10 @@ export const createPermission = (data: any) =>
   authRequest.post('/permission', data)
 
 export const updatePermission = (id: string, data: any) =>
-  authRequest.put(`/permission/${id}`, data)
+  authRequest.post(`/permission/${id}/update`, data)
 
 export const deletePermission = (id: string) =>
-  authRequest.delete(`/permission/${id}`)
+  authRequest.post(`/permission/${id}/delete`, { id })
 
 export const getAuditList = (params?: any) =>
   request.get('/audit/log', { params })
@@ -103,10 +103,10 @@ export const createTenant = (data: any) =>
   authRequest.post('/tenant', data)
 
 export const updateTenant = (data: any) =>
-  authRequest.put('/tenant', data)
+  authRequest.post('/tenant/update', data)
 
 export const deleteTenant = (id: string) =>
-  authRequest.delete(`/tenant/${id}`)
+  authRequest.post(`/tenant/${id}/delete`, { id })
 
 // 域管理
 export const getDomainPage = (params?: any) =>
@@ -128,10 +128,10 @@ export const createDomain = (data: any) =>
   authRequest.post('/domain', data)
 
 export const updateDomain = (data: any) =>
-  authRequest.put('/domain', data)
+  authRequest.post('/domain/update', data)
 
 export const deleteDomain = (id: string) =>
-  authRequest.delete(`/domain/${id}`)
+  authRequest.post(`/domain/${id}/delete`, { id })
 
 // 组织管理
 export const getOrgPage = (params?: any) =>
@@ -156,10 +156,10 @@ export const createOrg = (data: any) =>
   authRequest.post('/org', data)
 
 export const updateOrg = (data: any) =>
-  authRequest.put('/org', data)
+  authRequest.post('/org/update', data)
 
 export const deleteOrg = (id: string) =>
-  authRequest.delete(`/org/${id}`)
+  authRequest.post(`/org/${id}/delete`, { id })
 
 // 部门管理
 export const getDeptPage = (params?: any) =>
@@ -187,10 +187,10 @@ export const createDept = (data: any) =>
   authRequest.post('/dept', data)
 
 export const updateDept = (data: any) =>
-  authRequest.put('/dept', data)
+  authRequest.post('/dept/update', data)
 
 export const deleteDept = (id: string) =>
-  authRequest.delete(`/dept/${id}`)
+  authRequest.post(`/dept/${id}/delete`, { id })
 
 // 组管理
 export const getGroupPage = (params?: any) =>
@@ -221,7 +221,7 @@ export const createGroup = (data: any) =>
   authRequest.post('/group', data)
 
 export const updateGroup = (data: any) =>
-  authRequest.put('/group', data)
+  authRequest.post('/group/update', data)
 
 export const deleteGroup = (id: string) =>
-  authRequest.delete(`/group/${id}`)
+  authRequest.post(`/group/${id}/delete`, { id })

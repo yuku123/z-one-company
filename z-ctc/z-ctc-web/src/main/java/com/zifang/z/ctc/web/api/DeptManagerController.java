@@ -65,13 +65,14 @@ public class DeptManagerController {
     }
 
     @Operation(summary = "更新")
-    @PutMapping
+    @PostMapping("/update")
+    
     public void update(@RequestBody DeptReq req) {
         deptBizService.update(toDto(req));
     }
 
     @Operation(summary = "删除")
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/delete")
     public void delete(@PathVariable Long id) {
         deptBizService.delete(id);
     }

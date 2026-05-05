@@ -67,7 +67,7 @@ public class PermissionManagerController {
     /**
      * 更新权限
      */
-    @PutMapping("/{id}")
+    @PostMapping("/{id}/update")
     @Operation(summary = "更新权限")
     public void updatePermission(@PathVariable Long id, @RequestBody PermissionReq req) {
         Permission permission = toPermissionEntity(req);
@@ -78,7 +78,7 @@ public class PermissionManagerController {
     /**
      * 删除权限
      */
-    @DeleteMapping("/{id}")
+    @PostMapping("/{id}/delete")
     @Operation(summary = "删除权限")
     public void deletePermission(@PathVariable Long id) {
         permissionBizService.delete(id);
@@ -129,7 +129,7 @@ public class PermissionManagerController {
     /**
      * 更新角色
      */
-    @PutMapping("/role/{id}")
+    @PostMapping("/role/{id}/update")
     @Operation(summary = "更新角色")
     public void updateRole(@PathVariable Long id, @RequestBody RoleReq req) {
         Role role = toRoleEntity(req);
@@ -140,7 +140,7 @@ public class PermissionManagerController {
     /**
      * 删除角色
      */
-    @DeleteMapping("/role/{id}")
+    @PostMapping("/role/{id}/delete")
     @Operation(summary = "删除角色")
     public void deleteRole(@PathVariable Long id) {
         roleBizService.delete(id);
