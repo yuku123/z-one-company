@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = "com.zifang")
 public class ZCompanyMainStarter {
 
-    private static Logger log = LoggerFactory.getLogger(ZCompanyMainStarter.class);
+    private static final Logger log = LoggerFactory.getLogger(ZCompanyMainStarter.class);
 
     public static void main(String[] args) {
         SpringApplication.run(ZCompanyMainStarter.class, args);
