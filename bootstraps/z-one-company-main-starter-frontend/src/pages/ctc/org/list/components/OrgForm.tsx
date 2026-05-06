@@ -67,37 +67,37 @@ const OrgForm: React.FC<OrgFormProps> = ({
           <Input placeholder="请输入组织名称" />
         </Form.Item>
         <Form.Item
-          name="tenantId"
+          name="tenantCode"
           label="所属租户"
           rules={[{ required: true, message: '请选择所属租户' }]}
         >
           <Select placeholder="请选择所属租户">
             {(tenantList || []).map((tenant: any) => (
-              <Select.Option key={tenant.id} value={tenant.id}>
+              <Select.Option key={tenant.tenantCode} value={tenant.tenantCode}>
                 {tenant.tenantName}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
         <Form.Item
-          name="domainId"
+          name="domainCode"
           label="所属域"
           rules={[{ required: true, message: '请选择所属域' }]}
         >
           <Select placeholder="请选择所属域">
             {(domainList || []).map((domain: any) => (
-              <Select.Option key={domain.id} value={domain.id}>
+              <Select.Option key={domain.domainCode} value={domain.domainCode}>
                 {domain.domainName}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
         <Form.Item
-          name="parentId"
+          name="parentCode"
           label="上级组织"
         >
           <Select placeholder="请选择上级组织" allowClear>
-            <Select.Option value={0}>无</Select.Option>
+            <Select.Option value="">无</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item

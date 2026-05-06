@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,12 +33,6 @@ public class TenantManagerController {
     @GetMapping("/code/{tenantCode}")
     public Result<TenantResp> getByTenantCode(@PathVariable String tenantCode) {
         return Result.success(toResp(tenantBizService.getByTenantCode(tenantCode)));
-    }
-
-    @Operation(summary = "根据ID查询")
-    @GetMapping("/get")
-    public Result<TenantResp> getById(@RequestParam Long id) {
-        return Result.success(toResp(tenantBizService.getById(id)));
     }
 
     @Operation(summary = "用户所属租户列表")

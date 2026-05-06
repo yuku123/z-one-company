@@ -14,7 +14,7 @@ public class UserDTO {
     private String phone;
     private Integer status;
     private String tenantCode;
-    private Long deptId;
+    private String deptCode;
     private LocalDateTime lastLoginTime;
     private LocalDateTime gmtCreate;
     private List<String> roles;
@@ -33,8 +33,8 @@ public class UserDTO {
     public void setStatus(Integer status) { this.status = status; }
     public String getTenantCode() { return tenantCode; }
     public void setTenantCode(String tenantCode) { this.tenantCode = tenantCode; }
-    public Long getDeptId() { return deptId; }
-    public void setDeptId(Long deptId) { this.deptId = deptId; }
+    public String getDeptCode() { return deptCode; }
+    public void setDeptCode(String deptCode) { this.deptCode = deptCode; }
     public LocalDateTime getLastLoginTime() { return lastLoginTime; }
     public void setLastLoginTime(LocalDateTime lastLoginTime) { this.lastLoginTime = lastLoginTime; }
     public LocalDateTime getGmtCreate() { return gmtCreate; }

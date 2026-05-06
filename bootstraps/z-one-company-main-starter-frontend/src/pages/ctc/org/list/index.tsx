@@ -33,10 +33,10 @@ const OrgList: React.FC = () => {
 
   const columns: ProColumns<any>[] = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 60,
+      title: '组织编码',
+      dataIndex: 'orgCode',
+      key: 'orgCode',
+      copyable: true,
     },
     {
       title: '组织名称',
@@ -48,19 +48,19 @@ const OrgList: React.FC = () => {
     },
     {
       title: '所属租户',
-      dataIndex: 'tenantId',
-      key: 'tenantId',
+      dataIndex: 'tenantCode',
+      key: 'tenantCode',
       render: (_, record) => {
-        const tenant = tenantList.find(t => t.id === record.tenantId);
+        const tenant = tenantList.find(t => t.tenantCode === record.tenantCode);
         return <Tag color="blue">{tenant?.tenantName || '-'}</Tag>;
       },
     },
     {
       title: '所属域',
-      dataIndex: 'domainId',
-      key: 'domainId',
+      dataIndex: 'domainCode',
+      key: 'domainCode',
       render: (_, record) => {
-        const domain = domainList.find(d => d.id === record.domainId);
+        const domain = domainList.find(d => d.domainCode === record.domainCode);
         return <Tag color="green">{domain?.domainName || '-'}</Tag>;
       },
     },
@@ -115,7 +115,7 @@ const OrgList: React.FC = () => {
 
   const handleDelete = async (record: any) => {
     try {
-      await deleteOrg(record.id);
+      await deleteOrg(record.orgCode);
       message.success('删除成功');
       actionRef.current?.reload();
     } catch (error) {
@@ -144,7 +144,7 @@ const OrgList: React.FC = () => {
       <ProTable
         headerTitle="组织列表"
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="orgCode"
         search={{
           labelWidth: 120,
         }}

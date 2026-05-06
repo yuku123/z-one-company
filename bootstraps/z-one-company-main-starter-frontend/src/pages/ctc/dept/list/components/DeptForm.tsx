@@ -69,50 +69,50 @@ const DeptForm: React.FC<DeptFormProps> = ({
           <Input placeholder="请输入部门名称" />
         </Form.Item>
         <Form.Item
-          name="tenantId"
+          name="tenantCode"
           label="所属租户"
           rules={[{ required: true, message: '请选择所属租户' }]}
         >
           <Select placeholder="请选择所属租户">
             {(tenantList || []).map((tenant: any) => (
-              <Select.Option key={tenant.id} value={tenant.id}>
+              <Select.Option key={tenant.tenantCode} value={tenant.tenantCode}>
                 {tenant.tenantName}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
         <Form.Item
-          name="domainId"
+          name="domainCode"
           label="所属域"
           rules={[{ required: true, message: '请选择所属域' }]}
         >
           <Select placeholder="请选择所属域">
             {(domainList || []).map((domain: any) => (
-              <Select.Option key={domain.id} value={domain.id}>
+              <Select.Option key={domain.domainCode} value={domain.domainCode}>
                 {domain.domainName}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
         <Form.Item
-          name="orgId"
+          name="orgCode"
           label="所属组织"
           rules={[{ required: true, message: '请选择所属组织' }]}
         >
           <Select placeholder="请选择所属组织">
             {(orgList || []).map((org: any) => (
-              <Select.Option key={org.id} value={org.id}>
+              <Select.Option key={org.orgCode} value={org.orgCode}>
                 {org.orgName}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
         <Form.Item
-          name="parentId"
+          name="parentCode"
           label="上级部门"
         >
           <Select placeholder="请选择上级部门" allowClear>
-            <Select.Option value={0}>无</Select.Option>
+            <Select.Option value="">无</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item

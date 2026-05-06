@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react'
 import { Card, Table, Button, Input, Space, Tag, message, Popconfirm, Modal, Form, Select } from 'antd'
-import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
+import { PlusOutlined, ReloadOutlined } from '@ant-design/icons'
 import { getUserList, createUser, updateUser, deleteUser } from '../../../services/api'
 
 const UserManagement = () => {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  })
-  const [searchText, setSearchText] = useState('')
+  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 })
+  const [form] = Form.useForm()
   const [modalVisible, setModalVisible] = useState(false)
   const [editingUser, setEditingUser] = useState(null)
-  const [form] = Form.useForm()
+
+  const [filters, setFilters] = useState({
+    userName: '',
+    realName: '',
+    status: undefined,
+  })
 
   const fetchUserList = async (page = 1, pageSize = 10) => {
     setLoading(true)
@@ -22,14 +23,12 @@ const UserManagement = () => {
       const res = await getUserList({
         pageNum: page,
         pageSize: pageSize,
-        keyword: searchText || undefined,
+        userName: filters.userName || undefined,
+        realName: filters.realName || undefined,
+        status: filters.status,
       })
       setData(res?.records || [])
-      setPagination({
-        current: res?.current || 1,
-        pageSize: pageSize,
-        total: res?.total || 0,
-      })
+      setPagination({ current: res?.current || 1, pageSize, total: res?.total || 0 })
     } catch (error) {
       message.error('获取用户列表失败')
     } finally {
@@ -42,6 +41,11 @@ const UserManagement = () => {
   }, [])
 
   const handleSearch = () => {
+    fetchUserList(1, pagination.pageSize)
+  }
+
+  const handleReset = () => {
+    setFilters({ userName: '', realName: '', status: undefined })
     fetchUserList(1, pagination.pageSize)
   }
 
@@ -89,32 +93,11 @@ const UserManagement = () => {
   }
 
   const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 60,
-    },
-    {
-      title: '用户名',
-      dataIndex: 'userName',
-      key: 'userName',
-    },
-    {
-      title: '昵称',
-      dataIndex: 'nickName',
-      key: 'nickName',
-    },
-    {
-      title: '手机号',
-      dataIndex: 'phone',
-      key: 'phone',
-    },
-    {
-      title: '邮箱',
-      dataIndex: 'email',
-      key: 'email',
-    },
+    { title: 'ID', dataIndex: 'id', key: 'id', width: 60 },
+    { title: '用户名', dataIndex: 'userName', key: 'userName' },
+    { title: '昵称', dataIndex: 'nickName', key: 'nickName' },
+    { title: '手机号', dataIndex: 'phone', key: 'phone' },
+    { title: '邮箱', dataIndex: 'email', key: 'email' },
     {
       title: '状态',
       dataIndex: 'status',
@@ -125,24 +108,16 @@ const UserManagement = () => {
         </Tag>
       ),
     },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
-    },
+    { title: '创建时间', dataIndex: 'createTime', key: 'createTime' },
     {
       title: '操作',
       key: 'action',
       width: 150,
       render: (_, record) => (
         <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            编辑
-          </Button>
+          <Button type="link" size="small" onClick={() => handleEdit(record)}>编辑</Button>
           <Popconfirm title="确认删除" description="确定要删除该用户吗？" onConfirm={() => handleDelete(record.id)}>
-            <Button type="link" danger size="small" icon={<DeleteOutlined />}>
-              删除
-            </Button>
+            <Button type="link" danger size="small">删除</Button>
           </Popconfirm>
         </Space>
       ),
@@ -153,33 +128,51 @@ const UserManagement = () => {
     <Card
       title="用户管理"
       extra={
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          新增用户
-        </Button>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>新增用户</Button>
       }
     >
-      <div style={{ marginBottom: 16 }}>
-        <Space>
-          <Input.Search
-            placeholder="搜索用户名/手机号/邮箱"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onSearch={handleSearch}
-            style={{ width: 300 }}
-            allowClear
-          />
-          <Button icon={<ReloadOutlined />} onClick={() => fetchUserList(pagination.current, pagination.pageSize)}>
-            刷新
-          </Button>
-        </Space>
+      {/* 顶部筛选区域 */}
+      <div style={{ marginBottom: 16, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <Input
+          placeholder="用户名"
+          value={filters.userName}
+          onChange={e => setFilters(f => ({ ...f, userName: e.target.value }))}
+          onPressEnter={handleSearch}
+          style={{ width: 140 }}
+          allowClear
+        />
+        <Input
+          placeholder="昵称"
+          value={filters.realName}
+          onChange={e => setFilters(f => ({ ...f, realName: e.target.value }))}
+          onPressEnter={handleSearch}
+          style={{ width: 140 }}
+          allowClear
+        />
+        <Select
+          placeholder="状态"
+          value={filters.status}
+          onChange={val => setFilters(f => ({ ...f, status: val }))}
+          style={{ width: 120 }}
+          allowClear
+        >
+          <Select.Option value={1}>正常</Select.Option>
+          <Select.Option value={0}>停用</Select.Option>
+        </Select>
+        <Button type="primary" onClick={handleSearch}>查询</Button>
+        <Button onClick={handleReset}>重置</Button>
+        <Button icon={<ReloadOutlined />} onClick={() => fetchUserList(pagination.current, pagination.pageSize)}>
+          刷新
+        </Button>
       </div>
+
       <Table
         columns={columns}
         dataSource={data}
         pagination={{
           ...pagination,
           showSizeChanger: true,
-          showTotal: (total) => `共 ${total} 条`,
+          showTotal: total => `共 ${total} 条`,
         }}
         loading={loading}
         onChange={handleTableChange}

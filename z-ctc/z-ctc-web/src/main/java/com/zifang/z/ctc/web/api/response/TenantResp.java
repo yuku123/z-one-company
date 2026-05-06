@@ -3,7 +3,6 @@ package com.zifang.z.ctc.web.api.response;
 import java.time.LocalDateTime;
 
 public class TenantResp {
-    private Long id;
     private String tenantCode;
     private String tenantName;
     private String contactName;
@@ -14,8 +13,6 @@ public class TenantResp {
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
     public String getTenantCode() { return tenantCode; }
     public void setTenantCode(String tenantCode) { this.tenantCode = tenantCode; }
     public String getTenantName() { return tenantName; }

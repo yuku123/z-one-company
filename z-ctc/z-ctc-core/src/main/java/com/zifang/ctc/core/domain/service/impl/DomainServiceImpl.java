@@ -8,40 +8,22 @@ import com.zifang.ctc.core.domain.entity.DomainDO;
 import com.zifang.ctc.core.domain.mapper.DomainMapper;
 import com.zifang.ctc.core.domain.service.IDomainService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class DomainServiceImpl extends ServiceImpl<DomainMapper, DomainDO> implements IDomainService {
-
     @Override
-    public IPage<DomainDO> page(Page<DomainDO> page, DomainDO domainDO) {
-        LambdaQueryWrapper<DomainDO> wrapper = new LambdaQueryWrapper<>();
-        if (domainDO != null) {
-            if (StringUtils.hasText(domainDO.getDomainCode())) {
-                wrapper.like(DomainDO::getDomainCode, domainDO.getDomainCode());
-            }
-            if (StringUtils.hasText(domainDO.getDomainName())) {
-                wrapper.like(DomainDO::getDomainName, domainDO.getDomainName());
-            }
-            if (domainDO.getTenantId() != null) {
-                wrapper.eq(DomainDO::getTenantId, domainDO.getTenantId());
-            }
-            if (domainDO.getStatus() != null) {
-                wrapper.eq(DomainDO::getStatus, domainDO.getStatus());
-            }
-        }
-        wrapper.orderByDesc(DomainDO::getCreatedTime);
-        return page(page, wrapper);
+    public IPage<DomainDO> pageByTenantCode(Page<DomainDO> page, String tenantCode) {
+        LambdaQueryWrapper<DomainDO> w = new LambdaQueryWrapper<>();
+        if (tenantCode != null) w.eq(DomainDO::getTenantCode, tenantCode);
+        return page(page, w);
     }
 
     @Override
-    public List<DomainDO> listByTenantId(Long tenantId) {
-        return list(new LambdaQueryWrapper<DomainDO>()
-                .eq(DomainDO::getTenantId, tenantId)
-                .orderByDesc(DomainDO::getCreatedTime));
+    public List<DomainDO> listByTenantCode(String tenantCode) {
+        LambdaQueryWrapper<DomainDO> w = new LambdaQueryWrapper<>();
+        if (tenantCode != null) w.eq(DomainDO::getTenantCode, tenantCode);
+        return list(w);
     }
 
     @Override
@@ -50,20 +32,14 @@ public class DomainServiceImpl extends ServiceImpl<DomainMapper, DomainDO> imple
     }
 
     @Override
-    public boolean add(DomainDO domainDO) {
-        domainDO.setCreatedTime(LocalDateTime.now());
-        domainDO.setUpdatedTime(LocalDateTime.now());
-        return save(domainDO);
+    public Long getIdByDomainCode(String domainCode) {
+        DomainDO d = getByDomainCode(domainCode);
+        return d != null ? d.getId() : null;
     }
 
     @Override
-    public boolean update(DomainDO domainDO) {
-        domainDO.setUpdatedTime(LocalDateTime.now());
-        return updateById(domainDO);
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        return removeById(id);
+    public boolean deleteByDomainCode(String domainCode) {
+        Long id = getIdByDomainCode(domainCode);
+        return id != null && removeById(id);
     }
 }

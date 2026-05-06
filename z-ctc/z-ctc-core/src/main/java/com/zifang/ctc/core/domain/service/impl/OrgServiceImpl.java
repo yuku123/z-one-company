@@ -8,72 +8,45 @@ import com.zifang.ctc.core.domain.entity.OrgDO;
 import com.zifang.ctc.core.domain.mapper.OrgMapper;
 import com.zifang.ctc.core.domain.service.IOrgService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class OrgServiceImpl extends ServiceImpl<OrgMapper, OrgDO> implements IOrgService {
-
     @Override
-    public IPage<OrgDO> page(Page<OrgDO> page, OrgDO orgDO) {
-        LambdaQueryWrapper<OrgDO> wrapper = new LambdaQueryWrapper<>();
-        if (orgDO != null) {
-            if (orgDO.getId() != null) {
-                wrapper.eq(OrgDO::getId, orgDO.getId());
-            }
-            if (StringUtils.hasText(orgDO.getOrgName())) {
-                wrapper.like(OrgDO::getOrgName, orgDO.getOrgName());
-            }
-            if (orgDO.getTenantId() != null) {
-                wrapper.eq(OrgDO::getTenantId, orgDO.getTenantId());
-            }
-            if (orgDO.getDomainId() != null) {
-                wrapper.eq(OrgDO::getDomainId, orgDO.getDomainId());
-            }
-            if (orgDO.getStatus() != null) {
-                wrapper.eq(OrgDO::getStatus, orgDO.getStatus());
-            }
-        }
-        wrapper.orderByDesc(OrgDO::getCreatedTime);
-        return page(page, wrapper);
+    public IPage<OrgDO> pageByTenantCode(Page<OrgDO> page, String tenantCode) {
+        LambdaQueryWrapper<OrgDO> w = new LambdaQueryWrapper<>();
+        if (tenantCode != null) w.eq(OrgDO::getTenantCode, tenantCode);
+        return page(page, w);
     }
 
     @Override
-    public List<OrgDO> listByTenantId(Long tenantId) {
-        return list(new LambdaQueryWrapper<OrgDO>()
-                .eq(OrgDO::getTenantId, tenantId)
-                .orderByDesc(OrgDO::getCreatedTime));
+    public List<OrgDO> listByTenantCode(String tenantCode) {
+        LambdaQueryWrapper<OrgDO> w = new LambdaQueryWrapper<>();
+        if (tenantCode != null) w.eq(OrgDO::getTenantCode, tenantCode);
+        return list(w);
     }
 
     @Override
-    public List<OrgDO> listByDomainId(Long domainId) {
-        return list(new LambdaQueryWrapper<OrgDO>()
-                .eq(OrgDO::getDomainId, domainId)
-                .orderByDesc(OrgDO::getCreatedTime));
+    public List<OrgDO> listByDomainCode(String domainCode) {
+        LambdaQueryWrapper<OrgDO> w = new LambdaQueryWrapper<>();
+        if (domainCode != null) w.eq(OrgDO::getDomainCode, domainCode);
+        return list(w);
     }
 
     @Override
-    public OrgDO getByOrgId(Long orgId) {
-        return getOne(new LambdaQueryWrapper<OrgDO>().eq(OrgDO::getId, orgId));
+    public OrgDO getByOrgCode(String orgCode) {
+        return getOne(new LambdaQueryWrapper<OrgDO>().eq(OrgDO::getOrgCode, orgCode));
     }
 
     @Override
-    public boolean add(OrgDO orgDO) {
-        orgDO.setCreatedTime(LocalDateTime.now());
-        orgDO.setUpdatedTime(LocalDateTime.now());
-        return save(orgDO);
+    public Long getIdByOrgCode(String orgCode) {
+        OrgDO o = getByOrgCode(orgCode);
+        return o != null ? o.getId() : null;
     }
 
     @Override
-    public boolean update(OrgDO orgDO) {
-        orgDO.setUpdatedTime(LocalDateTime.now());
-        return updateById(orgDO);
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        return removeById(id);
+    public boolean deleteByOrgCode(String orgCode) {
+        Long id = getIdByOrgCode(orgCode);
+        return id != null && removeById(id);
     }
 }

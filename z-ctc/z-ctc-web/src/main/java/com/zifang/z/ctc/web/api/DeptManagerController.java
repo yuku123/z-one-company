@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,54 +32,60 @@ public class DeptManagerController {
     @Operation(summary = "分页查询")
     @PostMapping("/page")
     public Result<IPage<DeptResp>> page(@RequestBody DeptReq req) {
-        return Result.success(deptBizService.page(toDto(req)).convert(this::toResp));
+        return Result.success(deptBizService.pageByTenantCode(
+                req.getTenantCode(), req.getPageNum(), req.getPageSize()
+        ).convert(this::toResp));
     }
 
-    @Operation(summary = "根据租户ID查询")
-    @GetMapping("/tenant/{tenantId}")
-    public Result<List<DeptResp>> listByTenantId(@PathVariable Long tenantId) {
-        List<DeptResp> data = deptBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "根据租户编码查询部门列表")
+    @GetMapping("/tenant/{tenantCode}")
+    public Result<List<DeptResp>> listByTenantCode(@PathVariable String tenantCode) {
+        List<DeptResp> data = deptBizService.listByTenantCode(tenantCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
-    @Operation(summary = "根据域ID查询")
-    @GetMapping("/domain/{domainId}")
-    public Result<List<DeptResp>> listByDomainId(@PathVariable Long domainId) {
-        List<DeptResp> data = deptBizService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "根据域编码查询部门列表")
+    @GetMapping("/domain/{domainCode}")
+    public Result<List<DeptResp>> listByDomainCode(@PathVariable String domainCode) {
+        List<DeptResp> data = deptBizService.listByDomainCode(domainCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
-    @Operation(summary = "根据组织ID查询")
-    @GetMapping("/org/{orgId}")
-    public Result<List<DeptResp>> listByOrgId(@PathVariable Long orgId) {
-        List<DeptResp> data = deptBizService.listByOrgId(orgId).stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "根据组织编码查询部门列表")
+    @GetMapping("/org/{orgCode}")
+    public Result<List<DeptResp>> listByOrgCode(@PathVariable String orgCode) {
+        List<DeptResp> data = deptBizService.listByOrgCode(orgCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
-    @Operation(summary = "根据ID查询")
-    @GetMapping("/get")
-    public Result<DeptResp> getById(@RequestParam Long id) {
-        return Result.success(toResp(deptBizService.getById(id)));
+    @Operation(summary = "根据部门编码查询")
+    @GetMapping("/code/{deptCode}")
+    public Result<DeptResp> getByDeptCode(@PathVariable String deptCode) {
+        return Result.success(toResp(deptBizService.getByDeptCode(deptCode)));
     }
 
     @Operation(summary = "新增")
     @PostMapping
     public Result<Void> add(@RequestBody DeptReq req) {
-        deptBizService.add(toDto(req));
+        DeptDTO dto = new DeptDTO();
+        BeanUtils.copyProperties(req, dto);
+        deptBizService.create(dto);
         return Result.success();
     }
 
     @Operation(summary = "更新")
     @PostMapping("/update")
     public Result<Void> update(@RequestBody DeptReq req) {
-        deptBizService.update(toDto(req));
+        DeptDTO dto = new DeptDTO();
+        BeanUtils.copyProperties(req, dto);
+        deptBizService.update(dto);
         return Result.success();
     }
 
     @Operation(summary = "删除")
-    @PostMapping("/{id}/delete")
-    public Result<Void> delete(@PathVariable Long id) {
-        deptBizService.delete(id);
+    @PostMapping("/{deptCode}/delete")
+    public Result<Void> delete(@PathVariable String deptCode) {
+        deptBizService.delete(deptCode);
         return Result.success();
     }
 
@@ -89,11 +94,5 @@ public class DeptManagerController {
         DeptResp resp = new DeptResp();
         BeanUtils.copyProperties(dto, resp);
         return resp;
-    }
-
-    private DeptDTO toDto(DeptReq req) {
-        DeptDTO dto = new DeptDTO();
-        BeanUtils.copyProperties(req, dto);
-        return dto;
     }
 }

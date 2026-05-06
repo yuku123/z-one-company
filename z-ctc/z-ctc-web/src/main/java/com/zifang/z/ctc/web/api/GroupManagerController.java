@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,61 +32,67 @@ public class GroupManagerController {
     @Operation(summary = "分页查询")
     @PostMapping("/page")
     public Result<IPage<GroupResp>> page(@RequestBody GroupReq req) {
-        return Result.success(groupBizService.page(toDto(req)).convert(this::toResp));
+        return Result.success(groupBizService.pageByTenantCode(
+                req.getTenantCode(), req.getPageNum(), req.getPageSize()
+        ).convert(this::toResp));
     }
 
-    @Operation(summary = "根据租户ID查询")
-    @GetMapping("/tenant/{tenantId}")
-    public Result<List<GroupResp>> listByTenantId(@PathVariable Long tenantId) {
-        List<GroupResp> data = groupBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "根据租户编码查询用户组列表")
+    @GetMapping("/tenant/{tenantCode}")
+    public Result<List<GroupResp>> listByTenantCode(@PathVariable String tenantCode) {
+        List<GroupResp> data = groupBizService.listByTenantCode(tenantCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
-    @Operation(summary = "根据域ID查询")
-    @GetMapping("/domain/{domainId}")
-    public Result<List<GroupResp>> listByDomainId(@PathVariable Long domainId) {
-        List<GroupResp> data = groupBizService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "根据域编码查询用户组列表")
+    @GetMapping("/domain/{domainCode}")
+    public Result<List<GroupResp>> listByDomainCode(@PathVariable String domainCode) {
+        List<GroupResp> data = groupBizService.listByDomainCode(domainCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
-    @Operation(summary = "根据组织ID查询")
-    @GetMapping("/org/{orgId}")
-    public Result<List<GroupResp>> listByOrgId(@PathVariable Long orgId) {
-        List<GroupResp> data = groupBizService.listByOrgId(orgId).stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "根据组织编码查询用户组列表")
+    @GetMapping("/org/{orgCode}")
+    public Result<List<GroupResp>> listByOrgCode(@PathVariable String orgCode) {
+        List<GroupResp> data = groupBizService.listByOrgCode(orgCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
-    @Operation(summary = "根据部门ID查询")
-    @GetMapping("/dept/{deptId}")
-    public Result<List<GroupResp>> listByDeptId(@PathVariable Long deptId) {
-        List<GroupResp> data = groupBizService.listByDeptId(deptId).stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "根据部门编码查询用户组列表")
+    @GetMapping("/dept/{deptCode}")
+    public Result<List<GroupResp>> listByDeptCode(@PathVariable String deptCode) {
+        List<GroupResp> data = groupBizService.listByDeptCode(deptCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
-    @Operation(summary = "根据ID查询")
-    @GetMapping("/get")
-    public Result<GroupResp> getById(@RequestParam Long id) {
-        return Result.success(toResp(groupBizService.getById(id)));
+    @Operation(summary = "根据组编码查询")
+    @GetMapping("/code/{groupCode}")
+    public Result<GroupResp> getByGroupCode(@PathVariable String groupCode) {
+        return Result.success(toResp(groupBizService.getByGroupCode(groupCode)));
     }
 
     @Operation(summary = "新增")
     @PostMapping
     public Result<Void> add(@RequestBody GroupReq req) {
-        groupBizService.add(toDto(req));
+        GroupDTO dto = new GroupDTO();
+        BeanUtils.copyProperties(req, dto);
+        groupBizService.create(dto);
         return Result.success();
     }
 
     @Operation(summary = "更新")
     @PostMapping("/update")
     public Result<Void> update(@RequestBody GroupReq req) {
-        groupBizService.update(toDto(req));
+        GroupDTO dto = new GroupDTO();
+        BeanUtils.copyProperties(req, dto);
+        groupBizService.update(dto);
         return Result.success();
     }
 
     @Operation(summary = "删除")
-    @PostMapping("/{id}/delete")
-    public Result<Void> delete(@PathVariable Long id) {
-        groupBizService.delete(id);
+    @PostMapping("/{groupCode}/delete")
+    public Result<Void> delete(@PathVariable String groupCode) {
+        groupBizService.delete(groupCode);
         return Result.success();
     }
 
@@ -96,11 +101,5 @@ public class GroupManagerController {
         GroupResp resp = new GroupResp();
         BeanUtils.copyProperties(dto, resp);
         return resp;
-    }
-
-    private GroupDTO toDto(GroupReq req) {
-        GroupDTO dto = new GroupDTO();
-        BeanUtils.copyProperties(req, dto);
-        return dto;
     }
 }

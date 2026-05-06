@@ -3,29 +3,29 @@ package com.zifang.z.ctc.web.api.response;
 import java.time.LocalDateTime;
 
 public class GroupResp {
-    private Long id;
+    private String groupCode;
     private String groupName;
-    private Long tenantId;
-    private Long domainId;
-    private Long orgId;
-    private Long deptId;
+    private String tenantCode;
+    private String domainCode;
+    private String orgCode;
+    private String deptCode;
     private Integer status;
     private String description;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public String getGroupCode() { return groupCode; }
+    public void setGroupCode(String groupCode) { this.groupCode = groupCode; }
     public String getGroupName() { return groupName; }
     public void setGroupName(String groupName) { this.groupName = groupName; }
-    public Long getTenantId() { return tenantId; }
-    public void setTenantId(Long tenantId) { this.tenantId = tenantId; }
-    public Long getDomainId() { return domainId; }
-    public void setDomainId(Long domainId) { this.domainId = domainId; }
-    public Long getOrgId() { return orgId; }
-    public void setOrgId(Long orgId) { this.orgId = orgId; }
-    public Long getDeptId() { return deptId; }
-    public void setDeptId(Long deptId) { this.deptId = deptId; }
+    public String getTenantCode() { return tenantCode; }
+    public void setTenantCode(String tenantCode) { this.tenantCode = tenantCode; }
+    public String getDomainCode() { return domainCode; }
+    public void setDomainCode(String domainCode) { this.domainCode = domainCode; }
+    public String getOrgCode() { return orgCode; }
+    public void setOrgCode(String orgCode) { this.orgCode = orgCode; }
+    public String getDeptCode() { return deptCode; }
+    public void setDeptCode(String deptCode) { this.deptCode = deptCode; }
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
     public String getDescription() { return description; }

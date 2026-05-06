@@ -56,8 +56,8 @@ const Layout = () => {
         const user = JSON.parse(userInfoStr)
         setUserName(user.userName || '管理员')
         setUserInfo(user)
-        if (user.tenantId) {
-          setSelectedTenant([user.tenantId])
+        if (user.tenantCode) {
+          setSelectedTenant([user.tenantCode])
         }
       } catch (e) {}
     }

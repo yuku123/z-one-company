@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,46 +32,46 @@ public class DomainManagerController {
     @Operation(summary = "分页查询")
     @PostMapping("/page")
     public Result<IPage<DomainResp>> page(@RequestBody DomainReq req) {
-        return Result.success(domainBizService.page(toDto(req)).convert(this::toResp));
+        return Result.success(domainBizService.pageByTenantCode(
+                req.getTenantCode(), req.getPageNum(), req.getPageSize()
+        ).convert(this::toResp));
     }
 
-    @Operation(summary = "根据租户ID查询")
-    @GetMapping("/tenant/{tenantId}")
-    public Result<List<DomainResp>> listByTenantId(@PathVariable Long tenantId) {
-        List<DomainResp> data = domainBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+    @Operation(summary = "根据租户编码查询域列表")
+    @GetMapping("/tenant/{tenantCode}")
+    public Result<List<DomainResp>> listByTenantCode(@PathVariable String tenantCode) {
+        List<DomainResp> data = domainBizService.listByTenantCode(tenantCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
     @Operation(summary = "根据域编码查询")
-    @GetMapping("/getByCode")
-    public Result<DomainResp> getByDomainCode(@RequestParam String domainCode) {
+    @GetMapping("/code/{domainCode}")
+    public Result<DomainResp> getByDomainCode(@PathVariable String domainCode) {
         return Result.success(toResp(domainBizService.getByDomainCode(domainCode)));
-    }
-
-    @Operation(summary = "根据ID查询")
-    @GetMapping("/get")
-    public Result<DomainResp> getById(@RequestParam Long id) {
-        return Result.success(toResp(domainBizService.getById(id)));
     }
 
     @Operation(summary = "新增")
     @PostMapping
     public Result<Void> add(@RequestBody DomainReq req) {
-        domainBizService.add(toDto(req));
+        DomainDTO dto = new DomainDTO();
+        BeanUtils.copyProperties(req, dto);
+        domainBizService.create(dto);
         return Result.success();
     }
 
     @Operation(summary = "更新")
     @PostMapping("/update")
     public Result<Void> update(@RequestBody DomainReq req) {
-        domainBizService.update(toDto(req));
+        DomainDTO dto = new DomainDTO();
+        BeanUtils.copyProperties(req, dto);
+        domainBizService.update(dto);
         return Result.success();
     }
 
     @Operation(summary = "删除")
-    @PostMapping("/{id}/delete")
-    public Result<Void> delete(@PathVariable Long id) {
-        domainBizService.delete(id);
+    @PostMapping("/{domainCode}/delete")
+    public Result<Void> delete(@PathVariable String domainCode) {
+        domainBizService.delete(domainCode);
         return Result.success();
     }
 
@@ -81,11 +80,5 @@ public class DomainManagerController {
         DomainResp resp = new DomainResp();
         BeanUtils.copyProperties(dto, resp);
         return resp;
-    }
-
-    private DomainDTO toDto(DomainReq req) {
-        DomainDTO dto = new DomainDTO();
-        BeanUtils.copyProperties(req, dto);
-        return dto;
     }
 }

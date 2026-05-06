@@ -42,10 +42,10 @@ const DomainList: React.FC = () => {
     },
     {
       title: '所属租户',
-      dataIndex: 'tenantId',
-      key: 'tenantId',
+      dataIndex: 'tenantCode',
+      key: 'tenantCode',
       render: (_, record) => {
-        const tenant = tenantList.find(t => t.id === record.tenantId);
+        const tenant = tenantList.find(t => t.tenantCode === record.tenantCode);
         return <Tag color="blue">{tenant?.tenantName || '-'}</Tag>;
       },
     },
@@ -100,7 +100,7 @@ const DomainList: React.FC = () => {
 
   const handleDelete = async (record: any) => {
     try {
-      await deleteDomain(record.id);
+      await deleteDomain(record.domainCode);
       message.success('删除成功');
       actionRef.current?.reload();
     } catch (error) {
@@ -129,7 +129,7 @@ const DomainList: React.FC = () => {
       <ProTable
         headerTitle="域列表"
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="domainCode"
         search={{
           labelWidth: 120,
         }}

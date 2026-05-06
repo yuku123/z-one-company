@@ -2,17 +2,16 @@ package com.zifang.ctc.core.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.service.dto.DeptDTO;
-
 import java.util.List;
 
 public interface DeptBizService {
+    IPage<DeptDTO> pageByTenantCode(String tenantCode, int pageNum, int pageSize);
+    List<DeptDTO> listByTenantCode(String tenantCode);
+    List<DeptDTO> listByDomainCode(String domainCode);
+    List<DeptDTO> listByOrgCode(String orgCode);
+    DeptDTO getByDeptCode(String deptCode);
     List<DeptDTO> list();
-    IPage<DeptDTO> page(DeptDTO dept);
-    List<DeptDTO> listByTenantId(Long tenantId);
-    List<DeptDTO> listByDomainId(Long domainId);
-    List<DeptDTO> listByOrgId(Long orgId);
-    DeptDTO getById(Long id);
-    void add(DeptDTO dept);
-    void update(DeptDTO dept);
-    void delete(Long id);
+    boolean delete(String deptCode);
+    boolean create(DeptDTO dto);
+    boolean update(DeptDTO dto);
 }

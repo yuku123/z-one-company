@@ -31,7 +31,7 @@ export const getCurrentUser = () =>
 export const getTenantList = () =>
   authRequest.get('/tenant/list')
 
-// 账号管理
+// ========== 账号管理 ==========
 export const getUserList = (params?: any) =>
   authRequest.post('/account/page', params || {})
 
@@ -47,7 +47,7 @@ export const updateUser = (id: string, data: any) =>
 export const deleteUser = (id: string) =>
   authRequest.post(`/account/${id}/delete`, { id })
 
-// 角色管理
+// ========== 角色管理 ==========
 export const getRoleList = (params?: any) =>
   authRequest.post('/permission/role/page', params || {})
 
@@ -66,7 +66,7 @@ export const deleteRole = (id: string) =>
 export const getRolePermissions = (roleId: string) =>
   authRequest.get('/permission/role/permissions', { params: { roleId } })
 
-// 权限管理
+// ========== 权限管理 ==========
 export const getPermissionList = async (params?: any) => {
   const res = await authRequest.get('/permission/list', { params })
   return { data: { records: res, total: res.length, current: 1 } }
@@ -84,25 +84,22 @@ export const updatePermission = (id: string, data: any) =>
 export const deletePermission = (id: string) =>
   authRequest.post(`/permission/${id}/delete`, { id })
 
-// 审计日志
+// ========== 审计日志 ==========
 export const getAuditList = (params?: any) =>
   request.get('/audit/log', { params })
 
 export const exportAudit = (params?: any) =>
   request.get('/audit/export', { params, responseType: 'blob' })
 
-// 租户管理
+// ========== 租户管理 ==========
 export const getTenantPage = (params?: any) =>
   authRequest.post('/tenant/page', params)
 
 export const getTenantListAll = () =>
   authRequest.get('/tenant/list')
 
-export const getTenantById = (id: string) =>
-  authRequest.get('/tenant/get', { params: { id } })
-
 export const getTenantByCode = (tenantCode: string) =>
-  authRequest.get('/tenant/code/getByTenantCode', { params: { tenantCode } })
+  authRequest.get(`/tenant/code/${tenantCode}`)
 
 export const createTenant = (data: any) =>
   authRequest.post('/tenant', data)
@@ -110,24 +107,22 @@ export const createTenant = (data: any) =>
 export const updateTenant = (data: any) =>
   authRequest.post('/tenant/update', data)
 
-export const deleteTenant = (id: string) =>
-  authRequest.post(`/tenant/${id}/delete`, { id })
+export const deleteTenant = (tenantCode: string) =>
+  authRequest.post(`/tenant/${tenantCode}/delete`)
 
-// 域管理
+// ========== 域管理 ==========
 export const getDomainPage = (params?: any) =>
   authRequest.post('/domain/page', params)
 
 export const getDomainListAll = () =>
   authRequest.get('/domain/list')
 
-export const getDomainByTenantId = (tenantId: string) =>
-  authRequest.get(`/domain/tenant/${tenantId}`)
-
-export const getDomainById = (id: string) =>
-  authRequest.get('/domain/get', { params: { id } })
+// 根据租户编码查域列表（App.jsx 租户切换用）
+export const getDomainByTenantCode = (tenantCode: string) =>
+  authRequest.get(`/domain/tenant/${tenantCode}`)
 
 export const getDomainByCode = (domainCode: string) =>
-  authRequest.get('/domain/getByCode', { params: { domainCode } })
+  authRequest.get(`/domain/code/${domainCode}`)
 
 export const createDomain = (data: any) =>
   authRequest.post('/domain', data)
@@ -135,27 +130,26 @@ export const createDomain = (data: any) =>
 export const updateDomain = (data: any) =>
   authRequest.post('/domain/update', data)
 
-export const deleteDomain = (id: string) =>
-  authRequest.post(`/domain/${id}/delete`, { id })
+export const deleteDomain = (domainCode: string) =>
+  authRequest.post(`/domain/${domainCode}/delete`)
 
-// 组织管理
+// ========== 组织管理 ==========
 export const getOrgPage = (params?: any) =>
   authRequest.post('/org/page', params)
 
 export const getOrgListAll = () =>
   authRequest.get('/org/list')
 
-export const getOrgByTenantId = (tenantId: string) =>
-  authRequest.get(`/org/tenant/${tenantId}`)
+// 根据租户编码查组织
+export const getOrgByTenantCode = (tenantCode: string) =>
+  authRequest.get(`/org/tenant/${tenantCode}`)
 
-export const getOrgByDomainId = (domainId: string) =>
-  authRequest.get(`/org/domain/${domainId}`)
+// 根据域编码查组织
+export const getOrgByDomainCode = (domainCode: string) =>
+  authRequest.get(`/org/domain/${domainCode}`)
 
-export const getOrgById = (id: string) =>
-  authRequest.get('/org/get', { params: { id } })
-
-export const getOrgByCode = (orgId: string) =>
-  authRequest.get('/org/code', { params: { orgId } })
+export const getOrgByCode = (orgCode: string) =>
+  authRequest.get(`/org/code/${orgCode}`)
 
 export const createOrg = (data: any) =>
   authRequest.post('/org', data)
@@ -163,30 +157,27 @@ export const createOrg = (data: any) =>
 export const updateOrg = (data: any) =>
   authRequest.post('/org/update', data)
 
-export const deleteOrg = (id: string) =>
-  authRequest.post(`/org/${id}/delete`, { id })
+export const deleteOrg = (orgCode: string) =>
+  authRequest.post(`/org/${orgCode}/delete`)
 
-// 部门管理
+// ========== 部门管理 ==========
 export const getDeptPage = (params?: any) =>
   authRequest.post('/dept/page', params)
 
 export const getDeptListAll = () =>
   authRequest.get('/dept/list')
 
-export const getDeptByTenantId = (tenantId: string) =>
-  authRequest.get(`/dept/tenant/${tenantId}`)
+export const getDeptByTenantCode = (tenantCode: string) =>
+  authRequest.get(`/dept/tenant/${tenantCode}`)
 
-export const getDeptByDomainId = (domainId: string) =>
-  authRequest.get(`/dept/domain/${domainId}`)
+export const getDeptByDomainCode = (domainCode: string) =>
+  authRequest.get(`/dept/domain/${domainCode}`)
 
-export const getDeptByOrgId = (orgId: string) =>
-  authRequest.get(`/dept/org/${orgId}`)
+export const getDeptByOrgCode = (orgCode: string) =>
+  authRequest.get(`/dept/org/${orgCode}`)
 
-export const getDeptById = (id: string) =>
-  authRequest.get('/dept/get', { params: { id } })
-
-export const getDeptByCode = (deptId: string) =>
-  authRequest.get('/dept/code', { params: { deptId } })
+export const getDeptByCode = (deptCode: string) =>
+  authRequest.get(`/dept/code/${deptCode}`)
 
 export const createDept = (data: any) =>
   authRequest.post('/dept', data)
@@ -194,33 +185,30 @@ export const createDept = (data: any) =>
 export const updateDept = (data: any) =>
   authRequest.post('/dept/update', data)
 
-export const deleteDept = (id: string) =>
-  authRequest.post(`/dept/${id}/delete`, { id })
+export const deleteDept = (deptCode: string) =>
+  authRequest.post(`/dept/${deptCode}/delete`)
 
-// 组管理
+// ========== 组管理 ==========
 export const getGroupPage = (params?: any) =>
   authRequest.post('/group/page', params)
 
 export const getGroupListAll = () =>
   authRequest.get('/group/list')
 
-export const getGroupByTenantId = (tenantId: string) =>
-  authRequest.get(`/group/tenant/${tenantId}`)
+export const getGroupByTenantCode = (tenantCode: string) =>
+  authRequest.get(`/group/tenant/${tenantCode}`)
 
-export const getGroupByDomainId = (domainId: string) =>
-  authRequest.get(`/group/domain/${domainId}`)
+export const getGroupByDomainCode = (domainCode: string) =>
+  authRequest.get(`/group/domain/${domainCode}`)
 
-export const getGroupByOrgId = (orgId: string) =>
-  authRequest.get(`/group/org/${orgId}`)
+export const getGroupByOrgCode = (orgCode: string) =>
+  authRequest.get(`/group/org/${orgCode}`)
 
-export const getGroupByDeptId = (deptId: string) =>
-  authRequest.get(`/group/dept/${deptId}`)
+export const getGroupByDeptCode = (deptCode: string) =>
+  authRequest.get(`/group/dept/${deptCode}`)
 
-export const getGroupById = (id: string) =>
-  authRequest.get('/group/get', { params: { id } })
-
-export const getGroupByCode = (groupId: string) =>
-  authRequest.get('/group/code', { params: { groupId } })
+export const getGroupByCode = (groupCode: string) =>
+  authRequest.get(`/group/code/${groupCode}`)
 
 export const createGroup = (data: any) =>
   authRequest.post('/group', data)
@@ -228,5 +216,5 @@ export const createGroup = (data: any) =>
 export const updateGroup = (data: any) =>
   authRequest.post('/group/update', data)
 
-export const deleteGroup = (id: string) =>
-  authRequest.post(`/group/${id}/delete`, { id })
+export const deleteGroup = (groupCode: string) =>
+  authRequest.post(`/group/${groupCode}/delete`)

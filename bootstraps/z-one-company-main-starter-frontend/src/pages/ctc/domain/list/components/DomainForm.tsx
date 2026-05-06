@@ -75,13 +75,13 @@ const DomainForm: React.FC<DomainFormProps> = ({
           <Input placeholder="请输入域名称" />
         </Form.Item>
         <Form.Item
-          name="tenantId"
+          name="tenantCode"
           label="所属租户"
           rules={[{ required: true, message: '请选择所属租户' }]}
         >
           <Select placeholder="请选择所属租户">
             {(tenantList || []).map((tenant: any) => (
-              <Select.Option key={tenant.id} value={tenant.id}>
+              <Select.Option key={tenant.tenantCode} value={tenant.tenantCode}>
                 {tenant.tenantName}
               </Select.Option>
             ))}

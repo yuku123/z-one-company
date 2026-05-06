@@ -46,11 +46,6 @@ public class TenantBizServiceImpl implements TenantBizService {
     }
 
     @Override
-    public TenantDTO getById(Long id) {
-        return TenantDtoConverter.toDTO(tenantService.getById(id));
-    }
-
-    @Override
     public void add(TenantDTO dto) {
         Tenant tenant = new Tenant();
         BeanUtils.copyProperties(dto, tenant);
@@ -66,7 +61,7 @@ public class TenantBizServiceImpl implements TenantBizService {
 
     @Override
     public void delete(Long id) {
-        tenantService.removeById(id);
+        tenantService.delete(id);
     }
 
     @Override

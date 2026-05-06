@@ -9,7 +9,7 @@ public class UserReq {
     private String phone;
     private Integer status;
     private String tenantCode;
-    private Long deptId;
+    private String deptCode;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -27,6 +27,6 @@ public class UserReq {
     public void setStatus(Integer status) { this.status = status; }
     public String getTenantCode() { return tenantCode; }
     public void setTenantCode(String tenantCode) { this.tenantCode = tenantCode; }
-    public Long getDeptId() { return deptId; }
-    public void setDeptId(Long deptId) { this.deptId = deptId; }
+    public String getDeptCode() { return deptCode; }
+    public void setDeptCode(String deptCode) { this.deptCode = deptCode; }
 }

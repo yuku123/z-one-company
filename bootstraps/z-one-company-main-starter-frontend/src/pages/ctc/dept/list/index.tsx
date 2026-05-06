@@ -36,10 +36,10 @@ const DeptList: React.FC = () => {
 
   const columns: ProColumns<any>[] = [
     {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 60,
+      title: '部门编码',
+      dataIndex: 'deptCode',
+      key: 'deptCode',
+      copyable: true,
     },
     {
       title: '部门名称',
@@ -51,28 +51,28 @@ const DeptList: React.FC = () => {
     },
     {
       title: '所属租户',
-      dataIndex: 'tenantId',
-      key: 'tenantId',
+      dataIndex: 'tenantCode',
+      key: 'tenantCode',
       render: (_, record) => {
-        const tenant = tenantList.find(t => t.id === record.tenantId);
+        const tenant = tenantList.find(t => t.tenantCode === record.tenantCode);
         return <Tag color="blue">{tenant?.tenantName || '-'}</Tag>;
       },
     },
     {
       title: '所属域',
-      dataIndex: 'domainId',
-      key: 'domainId',
+      dataIndex: 'domainCode',
+      key: 'domainCode',
       render: (_, record) => {
-        const domain = domainList.find(d => d.id === record.domainId);
+        const domain = domainList.find(d => d.domainCode === record.domainCode);
         return <Tag color="green">{domain?.domainName || '-'}</Tag>;
       },
     },
     {
       title: '所属组织',
-      dataIndex: 'orgId',
-      key: 'orgId',
+      dataIndex: 'orgCode',
+      key: 'orgCode',
       render: (_, record) => {
-        const org = orgList.find(o => o.id === record.orgId);
+        const org = orgList.find(o => o.orgCode === record.orgCode);
         return <Tag color="orange">{org?.orgName || '-'}</Tag>;
       },
     },
@@ -127,7 +127,7 @@ const DeptList: React.FC = () => {
 
   const handleDelete = async (record: any) => {
     try {
-      await deleteDept(record.id);
+      await deleteDept(record.deptCode);
       message.success('删除成功');
       actionRef.current?.reload();
     } catch (error) {
@@ -156,7 +156,7 @@ const DeptList: React.FC = () => {
       <ProTable
         headerTitle="部门列表"
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="deptCode"
         search={{
           labelWidth: 120,
         }}

@@ -1,80 +1,74 @@
 package com.zifang.ctc.core.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zifang.ctc.core.domain.entity.OrgDO;
 import com.zifang.ctc.core.domain.service.IOrgService;
 import com.zifang.ctc.core.service.OrgBizService;
 import com.zifang.ctc.core.service.dto.OrgDTO;
-import com.zifang.ctc.core.service.dto.converter.OrgDtoConverter;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class OrgBizServiceImpl implements OrgBizService {
+    private final IOrgService orgService;
 
-    @Resource
-    private IOrgService orgService;
+    public OrgBizServiceImpl(IOrgService orgService) {
+        this.orgService = orgService;
+    }
+
+    private OrgDTO toDTO(OrgDO d) {
+        if (d == null) return null;
+        OrgDTO dto = new OrgDTO();
+        BeanUtils.copyProperties(d, dto);
+        return dto;
+    }
+
+    @Override
+    public IPage<OrgDTO> pageByTenantCode(String tenantCode, int pageNum, int pageSize) {
+        Page<OrgDO> page = new Page<>(pageNum, pageSize);
+        IPage<OrgDO> result = orgService.pageByTenantCode(page, tenantCode);
+        return result.convert(this::toDTO);
+    }
+
+    @Override
+    public List<OrgDTO> listByTenantCode(String tenantCode) {
+        return orgService.listByTenantCode(tenantCode).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OrgDTO> listByDomainCode(String domainCode) {
+        return orgService.listByDomainCode(domainCode).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public OrgDTO getByOrgCode(String orgCode) {
+        return toDTO(orgService.getByOrgCode(orgCode));
+    }
 
     @Override
     public List<OrgDTO> list() {
-        return orgService.list().stream()
-                .map(OrgDtoConverter::toDTO).collect(Collectors.toList());
+        return orgService.list().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
-    public IPage<OrgDTO> page(OrgDTO dto) {
-        LambdaQueryWrapper<OrgDO> wrapper = new LambdaQueryWrapper<>();
-        if (dto != null) {
-            if (dto.getId() != null) wrapper.eq(OrgDO::getId, dto.getId());
-            if (dto.getOrgName() != null && !dto.getOrgName().isEmpty())
-                wrapper.like(OrgDO::getOrgName, dto.getOrgName());
-            if (dto.getTenantId() != null) wrapper.eq(OrgDO::getTenantId, dto.getTenantId());
-            if (dto.getDomainId() != null) wrapper.eq(OrgDO::getDomainId, dto.getDomainId());
-            if (dto.getStatus() != null) wrapper.eq(OrgDO::getStatus, dto.getStatus());
-        }
-        wrapper.orderByDesc(OrgDO::getCreatedTime);
-        Page<OrgDO> p = new Page<>(1, 10);
-        return orgService.page(p, wrapper).convert(OrgDtoConverter::toDTO);
+    public boolean delete(String orgCode) {
+        return orgService.deleteByOrgCode(orgCode);
     }
 
     @Override
-    public List<OrgDTO> listByTenantId(Long tenantId) {
-        return orgService.listByTenantId(tenantId).stream()
-                .map(OrgDtoConverter::toDTO).collect(Collectors.toList());
+    public boolean create(OrgDTO dto) {
+        OrgDO d = new OrgDO();
+        BeanUtils.copyProperties(dto, d);
+        return orgService.save(d);
     }
 
     @Override
-    public List<OrgDTO> listByDomainId(Long domainId) {
-        return orgService.listByDomainId(domainId).stream()
-                .map(OrgDtoConverter::toDTO).collect(Collectors.toList());
-    }
-
-    @Override
-    public OrgDTO getById(Long id) {
-        return OrgDtoConverter.toDTO(orgService.getById(id));
-    }
-
-    @Override
-    public void add(OrgDTO dto) {
-        OrgDO entity = new OrgDO();
-        org.springframework.beans.BeanUtils.copyProperties(dto, entity);
-        orgService.add(entity);
-    }
-
-    @Override
-    public void update(OrgDTO dto) {
-        OrgDO entity = new OrgDO();
-        org.springframework.beans.BeanUtils.copyProperties(dto, entity);
-        orgService.update(entity);
-    }
-
-    @Override
-    public void delete(Long id) {
-        orgService.delete(id);
+    public boolean update(OrgDTO dto) {
+        OrgDO d = new OrgDO();
+        BeanUtils.copyProperties(dto, d);
+        return orgService.updateById(d);
     }
 }

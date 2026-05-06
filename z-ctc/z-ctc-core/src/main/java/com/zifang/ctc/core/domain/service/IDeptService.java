@@ -4,24 +4,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zifang.ctc.core.domain.entity.DeptDO;
-
 import java.util.List;
 
 public interface IDeptService extends IService<DeptDO> {
-
-    IPage<DeptDO> page(Page<DeptDO> page, DeptDO deptDO);
-
-    List<DeptDO> listByTenantId(Long tenantId);
-
-    List<DeptDO> listByDomainId(Long domainId);
-
-    List<DeptDO> listByOrgId(Long orgId);
-
-    DeptDO getByDeptId(Long deptId);
-
-    boolean add(DeptDO deptDO);
-
-    boolean update(DeptDO deptDO);
-
-    boolean delete(Long id);
+    IPage<DeptDO> pageByTenantCode(Page<DeptDO> page, String tenantCode);
+    List<DeptDO> listByTenantCode(String tenantCode);
+    List<DeptDO> listByDomainCode(String domainCode);
+    List<DeptDO> listByOrgCode(String orgCode);
+    DeptDO getByDeptCode(String deptCode);
+    Long getIdByDeptCode(String deptCode);
+    boolean deleteByDeptCode(String deptCode);
 }

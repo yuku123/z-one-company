@@ -8,90 +8,59 @@ import com.zifang.ctc.core.domain.entity.GroupDO;
 import com.zifang.ctc.core.domain.mapper.GroupMapper;
 import com.zifang.ctc.core.domain.service.IGroupService;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class GroupServiceImpl extends ServiceImpl<GroupMapper, GroupDO> implements IGroupService {
-
     @Override
-    public IPage<GroupDO> page(Page<GroupDO> page, GroupDO groupDO) {
-        LambdaQueryWrapper<GroupDO> wrapper = new LambdaQueryWrapper<>();
-        if (groupDO != null) {
-
-            if (StringUtils.hasText(groupDO.getGroupName())) {
-                wrapper.like(GroupDO::getGroupName, groupDO.getGroupName());
-            }
-            if (groupDO.getTenantId() != null) {
-                wrapper.eq(GroupDO::getTenantId, groupDO.getTenantId());
-            }
-            if (groupDO.getDomainId() != null) {
-                wrapper.eq(GroupDO::getDomainId, groupDO.getDomainId());
-            }
-            if (groupDO.getOrgId() != null) {
-                wrapper.eq(GroupDO::getOrgId, groupDO.getOrgId());
-            }
-            if (groupDO.getDeptId() != null) {
-                wrapper.eq(GroupDO::getDeptId, groupDO.getDeptId());
-            }
-            if (groupDO.getStatus() != null) {
-                wrapper.eq(GroupDO::getStatus, groupDO.getStatus());
-            }
-        }
-        wrapper.orderByDesc(GroupDO::getCreatedTime);
-        return page(page, wrapper);
+    public IPage<GroupDO> pageByTenantCode(Page<GroupDO> page, String tenantCode) {
+        LambdaQueryWrapper<GroupDO> w = new LambdaQueryWrapper<>();
+        if (tenantCode != null) w.eq(GroupDO::getTenantCode, tenantCode);
+        return page(page, w);
     }
 
     @Override
-    public List<GroupDO> listByTenantId(Long tenantId) {
-        return list(new LambdaQueryWrapper<GroupDO>()
-                .eq(GroupDO::getTenantId, tenantId)
-                .orderByDesc(GroupDO::getCreatedTime));
+    public List<GroupDO> listByTenantCode(String tenantCode) {
+        LambdaQueryWrapper<GroupDO> w = new LambdaQueryWrapper<>();
+        if (tenantCode != null) w.eq(GroupDO::getTenantCode, tenantCode);
+        return list(w);
     }
 
     @Override
-    public List<GroupDO> listByDomainId(Long domainId) {
-        return list(new LambdaQueryWrapper<GroupDO>()
-                .eq(GroupDO::getDomainId, domainId)
-                .orderByDesc(GroupDO::getCreatedTime));
+    public List<GroupDO> listByDomainCode(String domainCode) {
+        LambdaQueryWrapper<GroupDO> w = new LambdaQueryWrapper<>();
+        if (domainCode != null) w.eq(GroupDO::getDomainCode, domainCode);
+        return list(w);
     }
 
     @Override
-    public List<GroupDO> listByOrgId(Long orgId) {
-        return list(new LambdaQueryWrapper<GroupDO>()
-                .eq(GroupDO::getOrgId, orgId)
-                .orderByDesc(GroupDO::getCreatedTime));
+    public List<GroupDO> listByOrgCode(String orgCode) {
+        LambdaQueryWrapper<GroupDO> w = new LambdaQueryWrapper<>();
+        if (orgCode != null) w.eq(GroupDO::getOrgCode, orgCode);
+        return list(w);
     }
 
     @Override
-    public List<GroupDO> listByDeptId(Long deptId) {
-        return list(new LambdaQueryWrapper<GroupDO>()
-                .eq(GroupDO::getDeptId, deptId)
-                .orderByDesc(GroupDO::getCreatedTime));
+    public List<GroupDO> listByDeptCode(String deptCode) {
+        LambdaQueryWrapper<GroupDO> w = new LambdaQueryWrapper<>();
+        if (deptCode != null) w.eq(GroupDO::getDeptCode, deptCode);
+        return list(w);
     }
 
     @Override
-    public GroupDO getByGroupId(Long groupId) {
-        return getOne(new LambdaQueryWrapper<GroupDO>().eq(GroupDO::getId, groupId));
+    public GroupDO getByGroupCode(String groupCode) {
+        return getOne(new LambdaQueryWrapper<GroupDO>().eq(GroupDO::getGroupCode, groupCode));
     }
 
     @Override
-    public boolean add(GroupDO groupDO) {
-        groupDO.setCreatedTime(LocalDateTime.now());
-        groupDO.setUpdatedTime(LocalDateTime.now());
-        return save(groupDO);
+    public Long getIdByGroupCode(String groupCode) {
+        GroupDO g = getByGroupCode(groupCode);
+        return g != null ? g.getId() : null;
     }
 
     @Override
-    public boolean update(GroupDO groupDO) {
-        groupDO.setUpdatedTime(LocalDateTime.now());
-        return updateById(groupDO);
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        return removeById(id);
+    public boolean deleteByGroupCode(String groupCode) {
+        Long id = getIdByGroupCode(groupCode);
+        return id != null && removeById(id);
     }
 }

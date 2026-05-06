@@ -39,6 +39,12 @@ public class TenantServiceImpl extends ServiceImpl<TenantMapper, Tenant> impleme
     }
 
     @Override
+    public Long getIdByTenantCode(String tenantCode) {
+        Tenant t = getByTenantCode(tenantCode);
+        return t != null ? t.getId() : null;
+    }
+
+    @Override
     public boolean add(Tenant tenant) {
         tenant.setGmtCreate(LocalDateTime.now());
         tenant.setGmtModified(LocalDateTime.now());

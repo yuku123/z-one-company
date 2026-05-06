@@ -24,11 +24,11 @@ public class UserInfoResponse {
     @Schema(description = "手机号")
     private String phone;
 
-    @Schema(description = "租户ID")
-    private String tenantId;
+    @Schema(description = "租户编码")
+    private String tenantCode;
 
-    @Schema(description = "部门ID")
-    private Long deptId;
+    @Schema(description = "部门编码")
+    private String deptCode;
 
     @Schema(description = "角色列表")
     private List<String> roles;
@@ -66,17 +66,17 @@ public class UserInfoResponse {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    public String getTenantId() {
-        return tenantId;
+    public String getTenantCode() {
+        return tenantCode;
     }
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
+    public void setTenantCode(String tenantCode) {
+        this.tenantCode = tenantCode;
     }
-    public Long getDeptId() {
-        return deptId;
+    public String getDeptCode() {
+        return deptCode;
     }
-    public void setDeptId(Long deptId) {
-        this.deptId = deptId;
+    public void setDeptCode(String deptCode) {
+        this.deptCode = deptCode;
     }
     public List<String> getRoles() {
         return roles;

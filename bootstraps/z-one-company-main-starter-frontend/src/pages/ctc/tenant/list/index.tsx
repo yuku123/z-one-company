@@ -99,7 +99,7 @@ const TenantList: React.FC = () => {
 
   const handleDelete = async (record: any) => {
     try {
-      await deleteTenant(record.id);
+      await deleteTenant(record.tenantCode);
       message.success('删除成功');
       actionRef.current?.reload();
     } catch (error) {
@@ -128,7 +128,7 @@ const TenantList: React.FC = () => {
       <ProTable
         headerTitle="租户列表"
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="tenantCode"
         search={{
           labelWidth: 120,
         }}
