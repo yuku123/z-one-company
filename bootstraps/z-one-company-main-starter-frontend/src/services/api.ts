@@ -240,3 +240,20 @@ export const configApi = {
   // 集群删除
   clusterDelete: (id: number) => request.post(`/cluster/${id}/delete`),
 }
+
+// ==================== Naming 服务注册发现 ====================
+export const namingApi = {
+  // 服务列表
+  listServices: () => request.get('/naming/listServices'),
+  // 查询实例（按服务名）
+  getInstances: (serviceName: string) => request.get('/naming/getAllInstances', { params: { serviceName } }),
+  // 查询健康实例
+  getHealthyInstances: (serviceName: string) =>
+    request.get('/naming/selectInstances/healthy', { params: { serviceName } }),
+  // 服务详情
+  serviceDetail: (serviceName: string) => request.get(`/naming/service/${serviceName}`),
+  // 注册实例
+  registerInstance: (data: any) => request.post('/naming/registerInstance', data),
+  // 注销实例
+  deregisterInstance: (data: any) => request.post('/naming/deregisterInstance', data),
+}

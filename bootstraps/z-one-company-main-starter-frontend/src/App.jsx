@@ -35,8 +35,12 @@ const menuItems = [
   ]},
   { key: '/config', icon: <SettingOutlined />, label: '配置中心', children: [
     { key: '/config/list', label: '配置列表' },
+    { key: '/config/history', label: '变更历史' },
     { key: '/config/dashboard', label: 'Dashboard' },
     { key: '/config/cluster', label: '命名空间' },
+  ]},
+  { key: '/service', icon: <CloudServerOutlined />, label: '服务管理', children: [
+    { key: '/config/service', label: '服务列表' },
   ]},
   { key: '/task', icon: <FileTextOutlined />, label: '任务中心', children: [
     { key: '/task/dashboard', label: '仪表盘' },
