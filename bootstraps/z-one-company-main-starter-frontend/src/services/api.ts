@@ -218,3 +218,25 @@ export const updateGroup = (data: any) =>
 
 export const deleteGroup = (groupCode: string) =>
   authRequest.post(`/group/${groupCode}/delete`)
+
+// ==================== Config 配置中心 ====================
+export const configApi = {
+  // 配置列表分页
+  pageConfig: (params: any) => request.post('/config/pageConfig', params),
+  // 保存配置
+  saveConfig: (data: any) => request.post('/config/saveConfig', data),
+  // 删除配置
+  deleteConfig: (data: any) => request.post('/config/delete', data),
+  // 获取 Group 列表
+  groupList: () => request.get('/config/groupList'),
+  // 配置变更历史
+  historyPage: (params: any) => request.post('/config/history/page', params),
+  // Dashboard 统计
+  getStats: () => request.get('/dashboard/stats'),
+  // 集群列表
+  clusterList: () => request.get('/cluster/list'),
+  // 集群新增/更新
+  clusterSave: (data: any) => request.post('/cluster/save', data),
+  // 集群删除
+  clusterDelete: (id: number) => request.post(`/cluster/${id}/delete`),
+}

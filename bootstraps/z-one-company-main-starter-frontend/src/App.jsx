@@ -36,6 +36,7 @@ const menuItems = [
   { key: '/config', icon: <SettingOutlined />, label: '配置中心', children: [
     { key: '/config/list', label: '配置列表' },
     { key: '/config/dashboard', label: 'Dashboard' },
+    { key: '/config/cluster', label: '命名空间' },
   ]},
   { key: '/task', icon: <FileTextOutlined />, label: '任务中心', children: [
     { key: '/task/dashboard', label: '仪表盘' },
