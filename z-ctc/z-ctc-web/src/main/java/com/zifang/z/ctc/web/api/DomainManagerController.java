@@ -33,7 +33,7 @@ public class DomainManagerController {
     @PostMapping("/page")
     public Result<IPage<DomainResp>> page(@RequestBody DomainReq req) {
         return Result.success(domainBizService.pageByTenantCode(
-                req.getTenantCode(), req.getPageNum(), req.getPageSize()
+                req.getTenantCode(), req.getPageNum().intValue(), req.getPageSize().intValue()
         ).convert(this::toResp));
     }
 

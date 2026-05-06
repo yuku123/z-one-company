@@ -9,6 +9,8 @@ public class GroupReq {
     private String deptCode;
     private Integer status;
     private String description;
+    private Long pageNum = 1L;
+    private Long pageSize = 20L;
 
     public String getGroupCode() { return groupCode; }
     public void setGroupCode(String groupCode) { this.groupCode = groupCode; }
@@ -26,4 +28,8 @@ public class GroupReq {
     public void setStatus(Integer status) { this.status = status; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public Long getPageNum() { return pageNum; }
+    public void setPageNum(Long pageNum) { this.pageNum = pageNum; }
+    public Long getPageSize() { return pageSize; }
+    public void setPageSize(Long pageSize) { this.pageSize = pageSize; }
 }

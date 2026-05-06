@@ -33,7 +33,7 @@ public class OrgManagerController {
     @PostMapping("/page")
     public Result<IPage<OrgResp>> page(@RequestBody OrgReq req) {
         return Result.success(orgBizService.pageByTenantCode(
-                req.getTenantCode(), req.getPageNum(), req.getPageSize()
+                req.getTenantCode(), req.getPageNum().intValue(), req.getPageSize().intValue()
         ).convert(this::toResp));
     }
 

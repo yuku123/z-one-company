@@ -33,7 +33,7 @@ public class GroupManagerController {
     @PostMapping("/page")
     public Result<IPage<GroupResp>> page(@RequestBody GroupReq req) {
         return Result.success(groupBizService.pageByTenantCode(
-                req.getTenantCode(), req.getPageNum(), req.getPageSize()
+                req.getTenantCode(), req.getPageNum().intValue(), req.getPageSize().intValue()
         ).convert(this::toResp));
     }
 

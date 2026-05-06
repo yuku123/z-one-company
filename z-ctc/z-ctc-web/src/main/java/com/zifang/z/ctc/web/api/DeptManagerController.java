@@ -33,7 +33,7 @@ public class DeptManagerController {
     @PostMapping("/page")
     public Result<IPage<DeptResp>> page(@RequestBody DeptReq req) {
         return Result.success(deptBizService.pageByTenantCode(
-                req.getTenantCode(), req.getPageNum(), req.getPageSize()
+                req.getTenantCode(), req.getPageNum().intValue(), req.getPageSize().intValue()
         ).convert(this::toResp));
     }
 
