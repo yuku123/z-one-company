@@ -41,6 +41,12 @@ public class TenantManagerController {
         return toResp(tenantBizService.getById(id));
     }
 
+    @Operation(summary = "用户所属租户列表")
+    @GetMapping("/list")
+    public List<TenantResp> list() {
+        return tenantBizService.list().stream().map(this::toResp).collect(Collectors.toList());
+    }
+
     @Operation(summary = "新增")
     @PostMapping
     public void add(@RequestBody TenantReq req) {

@@ -16,10 +16,20 @@ public class SsoInterceptor implements HandlerInterceptor {
     private final TokenService tokenService;
     private final SsoProperties ssoProperties;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private List<String> excludedPaths;
+    private List<String> interceptPaths;
 
     public SsoInterceptor(TokenService tokenService, SsoProperties ssoProperties) {
         this.tokenService = tokenService;
         this.ssoProperties = ssoProperties;
+    }
+
+    public void setExcludedPaths(List<String> excludedPaths) {
+        this.excludedPaths = excludedPaths;
+    }
+
+    public void setInterceptPaths(List<String> interceptPaths) {
+        this.interceptPaths = interceptPaths;
     }
 
     @Override
@@ -87,8 +97,8 @@ public class SsoInterceptor implements HandlerInterceptor {
 
     // 判断是否为忽略的路径
     private boolean isExcludePath(String requestUri) {
-        List<String> excludePaths = ssoProperties.getExcludePaths();
-        for (String pattern : excludePaths) {
+        List<String> paths = (excludedPaths != null) ? excludedPaths : ssoProperties.getExcludePaths();
+        for (String pattern : paths) {
             if (pathMatcher.match(pattern, requestUri)) {
                 return true;
             }
@@ -98,8 +108,8 @@ public class SsoInterceptor implements HandlerInterceptor {
 
     // 判断是否为需要拦截的路径
     private boolean isInterceptPath(String requestUri) {
-        List<String> interceptPaths = ssoProperties.getInterceptPaths();
-        for (String pattern : interceptPaths) {
+        List<String> paths = (interceptPaths != null) ? interceptPaths : ssoProperties.getInterceptPaths();
+        for (String pattern : paths) {
             if (pathMatcher.match(pattern, requestUri)) {
                 return true;
             }

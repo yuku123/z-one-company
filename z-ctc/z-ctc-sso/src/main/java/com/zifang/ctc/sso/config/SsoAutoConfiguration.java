@@ -21,8 +21,8 @@ public class SsoAutoConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean
-    public TokenService tokenService(SsoProperties ssoProperties, RestTemplate restTemplate) {
-        return new RemoteTokenService(ssoProperties, restTemplate);
+    public TokenService tokenService(SsoProperties ssoProperties, RestTemplate restTemplate, JwtUtil jwtUtil) {
+        return new LocalTokenService(jwtUtil);
     }
 
     @Bean
@@ -32,8 +32,21 @@ public class SsoAutoConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(ssoInterceptor(tokenService(ssoProperties(), restTemplate()),ssoProperties()))
-                .addPathPatterns("/**"); // 拦截所有路径，具体由内部判断
+        SsoInterceptor interceptor = new SsoInterceptor(
+                tokenService(ssoProperties(), restTemplate(), jwtUtil()),
+                ssoProperties()
+        );
+        interceptor.setExcludedPaths(java.util.Arrays.asList(
+                "/api/auth/login",
+                "/api/auth/register",
+                "/api/auth/verify",
+                "/api/auth/send-code",
+                "/api/auth/reset-password",
+                "/login", "/doc.html", "/swagger-resources/**",
+                "/favicon.ico"
+        ));
+        interceptor.setInterceptPaths(java.util.Arrays.asList("/api/**"));
+        registry.addInterceptor(interceptor).addPathPatterns("/**");
     }
 
     @Bean

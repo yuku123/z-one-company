@@ -66,4 +66,9 @@ public class TenantBizServiceImpl implements TenantBizService {
     public void delete(Long id) {
         tenantService.removeById(id);
     }
+
+    @Override
+    public java.util.List<TenantDTO> list() {
+        return tenantService.list().stream().map(TenantDtoConverter::toDTO).collect(java.util.stream.Collectors.toList());
+    }
 }

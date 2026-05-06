@@ -10,4 +10,5 @@ public interface TenantBizService {
     void add(TenantDTO tenant);
     void update(TenantDTO tenant);
     void delete(Long id);
+    java.util.List<TenantDTO> list();
 }

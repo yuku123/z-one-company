@@ -61,6 +61,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <!-- 排除 spring-boot-starter-logging（带 logback），显式引入 log4j2 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-log4j2</artifactId>
+                <version>${spring-boot.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

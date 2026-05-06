@@ -8,7 +8,7 @@ const request = axios.create({
 
 // 认证请求实例 - 用于 /auth 开头的接口（绕过 /api 前缀）
 const authRequest = axios.create({
-  baseURL: '',
+  baseURL: '/api',
   timeout: 10000,
 })
 

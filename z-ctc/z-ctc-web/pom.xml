@@ -23,8 +23,5 @@
             <groupId>com.zifang</groupId>
             <artifactId>z-ctc-core</artifactId>
         </dependency>
-
-
-
     </dependencies>
 </project>
