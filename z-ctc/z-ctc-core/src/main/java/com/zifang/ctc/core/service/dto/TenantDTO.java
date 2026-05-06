@@ -10,6 +10,9 @@ public class TenantDTO {
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
+    private Long pageNum = 1L;
+    private Long pageSize = 20L;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTenantCode() { return tenantCode; }
@@ -22,4 +25,8 @@ public class TenantDTO {
     public void setGmtCreate(LocalDateTime gmtCreate) { this.gmtCreate = gmtCreate; }
     public LocalDateTime getGmtModified() { return gmtModified; }
     public void setGmtModified(LocalDateTime gmtModified) { this.gmtModified = gmtModified; }
+    public Long getPageNum() { return pageNum; }
+    public void setPageNum(Long pageNum) { this.pageNum = pageNum; }
+    public Long getPageSize() { return pageSize; }
+    public void setPageSize(Long pageSize) { this.pageSize = pageSize; }
 }

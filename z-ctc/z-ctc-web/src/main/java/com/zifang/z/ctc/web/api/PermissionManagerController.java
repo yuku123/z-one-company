@@ -8,6 +8,7 @@ import com.zifang.ctc.core.service.RoleBizService;
 import com.zifang.ctc.core.service.dto.PermissionDTO;
 import com.zifang.ctc.core.service.dto.RoleDTO;
 import com.zifang.ctc.core.service.model.request.RolePageReq;
+import com.zifang.util.core.meta.Result;
 import com.zifang.z.ctc.web.api.request.RoleReq;
 import com.zifang.z.ctc.web.api.response.PermissionResp;
 import com.zifang.z.ctc.web.api.response.RoleResp;
@@ -34,136 +35,106 @@ public class PermissionManagerController {
     @Resource
     private RoleBizService roleBizService;
 
-    /**
-     * 获取权限列表
-     */
     @GetMapping("/list")
     @Operation(summary = "获取权限列表")
-    public List<PermissionResp> listPermissions() {
-        return permissionBizService.list().stream()
+    public Result<List<PermissionResp>> listPermissions() {
+        List<PermissionResp> data = permissionBizService.list().stream()
                 .map(this::toPermissionResp)
                 .collect(Collectors.toList());
+        return Result.success(data);
     }
 
-    /**
-     * 根据ID获取权限
-     */
-    @GetMapping("/{id}")
+    @GetMapping("/get")
     @Operation(summary = "根据ID获取权限")
-    public PermissionResp getPermissionById(@PathVariable Long id) {
-        return toPermissionResp(permissionBizService.getById(id));
+    public Result<PermissionResp> getPermissionById(@RequestParam Long id) {
+        return Result.success(toPermissionResp(permissionBizService.getById(id)));
     }
 
-    /**
-     * 创建权限
-     */
     @PostMapping
     @Operation(summary = "创建权限")
-    public void createPermission(@RequestBody PermissionReq req) {
+    public Result<Void> createPermission(@RequestBody PermissionReq req) {
         Permission permission = toPermissionEntity(req);
         permissionBizService.create(permission);
+        return Result.success();
     }
 
-    /**
-     * 更新权限
-     */
     @PostMapping("/{id}/update")
     @Operation(summary = "更新权限")
-    public void updatePermission(@PathVariable Long id, @RequestBody PermissionReq req) {
+    public Result<Void> updatePermission(@PathVariable Long id, @RequestBody PermissionReq req) {
         Permission permission = toPermissionEntity(req);
         permission.setId(id);
         permissionBizService.update(permission);
+        return Result.success();
     }
 
-    /**
-     * 删除权限
-     */
     @PostMapping("/{id}/delete")
     @Operation(summary = "删除权限")
-    public void deletePermission(@PathVariable Long id) {
+    public Result<Void> deletePermission(@PathVariable Long id) {
         permissionBizService.delete(id);
+        return Result.success();
     }
 
     // ==================== 角色管理 ====================
 
-    /**
-     * 获取角色列表
-     */
     @GetMapping("/role/list")
     @Operation(summary = "获取角色列表")
-    public List<RoleResp> listRoles() {
-        return roleBizService.list().stream()
+    public Result<List<RoleResp>> listRoles() {
+        List<RoleResp> data = roleBizService.list().stream()
                 .map(this::toRoleResp)
                 .collect(Collectors.toList());
+        return Result.success(data);
     }
 
-    /**
-     * 分页查询角色
-     */
     @PostMapping("/role/page")
     @Operation(summary = "分页查询角色")
-    public IPage<RoleResp> pageRoles(@RequestBody RolePageReq req) {
-        IPage<RoleDTO> page = roleBizService.page(req);
-        return page.convert(this::toRoleResp);
+    public Result<IPage<RoleResp>> pageRoles(@RequestBody RolePageReq req) {
+        return Result.success(roleBizService.page(req).convert(this::toRoleResp));
     }
 
-    /**
-     * 根据ID获取角色
-     */
-    @GetMapping("/role/{id}")
+    @GetMapping("/role/get")
     @Operation(summary = "根据ID获取角色")
-    public RoleResp getRoleById(@PathVariable Long id) {
-        return toRoleResp(roleBizService.getById(id));
+    public Result<RoleResp> getRoleById(@RequestParam Long id) {
+        return Result.success(toRoleResp(roleBizService.getById(id)));
     }
 
-    /**
-     * 创建角色
-     */
     @PostMapping("/role")
     @Operation(summary = "创建角色")
-    public void createRole(@RequestBody RoleReq req) {
+    public Result<Void> createRole(@RequestBody RoleReq req) {
         Role role = toRoleEntity(req);
         roleBizService.create(role);
+        return Result.success();
     }
 
-    /**
-     * 更新角色
-     */
     @PostMapping("/role/{id}/update")
     @Operation(summary = "更新角色")
-    public void updateRole(@PathVariable Long id, @RequestBody RoleReq req) {
+    public Result<Void> updateRole(@PathVariable Long id, @RequestBody RoleReq req) {
         Role role = toRoleEntity(req);
         role.setId(id);
         roleBizService.update(role);
+        return Result.success();
     }
 
-    /**
-     * 删除角色
-     */
     @PostMapping("/role/{id}/delete")
     @Operation(summary = "删除角色")
-    public void deleteRole(@PathVariable Long id) {
+    public Result<Void> deleteRole(@PathVariable Long id) {
         roleBizService.delete(id);
+        return Result.success();
     }
 
-    /**
-     * 为角色分配权限
-     */
     @PostMapping("/role/{roleId}/permissions")
     @Operation(summary = "为角色分配权限")
-    public void assignPermissionsToRole(@PathVariable Long roleId, @RequestBody List<Long> permissionIds) {
+    public Result<Void> assignPermissionsToRole(@PathVariable Long roleId, @RequestBody List<Long> permissionIds) {
         roleBizService.assignPermissions(roleId, permissionIds);
+        return Result.success();
     }
 
-    /**
-     * 获取角色的权限列表
-     */
-    @GetMapping("/role/{roleId}/permissions")
+    @GetMapping("/role/permissions")
     @Operation(summary = "获取角色的权限列表")
-    public List<PermissionResp> getRolePermissions(@PathVariable Long roleId) {
-        return roleBizService.getRolePermissions(roleId).stream()
+    public Result<List<PermissionResp>> getRolePermissions(@RequestParam Long roleId) {
+        List<PermissionResp> data = roleBizService.getRolePermissions(roleId).stream()
                 .map(this::toPermissionResp)
                 .collect(Collectors.toList());
+        return Result.success(data);
     }
 
     // ========== private convert methods ==========

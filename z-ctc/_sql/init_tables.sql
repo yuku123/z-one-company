@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS z_ctc_domain (
 -- 组织表
 CREATE TABLE IF NOT EXISTS z_ctc_org (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    org_id BIGINT NOT NULL COMMENT '组织ID',
     org_name VARCHAR(100) NOT NULL COMMENT '组织名称',
     tenant_id BIGINT COMMENT '租户ID',
     domain_id BIGINT COMMENT '域ID',
@@ -40,14 +39,12 @@ CREATE TABLE IF NOT EXISTS z_ctc_org (
     created_time DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     INDEX idx_tenant_id (tenant_id),
-    INDEX idx_domain_id (domain_id),
-    INDEX idx_org_id (org_id)
+    INDEX idx_domain_id (domain_id)
 ) COMMENT '组织表';
 
 -- 部门表
 CREATE TABLE IF NOT EXISTS z_ctc_dept (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    dept_id BIGINT NOT NULL COMMENT '部门ID',
     dept_name VARCHAR(100) NOT NULL COMMENT '部门名称',
     tenant_id BIGINT COMMENT '租户ID',
     domain_id BIGINT COMMENT '域ID',
@@ -59,14 +56,12 @@ CREATE TABLE IF NOT EXISTS z_ctc_dept (
     updated_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     INDEX idx_tenant_id (tenant_id),
     INDEX idx_domain_id (domain_id),
-    INDEX idx_org_id (org_id),
-    INDEX idx_dept_id (dept_id)
+    INDEX idx_org_id (org_id)
 ) COMMENT '部门表';
 
 -- 组表
 CREATE TABLE IF NOT EXISTS z_ctc_group (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    group_id BIGINT NOT NULL COMMENT '组ID',
     group_name VARCHAR(100) NOT NULL COMMENT '组名称',
     tenant_id BIGINT COMMENT '租户ID',
     domain_id BIGINT COMMENT '域ID',
@@ -79,8 +74,7 @@ CREATE TABLE IF NOT EXISTS z_ctc_group (
     INDEX idx_tenant_id (tenant_id),
     INDEX idx_domain_id (domain_id),
     INDEX idx_org_id (org_id),
-    INDEX idx_dept_id (dept_id),
-    INDEX idx_group_id (group_id)
+    INDEX idx_dept_id (dept_id)
 ) COMMENT '组表';
 
 -- 插入测试数据

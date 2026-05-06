@@ -7,9 +7,10 @@ import com.zifang.ctc.core.service.dto.UserDTO;
 import com.zifang.ctc.core.service.model.request.ChangePasswordRequest;
 import com.zifang.ctc.core.service.model.request.ResetPasswordRequest;
 import com.zifang.ctc.core.service.model.request.UserPageReq;
+import com.zifang.ctc.sso.JwtUtil;
+import com.zifang.util.core.meta.Result;
 import com.zifang.z.ctc.web.api.request.UserReq;
 import com.zifang.z.ctc.web.api.response.UserResp;
-import com.zifang.ctc.sso.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,106 +35,82 @@ public class AccountManagerController {
     @Resource
     private UserBizService userBizService;
 
-    /**
-     * 获取当前登录用户信息
-     */
     @GetMapping("/info")
     @Operation(summary = "获取当前用户信息")
-    public UserResp getCurrentUserInfo(@RequestHeader("Authorization") String token) {
+    public Result<UserResp> getCurrentUserInfo(@RequestHeader("Authorization") String token) {
         JwtUtil.VerificationResult result = jwtUtil.verifyToken(token.replace("Bearer ", ""));
         if (!result.isValid()) {
-            return null;
+            return Result.success(null);
         }
         Map<String, Object> claims = result.getClaims();
         Long userId = ((Number) claims.get("userId")).longValue();
-        return toResp(userBizService.getById(userId));
+        return Result.success(toResp(userBizService.getById(userId)));
     }
 
-    /**
-     * 获取用户列表
-     */
     @GetMapping("/list")
     @Operation(summary = "获取用户列表")
-    public List<UserResp> listUsers() {
-        return userBizService.list().stream()
+    public Result<List<UserResp>> listUsers() {
+        List<UserResp> data = userBizService.list().stream()
                 .map(this::toResp)
                 .collect(Collectors.toList());
+        return Result.success(data);
     }
 
-    /**
-     * 分页查询用户
-     */
     @PostMapping("/page")
     @Operation(summary = "分页查询用户")
-    public IPage<UserResp> pageUsers(@RequestBody UserPageReq req) {
-        IPage<UserDTO> page = userBizService.page(req);
-        return page.convert(this::toResp);
+    public Result<IPage<UserResp>> pageUsers(@RequestBody UserPageReq req) {
+        return Result.success(userBizService.page(req).convert(this::toResp));
     }
 
-    /**
-     * 根据ID获取用户
-     */
-    @GetMapping("/{id}")
+    @GetMapping("/get")
     @Operation(summary = "根据ID获取用户")
-    public UserResp getUserById(@PathVariable Long id) {
-        return toResp(userBizService.getById(id));
+    public Result<UserResp> getUserById(@RequestParam Long id) {
+        return Result.success(toResp(userBizService.getById(id)));
     }
 
-    /**
-     * 创建用户
-     */
     @PostMapping
     @Operation(summary = "创建用户")
-    public void createUser(@RequestBody UserReq req) {
+    public Result<Void> createUser(@RequestBody UserReq req) {
         User user = toEntity(req);
         userBizService.create(user);
+        return Result.success();
     }
 
-    /**
-     * 更新用户
-     */
     @PostMapping("/{id}/update")
     @Operation(summary = "更新用户")
-    public void updateUser(@PathVariable Long id, @RequestBody UserReq req) {
+    public Result<Void> updateUser(@PathVariable Long id, @RequestBody UserReq req) {
         User user = toEntity(req);
         user.setId(id);
         userBizService.update(user);
+        return Result.success();
     }
 
-    /**
-     * 删除用户
-     */
     @PostMapping("/{id}/delete")
     @Operation(summary = "删除用户")
-    public void deleteUser(@PathVariable Long id) {
+    public Result<Void> deleteUser(@PathVariable Long id) {
         userBizService.delete(id);
+        return Result.success();
     }
 
-    /**
-     * 分配角色给用户
-     */
     @PostMapping("/{userId}/assign-role")
     @Operation(summary = "分配角色给用户")
-    public void assignRoles(@PathVariable Long userId, @RequestBody List<Long> roleIds) {
+    public Result<Void> assignRoles(@PathVariable Long userId, @RequestBody List<Long> roleIds) {
         userBizService.assignRoles(userId, roleIds);
+        return Result.success();
     }
 
-    /**
-     * 修改密码
-     */
     @PostMapping("/change-password")
     @Operation(summary = "修改密码")
-    public void changePassword(@RequestBody ChangePasswordRequest request) {
+    public Result<Void> changePassword(@RequestBody ChangePasswordRequest request) {
         userBizService.changePassword(request.getUserId(), request.getOldPassword(), request.getNewPassword());
+        return Result.success();
     }
 
-    /**
-     * 重置密码
-     */
     @PostMapping("/{userId}/reset-password")
     @Operation(summary = "重置密码")
-    public void resetPassword(@PathVariable Long userId, @RequestBody ResetPasswordRequest request) {
+    public Result<Void> resetPassword(@PathVariable Long userId, @RequestBody ResetPasswordRequest request) {
         userBizService.resetPassword(userId, request.getNewPassword());
+        return Result.success();
     }
 
     private UserResp toResp(UserDTO dto) {

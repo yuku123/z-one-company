@@ -128,6 +128,16 @@ const Layout: React.FC = () => {
     || currentTenant
     || '默认租户';
 
+  // 获取当前选中的菜单项
+  const getSelectedKeys = () => {
+    const path = location.pathname;
+    if (path.startsWith('/approval-center/todo')) return ['todo'];
+    if (path.startsWith('/approval-center/done')) return ['done'];
+    if (path.startsWith('/approval-center/my-processes')) return ['my-processes'];
+    if (path.startsWith('/designer')) return ['designer'];
+    return ['dashboard'];
+  };
+
   return (
     <AntLayout className={styles.layout}>
       {/* 顶部导航栏 */}

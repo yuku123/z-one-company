@@ -23,16 +23,26 @@ const setupInterceptors = (instance: axios.AxiosInstance) => {
   })
 
   instance.interceptors.response.use(
-    response => response.data,
+    response => {
+      const data = response.data;
+      // 统一 Result 包装解包：{ code, data, message } → 直接返回 data
+      if (data && typeof data === 'object' && 'code' in data && 'data' in data) {
+        if (data.code !== 200) {
+          return Promise.reject(new Error(data.message || '请求失败'));
+        }
+        return data.data;
+      }
+      return data;
+    },
     error => {
       if (error.response?.status === 401) {
-        localStorage.removeItem('token')
-        localStorage.removeItem('userInfo')
-        window.location.href = '/login'
+        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
+        window.location.href = '/login';
       }
-      return Promise.reject(error)
+      return Promise.reject(error);
     }
-  )
+  );
 }
 
 setupInterceptors(request)

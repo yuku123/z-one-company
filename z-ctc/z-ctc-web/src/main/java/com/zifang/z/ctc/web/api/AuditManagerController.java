@@ -3,10 +3,10 @@ package com.zifang.z.ctc.web.api;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.service.AuditBizService;
 import com.zifang.ctc.core.service.dto.AuditLogDTO;
+import com.zifang.util.core.meta.Result;
 import com.zifang.z.ctc.web.api.request.AuditLogReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +24,14 @@ public class AuditManagerController {
 
     @Operation(summary = "分页查询")
     @GetMapping("/log")
-    public IPage<AuditLogDTO> page(AuditLogReq req) {
+    public Result<IPage<AuditLogDTO>> page(AuditLogReq req) {
         AuditLogDTO query = new AuditLogDTO();
         if (req.getUserName() != null) query.setUserName(req.getUserName());
         if (req.getOperationType() != null) query.setOperationType(req.getOperationType());
         if (req.getIpAddress() != null) query.setIpAddress(req.getIpAddress());
         int pageNum = req.getCurrent() != null ? req.getCurrent() : 1;
         int pageSize = req.getPageSize() != null ? req.getPageSize() : 10;
-        return auditBizService.page(query, pageNum, pageSize);
+        return Result.success(auditBizService.page(query, pageNum, pageSize));
     }
 
     @Operation(summary = "导出")

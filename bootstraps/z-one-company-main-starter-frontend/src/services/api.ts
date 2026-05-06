@@ -31,14 +31,12 @@ export const getCurrentUser = () =>
 export const getTenantList = () =>
   authRequest.get('/tenant/list')
 
-export const getUserList = (params?: any) => {
-  // IPage<User> 返回结构: { records, total, size, current }
-  // ProTable 通过 responsePath: 'records' 读取
-  return authRequest.post('/account/page', params || {})
-}
+// 账号管理
+export const getUserList = (params?: any) =>
+  authRequest.post('/account/page', params || {})
 
 export const getUserById = (id: string) =>
-  authRequest.get(`/account/${id}`)
+  authRequest.get('/account/get', { params: { id } })
 
 export const createUser = (data: any) =>
   authRequest.post('/account', data)
@@ -49,13 +47,12 @@ export const updateUser = (id: string, data: any) =>
 export const deleteUser = (id: string) =>
   authRequest.post(`/account/${id}/delete`, { id })
 
-export const getRoleList = (params?: any) => {
-  // IPage<Role> 返回结构: { records, total, size, current }
-  return authRequest.post('/permission/role/page', params || {})
-}
+// 角色管理
+export const getRoleList = (params?: any) =>
+  authRequest.post('/permission/role/page', params || {})
 
 export const getRoleById = (id: string) =>
-  authRequest.get(`/permission/role/${id}`)
+  authRequest.get('/permission/role/get', { params: { id } })
 
 export const createRole = (data: any) =>
   authRequest.post('/permission/role', data)
@@ -66,6 +63,10 @@ export const updateRole = (id: string, data: any) =>
 export const deleteRole = (id: string) =>
   authRequest.post(`/permission/role/${id}/delete`, { id })
 
+export const getRolePermissions = (roleId: string) =>
+  authRequest.get('/permission/role/permissions', { params: { roleId } })
+
+// 权限管理
 export const getPermissionList = async (params?: any) => {
   const res = await authRequest.get('/permission/list', { params })
   return { data: { records: res, total: res.length, current: 1 } }
@@ -74,12 +75,16 @@ export const getPermissionList = async (params?: any) => {
 export const createPermission = (data: any) =>
   authRequest.post('/permission', data)
 
+export const getPermissionById = (id: string) =>
+  authRequest.get('/permission/get', { params: { id } })
+
 export const updatePermission = (id: string, data: any) =>
   authRequest.post(`/permission/${id}/update`, data)
 
 export const deletePermission = (id: string) =>
   authRequest.post(`/permission/${id}/delete`, { id })
 
+// 审计日志
 export const getAuditList = (params?: any) =>
   request.get('/audit/log', { params })
 
@@ -88,16 +93,16 @@ export const exportAudit = (params?: any) =>
 
 // 租户管理
 export const getTenantPage = (params?: any) =>
-  authRequest.get('/tenant/page', { params })
+  authRequest.post('/tenant/page', params)
 
 export const getTenantListAll = () =>
   authRequest.get('/tenant/list')
 
 export const getTenantById = (id: string) =>
-  authRequest.get(`/tenant/${id}`)
+  authRequest.get('/tenant/get', { params: { id } })
 
 export const getTenantByCode = (tenantCode: string) =>
-  authRequest.get(`/tenant/code/${tenantCode}`)
+  authRequest.get('/tenant/code/getByTenantCode', { params: { tenantCode } })
 
 export const createTenant = (data: any) =>
   authRequest.post('/tenant', data)
@@ -110,7 +115,7 @@ export const deleteTenant = (id: string) =>
 
 // 域管理
 export const getDomainPage = (params?: any) =>
-  authRequest.get('/domain/page', { params })
+  authRequest.post('/domain/page', params)
 
 export const getDomainListAll = () =>
   authRequest.get('/domain/list')
@@ -119,10 +124,10 @@ export const getDomainByTenantId = (tenantId: string) =>
   authRequest.get(`/domain/tenant/${tenantId}`)
 
 export const getDomainById = (id: string) =>
-  authRequest.get(`/domain/${id}`)
+  authRequest.get('/domain/get', { params: { id } })
 
 export const getDomainByCode = (domainCode: string) =>
-  authRequest.get(`/domain/code/${domainCode}`)
+  authRequest.get('/domain/getByCode', { params: { domainCode } })
 
 export const createDomain = (data: any) =>
   authRequest.post('/domain', data)
@@ -135,7 +140,7 @@ export const deleteDomain = (id: string) =>
 
 // 组织管理
 export const getOrgPage = (params?: any) =>
-  authRequest.get('/org/page', { params })
+  authRequest.post('/org/page', params)
 
 export const getOrgListAll = () =>
   authRequest.get('/org/list')
@@ -147,10 +152,10 @@ export const getOrgByDomainId = (domainId: string) =>
   authRequest.get(`/org/domain/${domainId}`)
 
 export const getOrgById = (id: string) =>
-  authRequest.get(`/org/${id}`)
+  authRequest.get('/org/get', { params: { id } })
 
 export const getOrgByCode = (orgId: string) =>
-  authRequest.get(`/org/code/${orgId}`)
+  authRequest.get('/org/code', { params: { orgId } })
 
 export const createOrg = (data: any) =>
   authRequest.post('/org', data)
@@ -163,7 +168,7 @@ export const deleteOrg = (id: string) =>
 
 // 部门管理
 export const getDeptPage = (params?: any) =>
-  authRequest.get('/dept/page', { params })
+  authRequest.post('/dept/page', params)
 
 export const getDeptListAll = () =>
   authRequest.get('/dept/list')
@@ -178,10 +183,10 @@ export const getDeptByOrgId = (orgId: string) =>
   authRequest.get(`/dept/org/${orgId}`)
 
 export const getDeptById = (id: string) =>
-  authRequest.get(`/dept/${id}`)
+  authRequest.get('/dept/get', { params: { id } })
 
 export const getDeptByCode = (deptId: string) =>
-  authRequest.get(`/dept/code/${deptId}`)
+  authRequest.get('/dept/code', { params: { deptId } })
 
 export const createDept = (data: any) =>
   authRequest.post('/dept', data)
@@ -194,7 +199,7 @@ export const deleteDept = (id: string) =>
 
 // 组管理
 export const getGroupPage = (params?: any) =>
-  authRequest.get('/group/page', { params })
+  authRequest.post('/group/page', params)
 
 export const getGroupListAll = () =>
   authRequest.get('/group/list')
@@ -212,10 +217,10 @@ export const getGroupByDeptId = (deptId: string) =>
   authRequest.get(`/group/dept/${deptId}`)
 
 export const getGroupById = (id: string) =>
-  authRequest.get(`/group/${id}`)
+  authRequest.get('/group/get', { params: { id } })
 
 export const getGroupByCode = (groupId: string) =>
-  authRequest.get(`/group/code/${groupId}`)
+  authRequest.get('/group/code', { params: { groupId } })
 
 export const createGroup = (data: any) =>
   authRequest.post('/group', data)

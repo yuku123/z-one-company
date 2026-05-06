@@ -24,11 +24,11 @@ const UserManagement = () => {
         pageSize: pageSize,
         keyword: searchText || undefined,
       })
-      setData(res.data?.records || [])
+      setData(res?.records || [])
       setPagination({
-        current: res.data?.current || 1,
+        current: res?.current || 1,
         pageSize: pageSize,
-        total: res.data?.total || 0,
+        total: res?.total || 0,
       })
     } catch (error) {
       message.error('获取用户列表失败')

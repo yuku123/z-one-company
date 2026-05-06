@@ -3,7 +3,6 @@ import { history, useModel } from '@umijs/max';
 import { Alert, message, Tabs } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { ProFormCheckbox, ProFormText, LoginForm } from '@ant-design/pro-components';
-import Cookies from 'js-cookie';
 import { login } from '@/services/api';
 import styles from './index.less';
 
@@ -44,7 +43,7 @@ const Login: React.FC = () => {
 
       if (response && response.token) {
         // 保存 token
-        Cookies.set('token', response.token, { expires: 1 });
+        localStorage.setItem('token', response.token);
 
         message.success('登录成功！');
         await fetchUserInfo();

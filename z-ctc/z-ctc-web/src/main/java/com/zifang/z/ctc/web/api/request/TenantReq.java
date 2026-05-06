@@ -9,6 +9,9 @@ public class TenantReq {
     private String contactEmail;
     private Integer status;
 
+    private Long pageNum = 1L;
+    private Long pageSize = 20L;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTenantCode() { return tenantCode; }
@@ -23,4 +26,8 @@ public class TenantReq {
     public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
+    public Long getPageNum() { return pageNum; }
+    public void setPageNum(Long pageNum) { this.pageNum = pageNum; }
+    public Long getPageSize() { return pageSize; }
+    public void setPageSize(Long pageSize) { this.pageSize = pageSize; }
 }

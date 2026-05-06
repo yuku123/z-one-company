@@ -3,6 +3,7 @@ package com.zifang.z.ctc.web.api;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.service.DomainBizService;
 import com.zifang.ctc.core.service.dto.DomainDTO;
+import com.zifang.util.core.meta.Result;
 import com.zifang.z.ctc.web.api.request.DomainReq;
 import com.zifang.z.ctc.web.api.response.DomainResp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,51 +25,55 @@ public class DomainManagerController {
 
     @Operation(summary = "列表")
     @GetMapping("/list")
-    public List<DomainResp> list() {
-        return domainBizService.list().stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<DomainResp>> list() {
+        List<DomainResp> data = domainBizService.list().stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "分页查询")
     @PostMapping("/page")
-    public IPage<DomainResp> page(@RequestBody DomainReq req) {
-        return domainBizService.page(toDto(req)).convert(this::toResp);
+    public Result<IPage<DomainResp>> page(@RequestBody DomainReq req) {
+        return Result.success(domainBizService.page(toDto(req)).convert(this::toResp));
     }
 
     @Operation(summary = "根据租户ID查询")
     @GetMapping("/tenant/{tenantId}")
-    public List<DomainResp> listByTenantId(@PathVariable Long tenantId) {
-        return domainBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<DomainResp>> listByTenantId(@PathVariable Long tenantId) {
+        List<DomainResp> data = domainBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "根据域编码查询")
-    @GetMapping("/code/{domainCode}")
-    public DomainResp getByDomainCode(@PathVariable String domainCode) {
-        return toResp(domainBizService.getByDomainCode(domainCode));
+    @GetMapping("/getByCode")
+    public Result<DomainResp> getByDomainCode(@RequestParam String domainCode) {
+        return Result.success(toResp(domainBizService.getByDomainCode(domainCode)));
     }
 
     @Operation(summary = "根据ID查询")
-    @GetMapping("/{id}")
-    public DomainResp getById(@PathVariable Long id) {
-        return toResp(domainBizService.getById(id));
+    @GetMapping("/get")
+    public Result<DomainResp> getById(@RequestParam Long id) {
+        return Result.success(toResp(domainBizService.getById(id)));
     }
 
     @Operation(summary = "新增")
     @PostMapping
-    public void add(@RequestBody DomainReq req) {
+    public Result<Void> add(@RequestBody DomainReq req) {
         domainBizService.add(toDto(req));
+        return Result.success();
     }
 
     @Operation(summary = "更新")
     @PostMapping("/update")
-    
-    public void update(@RequestBody DomainReq req) {
+    public Result<Void> update(@RequestBody DomainReq req) {
         domainBizService.update(toDto(req));
+        return Result.success();
     }
 
     @Operation(summary = "删除")
     @PostMapping("/{id}/delete")
-    public void delete(@PathVariable Long id) {
+    public Result<Void> delete(@PathVariable Long id) {
         domainBizService.delete(id);
+        return Result.success();
     }
 
     private DomainResp toResp(DomainDTO dto) {

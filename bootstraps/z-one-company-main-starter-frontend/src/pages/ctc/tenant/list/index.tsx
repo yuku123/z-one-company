@@ -146,9 +146,7 @@ const TenantList: React.FC = () => {
           </Button>,
         ]}
         request={async (params) => {
-          console.log('请求参数:', params);
           const response: any = await getTenantPage(params);
-          console.log('响应数据:', response);
           return {
             data: response.records || [],
             success: true,

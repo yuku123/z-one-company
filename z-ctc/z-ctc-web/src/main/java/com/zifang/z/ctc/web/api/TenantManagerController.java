@@ -3,6 +3,7 @@ package com.zifang.z.ctc.web.api;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.service.TenantBizService;
 import com.zifang.ctc.core.service.dto.TenantDTO;
+import com.zifang.util.core.meta.Result;
 import com.zifang.z.ctc.web.api.request.TenantReq;
 import com.zifang.z.ctc.web.api.response.TenantResp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,46 +25,48 @@ public class TenantManagerController {
 
     @Operation(summary = "分页查询")
     @PostMapping("/page")
-    public IPage<TenantResp> page(@RequestBody TenantReq req) {
+    public Result<IPage<TenantResp>> page(@RequestBody TenantReq req) {
         TenantDTO dto = toDto(req);
-        return tenantBizService.page(dto).convert(this::toResp);
+        return Result.success(tenantBizService.page(dto).convert(this::toResp));
     }
 
     @Operation(summary = "根据租户编码查询")
     @GetMapping("/code/{tenantCode}")
-    public TenantResp getByTenantCode(@PathVariable String tenantCode) {
-        return toResp(tenantBizService.getByTenantCode(tenantCode));
+    public Result<TenantResp> getByTenantCode(@PathVariable String tenantCode) {
+        return Result.success(toResp(tenantBizService.getByTenantCode(tenantCode)));
     }
 
     @Operation(summary = "根据ID查询")
-    @GetMapping("/{id}")
-    public TenantResp getById(@PathVariable Long id) {
-        return toResp(tenantBizService.getById(id));
+    @GetMapping("/get")
+    public Result<TenantResp> getById(@RequestParam Long id) {
+        return Result.success(toResp(tenantBizService.getById(id)));
     }
 
     @Operation(summary = "用户所属租户列表")
     @GetMapping("/list")
-    public List<TenantResp> list() {
-        return tenantBizService.list().stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<TenantResp>> list() {
+        return Result.success(tenantBizService.list().stream().map(this::toResp).collect(Collectors.toList()));
     }
 
     @Operation(summary = "新增")
     @PostMapping
-    public void add(@RequestBody TenantReq req) {
+    public Result<Void> add(@RequestBody TenantReq req) {
         tenantBizService.add(toDto(req));
+        return Result.success();
     }
 
     @Operation(summary = "更新")
     @PostMapping("/update")
-    
-    public void update(@RequestBody TenantReq req) {
+    public Result<Void> update(@RequestBody TenantReq req) {
         tenantBizService.update(toDto(req));
+        return Result.success();
     }
 
     @Operation(summary = "删除")
     @PostMapping("/{id}/delete")
-    public void delete(@PathVariable Long id) {
+    public Result<Void> delete(@PathVariable Long id) {
         tenantBizService.delete(id);
+        return Result.success();
     }
 
     private TenantResp toResp(TenantDTO dto) {

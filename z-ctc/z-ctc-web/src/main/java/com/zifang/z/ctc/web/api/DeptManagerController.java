@@ -3,6 +3,7 @@ package com.zifang.z.ctc.web.api;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.service.DeptBizService;
 import com.zifang.ctc.core.service.dto.DeptDTO;
+import com.zifang.util.core.meta.Result;
 import com.zifang.z.ctc.web.api.request.DeptReq;
 import com.zifang.z.ctc.web.api.response.DeptResp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,57 +25,63 @@ public class DeptManagerController {
 
     @Operation(summary = "列表")
     @GetMapping("/list")
-    public List<DeptResp> list() {
-        return deptBizService.list().stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<DeptResp>> list() {
+        List<DeptResp> data = deptBizService.list().stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "分页查询")
     @PostMapping("/page")
-    public IPage<DeptResp> page(@RequestBody DeptReq req) {
-        return deptBizService.page(toDto(req)).convert(this::toResp);
+    public Result<IPage<DeptResp>> page(@RequestBody DeptReq req) {
+        return Result.success(deptBizService.page(toDto(req)).convert(this::toResp));
     }
 
     @Operation(summary = "根据租户ID查询")
     @GetMapping("/tenant/{tenantId}")
-    public List<DeptResp> listByTenantId(@PathVariable Long tenantId) {
-        return deptBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<DeptResp>> listByTenantId(@PathVariable Long tenantId) {
+        List<DeptResp> data = deptBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "根据域ID查询")
     @GetMapping("/domain/{domainId}")
-    public List<DeptResp> listByDomainId(@PathVariable Long domainId) {
-        return deptBizService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<DeptResp>> listByDomainId(@PathVariable Long domainId) {
+        List<DeptResp> data = deptBizService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "根据组织ID查询")
     @GetMapping("/org/{orgId}")
-    public List<DeptResp> listByOrgId(@PathVariable Long orgId) {
-        return deptBizService.listByOrgId(orgId).stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<DeptResp>> listByOrgId(@PathVariable Long orgId) {
+        List<DeptResp> data = deptBizService.listByOrgId(orgId).stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "根据ID查询")
-    @GetMapping("/{id}")
-    public DeptResp getById(@PathVariable Long id) {
-        return toResp(deptBizService.getById(id));
+    @GetMapping("/get")
+    public Result<DeptResp> getById(@RequestParam Long id) {
+        return Result.success(toResp(deptBizService.getById(id)));
     }
 
     @Operation(summary = "新增")
     @PostMapping
-    public void add(@RequestBody DeptReq req) {
+    public Result<Void> add(@RequestBody DeptReq req) {
         deptBizService.add(toDto(req));
+        return Result.success();
     }
 
     @Operation(summary = "更新")
     @PostMapping("/update")
-    
-    public void update(@RequestBody DeptReq req) {
+    public Result<Void> update(@RequestBody DeptReq req) {
         deptBizService.update(toDto(req));
+        return Result.success();
     }
 
     @Operation(summary = "删除")
     @PostMapping("/{id}/delete")
-    public void delete(@PathVariable Long id) {
+    public Result<Void> delete(@PathVariable Long id) {
         deptBizService.delete(id);
+        return Result.success();
     }
 
     private DeptResp toResp(DeptDTO dto) {

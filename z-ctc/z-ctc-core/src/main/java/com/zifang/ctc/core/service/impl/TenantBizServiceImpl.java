@@ -34,7 +34,9 @@ public class TenantBizServiceImpl implements TenantBizService {
             }
         }
         wrapper.orderByDesc(Tenant::getGmtCreate);
-        Page<Tenant> p = new Page<>(1, 10); // 分页参数需从dto传入，这里简化
+        long pNum = dto.getPageNum() != null ? dto.getPageNum() : 1L;
+        long pSize = dto.getPageSize() != null ? dto.getPageSize() : 20L;
+        Page<Tenant> p = new Page<>(pNum, pSize);
         return tenantService.page(p, wrapper).convert(TenantDtoConverter::toDTO);
     }
 

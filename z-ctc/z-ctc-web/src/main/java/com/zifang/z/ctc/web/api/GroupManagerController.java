@@ -3,6 +3,7 @@ package com.zifang.z.ctc.web.api;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.ctc.core.service.GroupBizService;
 import com.zifang.ctc.core.service.dto.GroupDTO;
+import com.zifang.util.core.meta.Result;
 import com.zifang.z.ctc.web.api.request.GroupReq;
 import com.zifang.z.ctc.web.api.response.GroupResp;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,63 +25,70 @@ public class GroupManagerController {
 
     @Operation(summary = "列表")
     @GetMapping("/list")
-    public List<GroupResp> list() {
-        return groupBizService.list().stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<GroupResp>> list() {
+        List<GroupResp> data = groupBizService.list().stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "分页查询")
     @PostMapping("/page")
-    public IPage<GroupResp> page(@RequestBody GroupReq req) {
-        return groupBizService.page(toDto(req)).convert(this::toResp);
+    public Result<IPage<GroupResp>> page(@RequestBody GroupReq req) {
+        return Result.success(groupBizService.page(toDto(req)).convert(this::toResp));
     }
 
     @Operation(summary = "根据租户ID查询")
     @GetMapping("/tenant/{tenantId}")
-    public List<GroupResp> listByTenantId(@PathVariable Long tenantId) {
-        return groupBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<GroupResp>> listByTenantId(@PathVariable Long tenantId) {
+        List<GroupResp> data = groupBizService.listByTenantId(tenantId).stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "根据域ID查询")
     @GetMapping("/domain/{domainId}")
-    public List<GroupResp> listByDomainId(@PathVariable Long domainId) {
-        return groupBizService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<GroupResp>> listByDomainId(@PathVariable Long domainId) {
+        List<GroupResp> data = groupBizService.listByDomainId(domainId).stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "根据组织ID查询")
     @GetMapping("/org/{orgId}")
-    public List<GroupResp> listByOrgId(@PathVariable Long orgId) {
-        return groupBizService.listByOrgId(orgId).stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<GroupResp>> listByOrgId(@PathVariable Long orgId) {
+        List<GroupResp> data = groupBizService.listByOrgId(orgId).stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "根据部门ID查询")
     @GetMapping("/dept/{deptId}")
-    public List<GroupResp> listByDeptId(@PathVariable Long deptId) {
-        return groupBizService.listByDeptId(deptId).stream().map(this::toResp).collect(Collectors.toList());
+    public Result<List<GroupResp>> listByDeptId(@PathVariable Long deptId) {
+        List<GroupResp> data = groupBizService.listByDeptId(deptId).stream().map(this::toResp).collect(Collectors.toList());
+        return Result.success(data);
     }
 
     @Operation(summary = "根据ID查询")
-    @GetMapping("/{id}")
-    public GroupResp getById(@PathVariable Long id) {
-        return toResp(groupBizService.getById(id));
+    @GetMapping("/get")
+    public Result<GroupResp> getById(@RequestParam Long id) {
+        return Result.success(toResp(groupBizService.getById(id)));
     }
 
     @Operation(summary = "新增")
     @PostMapping
-    public void add(@RequestBody GroupReq req) {
+    public Result<Void> add(@RequestBody GroupReq req) {
         groupBizService.add(toDto(req));
+        return Result.success();
     }
 
     @Operation(summary = "更新")
     @PostMapping("/update")
-    
-    public void update(@RequestBody GroupReq req) {
+    public Result<Void> update(@RequestBody GroupReq req) {
         groupBizService.update(toDto(req));
+        return Result.success();
     }
 
     @Operation(summary = "删除")
     @PostMapping("/{id}/delete")
-    public void delete(@PathVariable Long id) {
+    public Result<Void> delete(@PathVariable Long id) {
         groupBizService.delete(id);
+        return Result.success();
     }
 
     private GroupResp toResp(GroupDTO dto) {
