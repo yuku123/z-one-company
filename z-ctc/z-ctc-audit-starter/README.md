@@ -58,7 +58,7 @@ public void delete(@RequestBody IdReq req) {
 |------|------|
 | traceId | UUID，每次请求唯一 |
 | application | 应用名，来自配置 |
-| operationType | GET=QUERY / POST=CREATE / PUT=PATCH=UPDATE / DELETE=DELETE |
+| operationType | GET=QUERY / POST=CREATE / PATCH=UPDATE / DELETE=DELETE |
 | operationDesc | @Audit 注解值，未填则用 类名.方法名 |
 | userId / userName | 从 JWT token 中解析 |
 | tenantCode | 从 JWT token 中解析 |
