@@ -24,5 +24,11 @@
             <artifactId>z-config-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-ctc-sso</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 </project>

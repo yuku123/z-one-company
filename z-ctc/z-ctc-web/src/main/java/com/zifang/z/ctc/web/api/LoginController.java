@@ -6,12 +6,15 @@ import com.zifang.ctc.core.service.model.request.LoginRequest;
 import com.zifang.ctc.core.service.model.request.RegisterRequest;
 import com.zifang.ctc.core.service.model.response.LoginResponse;
 import com.zifang.ctc.sso.JwtUtil;
+import com.zifang.ctc.sso.model.UserInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -211,5 +214,29 @@ public class LoginController {
             result.put("message", e.getMessage());
         }
         return result;
+    }
+
+    /**
+     * Token 验证接口（供 sso-starter 的 RemoteTokenService 调用）
+     * GET /api/auth/verify 匹配 SsoProperties 默认 authServerUrl
+     */
+    @GetMapping("/verify")
+    @Operation(summary = "验证Token")
+    public UserInfo verifyToken(HttpServletRequest request, HttpServletResponse response) {
+        String token = request.getHeader("Authorization");
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
+        JwtUtil.VerificationResult result = jwtUtil.verifyToken(token);
+        if (!result.isValid()) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return null;
+        }
+        Map<String, Object> claims = result.getClaims();
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(String.valueOf(claims.getOrDefault("userId", "")));
+        userInfo.setUsername(String.valueOf(claims.getOrDefault("username", "")));
+        userInfo.setNickname(String.valueOf(claims.getOrDefault("nickname", "")));
+        return userInfo;
     }
 }

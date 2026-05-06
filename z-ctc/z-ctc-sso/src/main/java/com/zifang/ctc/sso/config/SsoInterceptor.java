@@ -55,7 +55,17 @@ public class SsoInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // token无效或不存在，重定向到登录页，并携带当前地址作为回调
+        // token无效或不存在
+        // API 请求（Accept: application/json）返回 401 JSON，浏览器请求重定向到登录页
+        String accept = request.getHeader("Accept");
+        boolean isApiRequest = (accept != null && accept.contains("application/json"))
+                || (request.getHeader("Content-Type") != null && request.getHeader("Content-Type").contains("application/json"));
+        if (isApiRequest) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"code\":401,\"message\":\"未登录或Token无效\"}");
+            return false;
+        }
         String redirectUrl = ssoProperties.getLoginUrl() + "?redirect=" +
                 request.getRequestURL().toString();
         response.sendRedirect(redirectUrl);
