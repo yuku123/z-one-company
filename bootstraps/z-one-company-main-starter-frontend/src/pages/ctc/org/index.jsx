@@ -5,6 +5,7 @@ import { getTenantList, getDomainByTenantCode } from '@/services/api'
 import { getOrgList, createOrg, updateOrg, deleteOrg } from '@/services/api'
 import { getOrgByDomainCode, getDeptByOrgCode, getDeptList, createDept, updateDept, deleteDept } from '@/services/api'
 import { getGroupByDeptCode, getGroupList, createGroup, updateGroup, deleteGroup } from '@/services/api'
+import { userOrgRelApi } from '@/services/api'
 
 const OrgManage = () => {
   const [tenantOptions, setTenantOptions] = useState([])
@@ -229,16 +230,30 @@ const OrgManage = () => {
     setSelectedType(node.type)
     setConfigData(parseExtConfig(node.data.extConfig))
 
-    // 加载子列表
-    const cfg = typeConfig[node.type]
-    if (cfg.api.children) {
+    // 加载子列表 + 关联用户
+    if (node.type === 'org') {
+      // 组织：显示子树 + 关联用户
       try {
-        const code = node.type === 'org' ? node.data.orgCode : node.data.deptCode
-        const children = await cfg.api.children(code)
-        setChildList(children || [])
+        const [children, users] = await Promise.all([
+          getDeptByOrgCode(node.data.orgCode),
+          userOrgRelApi.usersByDept(node.data.orgCode),
+        ])
+        setChildList(users || [])
       } catch (e) { setChildList([]) }
-    } else {
-      setChildList([])
+    } else if (node.type === 'dept') {
+      // 部门：显示子树 + 关联用户
+      try {
+        const [children, users] = await Promise.all([
+          getGroupByDeptCode(node.data.deptCode),
+          userOrgRelApi.usersByDept(node.data.deptCode),
+        ])
+        setChildList(users || [])
+      } catch (e) { setChildList([]) }
+    } else if (node.type === 'group') {
+      try {
+        const res = await userOrgRelApi.usersByGroup(node.data.groupCode)
+        setChildList(res || [])
+      } catch (e) { setChildList([]) }
     }
   }
 
@@ -299,7 +314,11 @@ const OrgManage = () => {
     },
   ]
 
-  const childColumns = [
+  const childColumns = selectedType === 'group' || (childList.length > 0 && childList[0].userName) ? [
+    { title: '用户名', dataIndex: 'userName', key: 'userName' },
+    { title: '昵称', dataIndex: 'nickName', key: 'nickName' },
+    { title: '真实姓名', dataIndex: 'realName', key: 'realName' },
+  ] : [
     { title: '编码', dataIndex: 'orgCode', key: 'orgCode', render: (_, r) => r.orgCode || r.deptCode || r.groupCode },
     { title: '名称', dataIndex: 'orgName', key: 'orgName', render: (_, r) => r.orgName || r.deptName || r.groupName },
     { title: '类型', key: 'type',
@@ -373,12 +392,12 @@ const OrgManage = () => {
             </Descriptions>
 
             {/* 子列表 */}
-            {selectedType !== 'group' && (
-              <Card type="inner" title={`下级${selectedType === 'org' ? '部门/组' : '组'}`} size="small" style={{ marginBottom: 16 }}>
-                <Table columns={childColumns} dataSource={childList.map((r, i) => ({ ...r, key: i }))}
-                  pagination={false} size="small" locale={{ emptyText: '暂无子节点' }} />
-              </Card>
-            )}
+            <Card type="inner"
+              title={selectedType === 'group' || (childList.length > 0 && childList[0].userName) ? '关联用户' : `下级${selectedType === 'org' ? '部门/组' : '组'}`}
+              size="small" style={{ marginBottom: 16 }}>
+              <Table columns={childColumns} dataSource={childList.map((r, i) => ({ ...r, key: i }))}
+                pagination={false} size="small" locale={{ emptyText: selectedType === 'group' ? '暂无关联用户' : '暂无子节点' }} />
+            </Card>
 
             {/* K-V 配置 */}
             <Card type="inner" title="扩展配置 (K-V)" size="small"

@@ -226,6 +226,40 @@ export const updateGroup = (data: any) =>
 export const deleteGroup = (groupCode: string) =>
   authRequest.post(`/group/${groupCode}/delete`)
 
+// ==================== 用户-组织关联 ====================
+export const userOrgRelApi = {
+  usersByGroup: (groupCode: string) => request.get('/user-org/users-by-group', { params: { groupCode } }),
+  usersByDept: (deptCode: string) => request.get('/user-org/users-by-dept', { params: { deptCode } }),
+  bind: (data: any) => request.post('/user-org/bind', data),
+  clearUser: (userId: number) => request.delete(`/user-org/user/${userId}`),
+}
+
+// ==================== 元典字典 ====================
+export const dictApi = {
+  list: (tenantCode: string) => request.get('/dict/list', { params: { tenantCode } }),
+  categories: (tenantCode: string) => request.get('/dict/categories', { params: { tenantCode } }),
+  hasInit: (tenantCode: string) => request.get('/dict/has-init', { params: { tenantCode } }),
+  init: (tenantCode: string, domainCode: string) => request.post('/dict/init', { tenantCode, domainCode }),
+  add: (data: any) => request.post('/dict', data),
+  update: (data: any) => request.post('/dict/update', data),
+  delete: (id: number) => request.post(`/dict/${id}/delete`),
+  reorder: (data: any[]) => request.post('/dict/reorder', data),
+}
+
+// ==================== 应用管理 ====================
+export const appApi = {
+  // App CRUD
+  list: (params?: any) => request.get('/app/list', { params }),
+  create: (data: any) => request.post('/app', data),
+  update: (data: any) => request.post('/app/update', data),
+  delete: (id: number) => request.post(`/app/${id}/delete`),
+  // Menu CRUD
+  menuList: (appCode: string) => request.get('/app/menu/list', { params: { appCode } }),
+  createMenu: (data: any) => request.post('/app/menu', data),
+  updateMenu: (data: any) => request.post('/app/menu/update', data),
+  deleteMenu: (id: number) => request.post(`/app/menu/${id}/delete`),
+}
+
 // ==================== Config 配置中心 ====================
 export const configApi = {
   // 配置列表分页

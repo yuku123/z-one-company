@@ -22,12 +22,14 @@ const menuItems = [
   { key: '/overview', icon: <AppstoreOutlined />, label: '概览' },
   { key: '/ctc', icon: <UserOutlined />, label: '4A中心', children: [
     { key: '/ctc/overview', label: '功能概览' },
-    { key: '/ctc/user', label: '用户管理' },
-    { key: '/ctc/role', label: '角色管理' },
-    { key: '/ctc/permission', label: '权限管理' },
-    { key: '/ctc/audit', label: '审计日志' },
     { key: '/ctc/tenant', label: '租户管理' },
     { key: '/ctc/org', label: '组织管理' },
+    { key: '/ctc/user', label: '用户管理' },
+    { key: '/ctc/permission', label: '权限管理' },
+    { key: '/ctc/app', label: '应用管理' },
+    { key: '/ctc/dict', label: '元典管理' },
+    { key: '/ctc/role', label: '角色管理' },
+    { key: '/ctc/audit', label: '审计日志' },
   ]},
   { key: '/config', icon: <SettingOutlined />, label: '配置中心', children: [
     { key: '/config/list', label: '配置列表' },

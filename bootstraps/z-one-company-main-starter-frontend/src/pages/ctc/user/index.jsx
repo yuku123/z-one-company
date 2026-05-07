@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Card, Table, Button, Space, Tag, message, Popconfirm, Modal, Form, Input, Select, Drawer, Tree } from 'antd'
 import { PlusOutlined, ReloadOutlined, ApartmentOutlined } from '@ant-design/icons'
-import { getUserList, createUser, updateUser, deleteUser } from '@/services/api'
+import { getUserList, createUser, updateUser, deleteUser, userOrgRelApi } from '@/services/api'
 import { getTenantList, getDomainByTenantCode } from '@/services/api'
-import { getOrgByDomainCode, getDeptByOrgCode } from '@/services/api'
+import { getOrgByDomainCode, getDeptByOrgCode, getGroupByDeptCode } from '@/services/api'
 
 const UserManagement = () => {
   const [loading, setLoading] = useState(false)
@@ -23,7 +23,8 @@ const UserManagement = () => {
   const [orgSelTenant, setOrgSelTenant] = useState(null)
   const [orgSelDomain, setOrgSelDomain] = useState(null)
   const [orgTree, setOrgTree] = useState([])
-  const [checkedDeptKeys, setCheckedDeptKeys] = useState([])
+  const [checkedKeys, setCheckedKeys] = useState([])
+  const [nodeMap, setNodeMap] = useState({}) // key → node data
 
   // ===== 用户列表 =====
   const fetchUserList = async (page = 1, pageSize = 10) => {
@@ -62,7 +63,7 @@ const UserManagement = () => {
   // ===== 组织关联抽屉 =====
   const openOrgDrawer = async (record) => {
     setOrgDrawerUser(record)
-    setCheckedDeptKeys(record.deptCode ? record.deptCode.split(',') : [])
+    setCheckedKeys(record.deptCode ? [] : [])
     setOrgSelTenant(null)
     setOrgSelDomain(null)
     setOrgTree([])
@@ -82,30 +83,67 @@ const UserManagement = () => {
 
   const onOrgDomainChange = async (code) => {
     setOrgSelDomain(code)
-    if (!code) { setOrgTree([]); return }
-    const orgs = await getOrgByDomainCode(code)
-    // 全量加载：org → dept
-    const tree = await Promise.all((orgs || []).map(async o => {
-      const depts = await getDeptByOrgCode(o.orgCode)
-      return {
-        key: `org:${o.orgCode}`,
-        title: <span><Tag color="#1677ff" style={{ marginRight: 4 }}>组织</Tag>{o.orgName || o.orgCode}</span>,
-        selectable: false, // 组织不可选
-        children: (depts || []).map(d => ({
-          key: `dept:${d.deptCode}`,
-          title: <span><Tag color="#52c41a" style={{ marginRight: 4 }}>部门</Tag>{d.deptName || d.deptCode}</span>,
-          data: d,
-          isLeaf: true,
-        })),
+    if (!code) { setOrgTree([]); setNodeMap({}); return }
+    try {
+      const orgs = await getOrgByDomainCode(code)
+      if (!orgs || orgs.length === 0) { setOrgTree([]); setNodeMap({}); return }
+      const tree = []; const map = {}
+      for (const o of (orgs || [])) {
+        const orgKey = `org:${o.orgCode}`
+        map[orgKey] = { type: 'org', code: o.orgCode, data: o }
+        const orgNode = {
+          key: orgKey,
+          title: <span><Tag color="#1677ff">组织</Tag>{o.orgName || o.orgCode}</span>,
+          children: [],
+        }
+        const depts = await getDeptByOrgCode(o.orgCode)
+        for (const d of (depts || [])) {
+          const deptKey = `dept:${d.deptCode}`
+          map[deptKey] = { type: 'dept', code: d.deptCode, parentOrg: o.orgCode, data: d }
+          const deptNode = {
+            key: deptKey,
+            title: <span><Tag color="#52c41a">部门</Tag>{d.deptName || d.deptCode}</span>,
+            children: [],
+          }
+          const groups = await getGroupByDeptCode(d.deptCode)
+          for (const g of (groups || [])) {
+            const groupKey = `group:${g.groupCode}`
+            map[groupKey] = { type: 'group', code: g.groupCode, parentOrg: o.orgCode, parentDept: d.deptCode, data: g }
+            deptNode.children.push({
+              key: groupKey,
+              title: <span><Tag color="#fa8c16">组</Tag>{g.groupName || g.groupCode}</span>,
+              isLeaf: true,
+            })
+          }
+          orgNode.children.push(deptNode)
+        }
+        tree.push(orgNode)
       }
-    }))
-    setOrgTree(tree)
+      setOrgTree(tree)
+      setNodeMap(map)
+    } catch (e) {
+      console.error('加载组织树失败', e)
+      message.error('加载组织树失败')
+      setOrgTree([])
+    }
   }
 
   const handleOrgConfirm = async () => {
-    if (checkedDeptKeys.length === 0) { message.warning('请至少选择一个部门'); return }
+    if (checkedKeys.length === 0) { message.warning('请至少选择一个节点'); return }
     try {
-      await updateUser(orgDrawerUser.id, { ...orgDrawerUser, deptCode: checkedDeptKeys.join(',') })
+      await userOrgRelApi.clearUser(orgDrawerUser.id)
+      for (const key of checkedKeys) {
+        const info = nodeMap[key]
+        if (!info) continue
+        const bindData = {
+          userId: orgDrawerUser.id,
+          tenantCode: orgSelTenant,
+          domainCode: orgSelDomain,
+          deptCode: info.type === 'dept' ? info.code : info.parentDept || null,
+          groupCode: info.type === 'group' ? info.code : null,
+        }
+        await userOrgRelApi.bind(bindData)
+      }
       message.success('关联成功')
       setOrgDrawerOpen(false)
       fetchUserList(pagination.current, pagination.pageSize)
@@ -188,21 +226,17 @@ const UserManagement = () => {
         </div>
         {orgSelDomain && orgTree.length > 0 ? (
           <Tree checkable treeData={orgTree} showLine showIcon={false}
-            checkedKeys={checkedDeptKeys}
-            onCheck={(checked) => {
-              // only allow dept keys (leaf nodes)
-              const deptKeys = checked.filter(k => k.startsWith('dept:'))
-              setCheckedDeptKeys(deptKeys)
-            }} />
+            checkedKeys={checkedKeys}
+            onCheck={(checked) => setCheckedKeys(checked)} />
         ) : (
           <div style={{ color: '#999', textAlign: 'center', marginTop: 40 }}>
             {orgSelDomain ? '加载中...' : '请先选择租户和域'}
           </div>
         )}
-        {checkedDeptKeys.length > 0 && (
+        {checkedKeys.length > 0 && (
           <div style={{ marginTop: 12, padding: '8px 12px', background: '#f6ffed', borderRadius: 4 }}>
-            已选 {checkedDeptKeys.length} 个部门：
-            {checkedDeptKeys.map(k => <Tag key={k} color="green">{k.replace('dept:', '')}</Tag>)}
+            已选 {checkedKeys.length} 个节点：
+            {checkedKeys.map(k => <Tag key={k} color="green">{k.replace(/^(org|dept|group):/, '')}</Tag>)}
           </div>
         )}
       </Drawer>
