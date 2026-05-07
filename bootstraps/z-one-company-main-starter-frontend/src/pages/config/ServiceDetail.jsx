@@ -14,15 +14,9 @@ const ServiceDetail = () => {
   const fetchInstances = async () => {
     setLoading(true)
     try {
-      const res = await namingApi.getInstances(serviceName)
-      if (res.success && res.data) {
-        setInstances((res.data || []).map((item, i) => ({ key: item.instanceId || i, ...item })))
-      } else {
-        message.error(res.message || '获取实例失败')
-      }
-    } catch (e) {
-      message.error('网络错误')
-    } finally { setLoading(false) }
+      const list = await namingApi.getInstances(serviceName)
+      if (list) setInstances((list || []).map((item, i) => ({ key: item.instanceId || i, ...item })))
+    } catch (e) { message.error('获取实例失败') } finally { setLoading(false) }
   }
 
   useEffect(() => { if (serviceName) fetchInstances() }, [serviceName])
@@ -44,10 +38,8 @@ const ServiceDetail = () => {
   return (
     <div>
       <Card size="small" style={{ marginBottom: 16 }}>
-        <Space>
-          <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/config/service')}>返回</Button>
-          <span style={{ fontSize: 16, fontWeight: 600 }}>{serviceName}</span>
-        </Space>
+        <Space><Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/config/service')}>返回</Button>
+          <span style={{ fontSize: 16, fontWeight: 600 }}>{serviceName}</span></Space>
       </Card>
       <Card size="small" style={{ marginBottom: 16 }}>
         <Descriptions size="small" column={4}>

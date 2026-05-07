@@ -1,7 +1,5 @@
 package com.zifang.z.config.web.api;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.zifang.util.core.meta.Result;
 import com.zifang.z.config.core.domain.entity.ZCluster;
 import com.zifang.z.config.core.domain.service.IZClusterService;
@@ -23,9 +21,7 @@ public class ClusterController {
     @GetMapping("/list")
     @Operation(summary = "001_获取所有集群(命名空间)列表")
     public Result<List<ZCluster>> list() {
-        QueryWrapper<ZCluster> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_deleted", 0);
-        return Result.success(clusterService.list(queryWrapper));
+        return Result.success(clusterService.list());
     }
 
     @PostMapping("/save")

@@ -1,18 +1,17 @@
 package com.zifang.z.ctc.web.api.response;
 
-import java.time.LocalDateTime;
-
 public class TenantResp {
+    private Long id;
     private String tenantCode;
     private String tenantName;
     private String contactName;
     private String contactPhone;
     private String contactEmail;
     private Integer status;
-    private LocalDateTime expireTime;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
+    private String extConfig;
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getTenantCode() { return tenantCode; }
     public void setTenantCode(String tenantCode) { this.tenantCode = tenantCode; }
     public String getTenantName() { return tenantName; }
@@ -25,10 +24,6 @@ public class TenantResp {
     public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
-    public LocalDateTime getExpireTime() { return expireTime; }
-    public void setExpireTime(LocalDateTime expireTime) { this.expireTime = expireTime; }
-    public LocalDateTime getGmtCreate() { return gmtCreate; }
-    public void setGmtCreate(LocalDateTime gmtCreate) { this.gmtCreate = gmtCreate; }
-    public LocalDateTime getGmtModified() { return gmtModified; }
-    public void setGmtModified(LocalDateTime gmtModified) { this.gmtModified = gmtModified; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
 }

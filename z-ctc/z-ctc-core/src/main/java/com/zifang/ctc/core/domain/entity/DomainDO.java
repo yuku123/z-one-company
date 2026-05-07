@@ -16,6 +16,7 @@ public class DomainDO {
     private String description;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+    private String extConfig;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -33,4 +34,6 @@ public class DomainDO {
     public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }
     public LocalDateTime getUpdatedTime() { return updatedTime; }
     public void setUpdatedTime(LocalDateTime updatedTime) { this.updatedTime = updatedTime; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
 }

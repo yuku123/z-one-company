@@ -8,7 +8,7 @@ public class TenantReq {
     private String contactPhone;
     private String contactEmail;
     private Integer status;
-
+    private String extConfig;
     private Long pageNum = 1L;
     private Long pageSize = 20L;
 
@@ -26,6 +26,8 @@ public class TenantReq {
     public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
     public Long getPageNum() { return pageNum; }
     public void setPageNum(Long pageNum) { this.pageNum = pageNum; }
     public Long getPageSize() { return pageSize; }

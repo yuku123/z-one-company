@@ -9,13 +9,12 @@ public class TenantDTO {
     private String contactName;
     private String contactPhone;
     private String contactEmail;
-    private Integer status;
     private LocalDateTime expireTime;
-    private LocalDateTime gmtCreate;
-    private LocalDateTime gmtModified;
+    private Integer status;
+    private String extConfig;
 
-    private Long pageNum = 1L;
-    private Long pageSize = 20L;
+    private Long pageNum;
+    private Long pageSize;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -29,14 +28,12 @@ public class TenantDTO {
     public void setContactPhone(String contactPhone) { this.contactPhone = contactPhone; }
     public String getContactEmail() { return contactEmail; }
     public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
-    public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
     public LocalDateTime getExpireTime() { return expireTime; }
     public void setExpireTime(LocalDateTime expireTime) { this.expireTime = expireTime; }
-    public LocalDateTime getGmtCreate() { return gmtCreate; }
-    public void setGmtCreate(LocalDateTime gmtCreate) { this.gmtCreate = gmtCreate; }
-    public LocalDateTime getGmtModified() { return gmtModified; }
-    public void setGmtModified(LocalDateTime gmtModified) { this.gmtModified = gmtModified; }
+    public Integer getStatus() { return status; }
+    public void setStatus(Integer status) { this.status = status; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
     public Long getPageNum() { return pageNum; }
     public void setPageNum(Long pageNum) { this.pageNum = pageNum; }
     public Long getPageSize() { return pageSize; }

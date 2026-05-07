@@ -20,6 +20,7 @@ public class Tenant {
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
     private Integer isDeleted;
+    private String extConfig;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -43,4 +44,6 @@ public class Tenant {
     public void setGmtModified(LocalDateTime gmtModified) { this.gmtModified = gmtModified; }
     public Integer getIsDeleted() { return isDeleted; }
     public void setIsDeleted(Integer isDeleted) { this.isDeleted = isDeleted; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
 }

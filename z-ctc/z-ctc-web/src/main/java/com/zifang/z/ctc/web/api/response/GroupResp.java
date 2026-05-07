@@ -1,7 +1,5 @@
 package com.zifang.z.ctc.web.api.response;
 
-import java.time.LocalDateTime;
-
 public class GroupResp {
     private String groupCode;
     private String groupName;
@@ -11,8 +9,7 @@ public class GroupResp {
     private String deptCode;
     private Integer status;
     private String description;
-    private LocalDateTime createdTime;
-    private LocalDateTime updatedTime;
+    private String extConfig;
 
     public String getGroupCode() { return groupCode; }
     public void setGroupCode(String groupCode) { this.groupCode = groupCode; }
@@ -30,8 +27,6 @@ public class GroupResp {
     public void setStatus(Integer status) { this.status = status; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-    public LocalDateTime getCreatedTime() { return createdTime; }
-    public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }
-    public LocalDateTime getUpdatedTime() { return updatedTime; }
-    public void setUpdatedTime(LocalDateTime updatedTime) { this.updatedTime = updatedTime; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
 }

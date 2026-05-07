@@ -9,6 +9,7 @@ public class DomainDTO {
     private Integer status;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+    private String extConfig;
 
     public String getDomainCode() { return domainCode; }
     public void setDomainCode(String domainCode) { this.domainCode = domainCode; }
@@ -22,4 +23,6 @@ public class DomainDTO {
     public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }
     public LocalDateTime getUpdatedTime() { return updatedTime; }
     public void setUpdatedTime(LocalDateTime updatedTime) { this.updatedTime = updatedTime; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
 }

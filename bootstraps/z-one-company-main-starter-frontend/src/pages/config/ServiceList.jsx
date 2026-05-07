@@ -12,15 +12,9 @@ const ServiceList = () => {
   const fetchServiceList = async () => {
     setLoading(true)
     try {
-      const res = await namingApi.listServices()
-      if (res.success && res.data) {
-        setData(res.data.map((item, i) => ({ key: i + 1, ...item })))
-      } else {
-        message.error(res.message || '获取服务列表失败')
-      }
-    } catch (e) {
-      message.error('网络错误')
-    } finally { setLoading(false) }
+      const list = await namingApi.listServices()
+      if (list) setData(list.map((item, i) => ({ key: i + 1, ...item })))
+    } catch (e) { message.error('获取服务列表失败') } finally { setLoading(false) }
   }
 
   useEffect(() => { fetchServiceList() }, [])
@@ -31,8 +25,6 @@ const ServiceList = () => {
     { title: '健康实例', dataIndex: 'healthyInstanceCount', key: 'healthyInstanceCount',
       render: (c) => <Tag color="success">{c || 0}</Tag> },
     { title: '总实例', dataIndex: 'totalInstanceCount', key: 'totalInstanceCount' },
-    { title: '状态', dataIndex: 'status', key: 'status',
-      render: (s) => <Tag color={s === 'UP' || s === '健康' ? 'success' : 'error'}>{s || '未知'}</Tag> },
     { title: '操作', key: 'action',
       render: (_, record) => (
         <Button type="link" icon={<EyeOutlined />}

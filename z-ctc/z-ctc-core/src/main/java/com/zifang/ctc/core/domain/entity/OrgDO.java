@@ -16,6 +16,7 @@ public class OrgDO {
     private String parentCode;
     private Integer status;
     private String description;
+    private String extConfig;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
 
@@ -39,4 +40,6 @@ public class OrgDO {
     public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }
     public LocalDateTime getUpdatedTime() { return updatedTime; }
     public void setUpdatedTime(LocalDateTime updatedTime) { this.updatedTime = updatedTime; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
 }

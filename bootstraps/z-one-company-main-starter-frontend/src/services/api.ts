@@ -116,6 +116,7 @@ export const getDomainPage = (params?: any) =>
 
 export const getDomainListAll = () =>
   authRequest.get('/domain/list')
+export const getDomainList = getDomainListAll
 
 // 根据租户编码查域列表（App.jsx 租户切换用）
 export const getDomainByTenantCode = (tenantCode: string) =>
@@ -138,6 +139,8 @@ export const getOrgPage = (params?: any) =>
   authRequest.post('/org/page', params)
 
 export const getOrgListAll = () =>
+  authRequest.get('/org/list')
+export const getOrgList = getOrgListAll
   authRequest.get('/org/list')
 
 // 根据租户编码查组织
@@ -166,6 +169,8 @@ export const getDeptPage = (params?: any) =>
 
 export const getDeptListAll = () =>
   authRequest.get('/dept/list')
+export const getDeptList = getDeptListAll
+  authRequest.get('/dept/list')
 
 export const getDeptByTenantCode = (tenantCode: string) =>
   authRequest.get(`/dept/tenant/${tenantCode}`)
@@ -193,6 +198,8 @@ export const getGroupPage = (params?: any) =>
   authRequest.post('/group/page', params)
 
 export const getGroupListAll = () =>
+  authRequest.get('/group/list')
+export const getGroupList = getGroupListAll
   authRequest.get('/group/list')
 
 export const getGroupByTenantCode = (tenantCode: string) =>

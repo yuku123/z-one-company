@@ -9,8 +9,10 @@ public class OrgDTO {
     private String domainCode;
     private String parentCode;
     private Integer status;
+    private String description;
     private LocalDateTime createdTime;
     private LocalDateTime updatedTime;
+    private String extConfig;
 
     public String getOrgCode() { return orgCode; }
     public void setOrgCode(String orgCode) { this.orgCode = orgCode; }
@@ -24,8 +26,12 @@ public class OrgDTO {
     public void setParentCode(String parentCode) { this.parentCode = parentCode; }
     public Integer getStatus() { return status; }
     public void setStatus(Integer status) { this.status = status; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
     public LocalDateTime getCreatedTime() { return createdTime; }
     public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }
     public LocalDateTime getUpdatedTime() { return updatedTime; }
     public void setUpdatedTime(LocalDateTime updatedTime) { this.updatedTime = updatedTime; }
+    public String getExtConfig() { return extConfig; }
+    public void setExtConfig(String extConfig) { this.extConfig = extConfig; }
 }

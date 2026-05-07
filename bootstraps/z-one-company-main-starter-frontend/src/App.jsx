@@ -21,17 +21,13 @@ const { Header, Sider, Content } = Layout
 const menuItems = [
   { key: '/overview', icon: <AppstoreOutlined />, label: '概览' },
   { key: '/ctc', icon: <UserOutlined />, label: '4A中心', children: [
-    { key: '/ctc/overview', label: '概览' },
-    { key: '/ctc/dashboard', label: '工作台' },
+    { key: '/ctc/overview', label: '功能概览' },
     { key: '/ctc/user', label: '用户管理' },
     { key: '/ctc/role', label: '角色管理' },
     { key: '/ctc/permission', label: '权限管理' },
     { key: '/ctc/audit', label: '审计日志' },
     { key: '/ctc/tenant', label: '租户管理' },
-    { key: '/ctc/domain', label: '域管理' },
     { key: '/ctc/org', label: '组织管理' },
-    { key: '/ctc/dept', label: '部门管理' },
-    { key: '/ctc/group', label: '组管理' },
   ]},
   { key: '/config', icon: <SettingOutlined />, label: '配置中心', children: [
     { key: '/config/list', label: '配置列表' },
@@ -131,6 +127,8 @@ function App() {
 
   const handleTenantChange = (value) => {
     setSelectedTenant([value, ''])
+    localStorage.setItem('z_tenant', value || '')
+    localStorage.setItem('z_domain', '')
     setDomainOptions([])
     if (value) {
       getDomainByTenantCode(value).then(domains => {

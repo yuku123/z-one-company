@@ -8,32 +8,22 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchStats = async () => {
+    (async () => {
       try {
-        const res = await configApi.getStats()
-        if (res.success) setStats(res.data)
-      } catch (e) {
-        message.error('获取统计数据失败')
-      } finally { setLoading(false) }
-    }
-    fetchStats()
+        const data = await configApi.getStats()
+        if (data) setStats(data)
+      } catch (e) { message.error('获取统计数据失败') }
+      finally { setLoading(false) }
+    })()
   }, [])
 
   return (
     <Spin spinning={loading}>
       <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} lg={6}>
-          <Card><Statistic title="配置总数" value={stats.configCount} prefix={<FileTextOutlined />} valueStyle={{ color: '#1890ff' }} /></Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card><Statistic title="注册服务" value={stats.serviceCount} prefix={<CloudServerOutlined />} valueStyle={{ color: '#52c41a' }} /></Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card><Statistic title="运行实例" value={stats.instanceCount} prefix={<ClusterOutlined />} valueStyle={{ color: '#fa8c16' }} /></Card>
-        </Col>
-        <Col xs={24} sm={12} lg={6}>
-          <Card><Statistic title="命名空间" value={stats.namespaceCount} prefix={<ApartmentOutlined />} valueStyle={{ color: '#f5222d' }} /></Card>
-        </Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="配置总数" value={stats.configCount} prefix={<FileTextOutlined />} valueStyle={{ color: '#1890ff' }} /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="注册服务" value={stats.serviceCount} prefix={<CloudServerOutlined />} valueStyle={{ color: '#52c41a' }} /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="运行实例" value={stats.instanceCount} prefix={<ClusterOutlined />} valueStyle={{ color: '#fa8c16' }} /></Card></Col>
+        <Col xs={24} sm={12} lg={6}><Card><Statistic title="命名空间" value={stats.namespaceCount} prefix={<ApartmentOutlined />} valueStyle={{ color: '#f5222d' }} /></Card></Col>
       </Row>
     </Spin>
   )
