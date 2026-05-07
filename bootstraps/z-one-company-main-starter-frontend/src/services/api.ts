@@ -297,7 +297,7 @@ export const namingApi = {
   // 服务列表
   listServices: () => request.get('/naming/listServices'),
   // 查询实例（按服务名）
-  getInstances: (serviceName: string) => request.get('/naming/getAllInstances', { params: { serviceName } }),
+  getInstances: (serviceName: string, group?: string) => request.get('/naming/getAllInstances', { params: { serviceName, group } }),
   // 查询健康实例
   getHealthyInstances: (serviceName: string) =>
     request.get('/naming/selectInstances/healthy', { params: { serviceName } }),

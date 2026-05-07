@@ -22,6 +22,14 @@ const ConfigList = () => {
   const [selectedVersion1, setSelectedVersion1] = useState(null)
   const [selectedVersion2, setSelectedVersion2] = useState(null)
   const [diffVisible, setDiffVisible] = useState(false)
+  const [historyDrawerOpen, setHistoryDrawerOpen] = useState(false)
+  const [historyRecord, setHistoryRecord] = useState(null)
+  const [historyList, setHistoryList] = useState([])
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [compareVer1, setCompareVer1] = useState(null)
+  const [compareVer2, setCompareVer2] = useState(null)
+  const [diffContent, setDiffContent] = useState({ left: '', right: '' })
+  const [diffModalOpen, setDiffModalOpen] = useState(false)
 
   const fetchNamespaceList = async () => {
     try {
@@ -79,6 +87,30 @@ const ConfigList = () => {
   const handleTableChange = (p) => fetchConfigList(p.current, p.pageSize)
   const handleSearch = () => fetchConfigList(1, pagination.pageSize)
 
+  // ===== 变更历史抽屉 =====
+  const openHistory = async (record) => {
+    setHistoryRecord(record)
+    setHistoryDrawerOpen(true)
+    setHistoryLoading(true)
+    try {
+      const res = await configApi.historyPage({ pageNum: 1, pageSize: 50, namespace: record.namespace, group: record.group, search: record.dataId })
+      setHistoryList((res?.records || []).map((r, i) => ({ key: r.id || i, ...r })))
+    } catch (e) { message.error('加载历史失败') } finally { setHistoryLoading(false) }
+  }
+
+  const handleRollback = async (item) => {
+    try {
+      await configApi.saveConfig({ namespace: item.namespace, dataId: item.dataId, group: item.group, content: item.content, configDesc: `回滚至 ${item.gmtCreate}` })
+      message.success('回滚成功'); setHistoryDrawerOpen(false); fetchConfigList()
+    } catch (e) { message.error('回滚失败') }
+  }
+
+  const handleCompare = () => {
+    if (!compareVer1 || !compareVer2) { message.warning('请选择两个版本'); return }
+    setDiffContent({ left: compareVer1.content || '', right: compareVer2.content || '' })
+    setDiffModalOpen(true)
+  }
+
   useEffect(() => { fetchConfigList(); fetchNamespaceList(); fetchGroupList() }, [location.key])
 
   // also re-fetch when namespace list changes (trigger fetch after tabs load)
@@ -92,9 +124,10 @@ const ConfigList = () => {
       render: (type) => <Tag color="blue">{type || 'TEXT'}</Tag> },
     { title: '操作', key: 'action', width: 150,
       render: (_, record) => (
-        <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
-          <Popconfirm title="确认删除" description={`确定要删除 "${record.dataId}" 吗？`}
+          <Space>
+            <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
+            <Button type="link" size="small" icon={<HistoryOutlined />} onClick={() => openHistory(record)}>历史</Button>
+            <Popconfirm title="确认删除" description={`确定要删除 "${record.dataId}" 吗？`}
             onConfirm={() => handleDelete(record)} okText="确定" cancelText="取消">
             <Button type="link" danger size="small" icon={<DeleteOutlined />}>删除</Button>
           </Popconfirm>

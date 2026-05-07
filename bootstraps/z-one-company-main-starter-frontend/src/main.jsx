@@ -13,6 +13,10 @@ import Login from './pages/ctc/login/AuthPage'
 import ScheduleIndex from './pages/schedule'
 import MistIndex from './pages/mist'
 import MetaIndex from './pages/meta'
+import AiIndex from './pages/ai'
+import RdIndex from './pages/rd'
+import ResourceIndex from './pages/resource'
+import OpsIndex from './pages/ops'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -31,6 +35,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="schedule/*" element={<ScheduleIndex />} />
             <Route path="mist/*" element={<MistIndex />} />
             <Route path="meta/*" element={<MetaIndex />} />
+            <Route path="ai/*" element={<AiIndex />} />
+            <Route path="rd/*" element={<RdIndex />} />
+            <Route path="resource/*" element={<ResourceIndex />} />
+            <Route path="ops/*" element={<OpsIndex />} />
           </Route>
         </Routes>
       </BrowserRouter>

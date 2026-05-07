@@ -13,7 +13,16 @@ import {
   MenuFoldOutlined,
   AuditOutlined,
   DownOutlined,
-} from '@ant-design/icons'
+  RobotOutlined,
+  CodeOutlined,
+  DeploymentUnitOutlined,
+  ToolOutlined,
+  CloudOutlined,
+  DesktopOutlined,
+  FolderOpenOutlined,
+  BarChartOutlined,
+  CalendarOutlined,
+  GiftOutlined } from '@ant-design/icons'
 import { getCurrentUser, getTenantList, getDomainByTenantCode } from './services/api'
 
 const { Header, Sider, Content } = Layout
@@ -34,6 +43,27 @@ const menuItems = [
   { key: '/config', icon: <SettingOutlined />, label: '配置中心', children: [
     { key: '/config/list', label: '配置列表' },
     { key: '/config/service', label: '服务列表' },
+  ]},
+  { key: '/ai', icon: <RobotOutlined />, label: '智能中心', children: [
+    { key: '/ai/mcp', label: 'MCP管理' },
+    { key: '/ai/skill', label: 'SKILL管理' },
+    { key: '/ai/agent', label: 'Agent应用' },
+  ]},
+  { key: '/rd', icon: <CodeOutlined />, label: '研发中心', children: [
+    { key: '/rd/repo', label: '仓库中心' },
+    { key: '/rd/sprint', label: '迭代管控' },
+    { key: '/rd/ops', label: '运维中心' },
+  ]},
+  { key: '/resource', icon: <CloudOutlined />, label: '资源管理', children: [
+    { key: '/resource/domain', label: '域名管理' },
+    { key: '/resource/ecs', label: 'ECS管理' },
+    { key: '/resource/rds', label: 'RDS管理' },
+    { key: '/resource/oss', label: '对象存储' },
+  ]},
+  { key: '/ops', icon: <BarChartOutlined />, label: '运营管控', children: [
+    { key: '/ops/channel', label: '渠道注册' },
+    { key: '/ops/task', label: '任务排期' },
+    { key: '/ops/delivery', label: '交付产物' },
   ]},
   { key: '/task', icon: <FileTextOutlined />, label: '任务中心', children: [
     { key: '/task/dashboard', label: '仪表盘' },
