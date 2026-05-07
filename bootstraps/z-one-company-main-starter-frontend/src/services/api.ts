@@ -260,6 +260,14 @@ export const appApi = {
   deleteMenu: (id: number) => request.post(`/app/menu/${id}/delete`),
 }
 
+// ==================== 字典分类 ====================
+export const dictCatApi = {
+  list: (tenantCode: string) => request.get('/dict-category/list', { params: { tenantCode } }),
+  create: (data: any) => request.post('/dict-category', data),
+  update: (data: any) => request.post('/dict-category/update', data),
+  delete: (id: number) => request.post(`/dict-category/${id}/delete`),
+}
+
 // ==================== Config 配置中心 ====================
 export const configApi = {
   // 配置列表分页
