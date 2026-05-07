@@ -15,13 +15,6 @@ const ConfigList = () => {
   const [selectedGroup, setSelectedGroup] = useState(undefined)
   const [namespaceList, setNamespaceList] = useState([])
   const [groupList, setGroupList] = useState([])
-  const [historyVisible, setHistoryVisible] = useState(false)
-  const [historyConfig, setHistoryConfig] = useState(null)
-  const [historyData, setHistoryData] = useState([])
-  const [historyLoading, setHistoryLoading] = useState(false)
-  const [selectedVersion1, setSelectedVersion1] = useState(null)
-  const [selectedVersion2, setSelectedVersion2] = useState(null)
-  const [diffVisible, setDiffVisible] = useState(false)
   const [historyDrawerOpen, setHistoryDrawerOpen] = useState(false)
   const [historyRecord, setHistoryRecord] = useState(null)
   const [historyList, setHistoryList] = useState([])
@@ -157,6 +150,38 @@ const ConfigList = () => {
           pagination={{ ...pagination, showSizeChanger: true, showTotal: (t) => `共 ${t} 条` }}
           loading={loading} onChange={handleTableChange} />
       </Card>
+      {/* 变更历史抽屉 */}
+      <Drawer title={`变更历史 - ${historyRecord?.dataId || ''}`} open={historyDrawerOpen}
+        onClose={() => setHistoryDrawerOpen(false)} width={800}>
+        <Space style={{ marginBottom: 12 }}>
+          <Select placeholder="选择版本1" style={{ width: 250 }} onChange={(id) => setCompareVer1(historyList.find(r => r.id === id))}
+            allowClear value={compareVer1?.id} labelRender={() => compareVer1?.gmtCreate || ''}
+            options={historyList.map(r => ({ label: `${r.gmtCreate} (${r.opType})`, value: r.id }))} />
+          <Select placeholder="选择版本2" style={{ width: 250 }} onChange={(id) => setCompareVer2(historyList.find(r => r.id === id))}
+            allowClear value={compareVer2?.id} labelRender={() => compareVer2?.gmtCreate || ''}
+            options={historyList.map(r => ({ label: `${r.gmtCreate} (${r.opType})`, value: r.id }))} />
+          <Button icon={<DiffOutlined />} onClick={handleCompare}>对比</Button>
+        </Space>
+        <Table columns={[
+          { title: '操作时间', dataIndex: 'gmtCreate', key: 'gmtCreate', width: 160 },
+          { title: '操作类型', dataIndex: 'opType', key: 'opType', width: 80,
+            render: (op) => <Tag color={op==='新增'?'success':op==='修改'?'processing':'red'}>{op}</Tag> },
+          { title: '操作人', dataIndex: 'srcUser', key: 'srcUser', width: 80 },
+          { title: '当前内容', key: 'content', ellipsis: true,
+            render: (_, r) => <Tooltip title={<pre style={{margin:0,maxHeight:200,overflow:'auto'}}>{r.content}</pre>}><span style={{cursor:'pointer'}}>{(r.content||'').substring(0,60)}</span></Tooltip> },
+          { title: '操作', key: 'action', width: 100,
+            render: (_, r) => <Popconfirm title="确认回滚？" onConfirm={() => handleRollback(r)}><Button type="link" size="small" icon={<RollbackOutlined />}>回滚</Button></Popconfirm> },
+        ]} dataSource={historyList} loading={historyLoading} size="small"
+          pagination={{ pageSize: 10, showTotal: t => `共 ${t} 条` }} />
+      </Drawer>
+      {/* 版本对比弹窗 */}
+      <Modal title="版本对比" open={diffModalOpen} width={900} footer={null}
+        onCancel={() => setDiffModalOpen(false)}>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <pre style={{ flex: 1, background: '#f5f5f5', padding: 12, borderRadius: 4, maxHeight: 500, overflow: 'auto', fontSize: 13, margin: 0 }}>{diffContent.left}</pre>
+          <pre style={{ flex: 1, background: '#fff7e6', padding: 12, borderRadius: 4, maxHeight: 500, overflow: 'auto', fontSize: 13, margin: 0 }}>{diffContent.right}</pre>
+        </div>
+      </Modal>
     </div>
   )
 }
