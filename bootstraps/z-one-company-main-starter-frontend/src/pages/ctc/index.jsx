@@ -9,6 +9,8 @@ import DomainManagement from './domain'
 import OrgManagement from './org'
 import DeptManagement from './dept'
 import GroupManagement from './group'
+import DictManagement from './dict'
+import AppManagement from './app'
 
 export default function CtcIndex() {
   return (
@@ -25,6 +27,8 @@ export default function CtcIndex() {
       <Route path="org" element={<OrgManagement />} />
       <Route path="dept" element={<DeptManagement />} />
       <Route path="group" element={<GroupManagement />} />
+      <Route path="dict" element={<DictManagement />} />
+      <Route path="app" element={<AppManagement />} />
     </Routes>
   )
 }

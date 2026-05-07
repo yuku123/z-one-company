@@ -18,6 +18,7 @@ import {
   KeyOutlined,
   AuditOutlined,
   HomeOutlined,
+  AppstoreOutlined,
   SettingOutlined,
   UserOutlined,
   LogoutOutlined,
@@ -96,6 +97,8 @@ const Layout = () => {
     if (path.includes('/user')) return ['user']
     if (path.includes('/role')) return ['role']
     if (path.includes('/permission')) return ['permission']
+    if (path.includes('/app')) return ['app']
+    if (path.includes('/dict')) return ['dict']
     if (path.includes('/audit')) return ['audit']
     if (path.includes('/tenant')) return ['tenant']
     if (path.includes('/domain')) return ['domain']
@@ -134,6 +137,16 @@ const Layout = () => {
       key: 'permission',
       icon: <KeyOutlined />,
       label: '权限管理',
+    },
+    {
+      key: 'app',
+      icon: <AppstoreOutlined />,
+      label: '应用管理',
+    },
+    {
+      key: 'dict',
+      icon: <SettingOutlined />,
+      label: '元典管理',
     },
     {
       key: 'audit',

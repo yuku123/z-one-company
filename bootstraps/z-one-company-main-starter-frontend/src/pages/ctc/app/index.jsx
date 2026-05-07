@@ -21,13 +21,19 @@ const AppPage = () => {
     (async () => {
       const tenants = await getTenantList()
       setTenantOptions((tenants || []).map(t => ({ label: `${t.tenantName} (${t.tenantCode})`, value: t.tenantCode })))
+      const saved = localStorage.getItem('z_tenant')
+      if (saved && (tenants || []).some(t => t.tenantCode === saved)) {
+        setSelectedTenant(saved)
+      }
     })()
   }, [])
+
+  useEffect(() => { if (selectedTenant) loadApps(selectedTenant) }, [selectedTenant])
 
   const loadApps = async (tenant) => {
     if (!tenant) return
     try {
-      const list = await appApi.list({ tenantCode: tenant })
+      const list = await appApi.list({ tenantCode: tenant }).catch(() => [])
       setApps(list || [])
       setSelectedApp(null); setMenus([])
     } catch (e) { message.error('加载应用失败') }
@@ -166,7 +172,13 @@ const AppPage = () => {
           <Form.Item name="appCode" label="所属应用"><Input disabled /></Form.Item>
           <Form.Item name="menuCode" label="菜单编码" rules={[{ required: true }]}><Input disabled={!!editingMenu} /></Form.Item>
           <Form.Item name="menuName" label="菜单名称" rules={[{ required: true }]}><Input /></Form.Item>
-          <Form.Item name="parentCode" label="父菜单编码"><Input placeholder="留空为顶级" /></Form.Item>
+          <Form.Item name="parentCode" label="父菜单编码">
+            <Select allowClear placeholder="留空为顶级">
+              {(menus || []).filter(m => editingMenu ? m.menuCode !== editingMenu.menuCode : true).map(m => (
+                <Select.Option key={m.menuCode} value={m.menuCode}>{m.menuName} ({m.menuCode})</Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
           <Form.Item name="menuType" label="类型" initialValue="menu">
             <Select><Select.Option value="menu">菜单</Select.Option><Select.Option value="button">按钮</Select.Option><Select.Option value="feature">功能</Select.Option></Select>
           </Form.Item>

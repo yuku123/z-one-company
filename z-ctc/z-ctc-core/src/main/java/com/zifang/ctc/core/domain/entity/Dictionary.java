@@ -17,6 +17,8 @@ public class Dictionary {
     private Long parentId;
     private Integer status;
     private String description;
+    private String extSchema;
+    private String extData;
     private LocalDateTime gmtCreate;
     private LocalDateTime gmtModified;
 
@@ -42,6 +44,10 @@ public class Dictionary {
     public void setStatus(Integer status) { this.status = status; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getExtSchema() { return extSchema; }
+    public void setExtSchema(String extSchema) { this.extSchema = extSchema; }
+    public String getExtData() { return extData; }
+    public void setExtData(String extData) { this.extData = extData; }
     public LocalDateTime getGmtCreate() { return gmtCreate; }
     public void setGmtCreate(LocalDateTime gmtCreate) { this.gmtCreate = gmtCreate; }
     public LocalDateTime getGmtModified() { return gmtModified; }
