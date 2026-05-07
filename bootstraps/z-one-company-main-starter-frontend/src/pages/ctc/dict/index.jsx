@@ -51,35 +51,27 @@ const DictPage = () => {
       const buildTree = (parentCode) => {
         const children = (dbCats || []).filter(c => c.parentCode === parentCode)
         const enumsInCat = (cats || []).filter(cat => cat === parentCode).map(cat => ({
-          key: `enum:${cat}`, title: `[枚举] ${cat}`,
-          type: 'enum', isLeaf: true,
+          key: `enum:${cat}`, title: 'enum',
+          type: 'enum', data: { category: cat }, isLeaf: true,
         }))
-        // if no sub-categories and no enums, show the enums directly
-        if (children.length === 0) {
-          return enumsInCat
-        }
+        if (children.length === 0) { return enumsInCat }
         const subNodes = children.map(c => ({
-          key: `cat:${c.catCode}`,
-          title: <span>{c.catName || c.catCode}</span>,
-          type: 'category', data: c,
+          key: `cat:${c.catCode}`, title: 'cat', type: 'category', data: c,
           children: buildTree(c.catCode),
         }))
         return subNodes
       }
       const treeData = roots.map(r => ({
-        key: `cat:${r.catCode}`,
-        title: <span>{r.catName || r.catCode}</span>,
-        type: 'category', data: r,
+        key: `cat:${r.catCode}`, title: 'cat', type: 'category', data: r,
         children: buildTree(r.catCode),
       }))
-      // also add orphans (enums without category)
       const catCodes = new Set((dbCats || []).map(c => c.catCode))
-      const orphans = (cats || []).filter(cat => !catCodes.has(cat)).map(cat => ({
-        key: `enum:${cat}`, title: `[枚举] ${cat}`,
-        type: 'enum', isLeaf: true,
+      const orphanEnumNames = (cats || []).filter(cat => !catCodes.has(cat))
+      const orphanEnums = orphanEnumNames.map(cat => ({
+        key: `enum:${cat}`, title: 'enum', type: 'enum', data: { category: cat }, isLeaf: true,
       }))
-      if (orphans.length > 0) {
-        treeData.push({ key: '__orphans__', title: <Tag color="orange">未分类</Tag>, type: 'placeholder', children: orphans })
+      if (orphanEnums.length > 0) {
+        treeData.push({ key: '__orphans__', title: <Tag color="orange">未分类</Tag>, type: 'placeholder', children: orphanEnums })
       }
       setCategories(treeData)
     } catch (e) { message.error('加载失败') } finally { setLoading(false) }
@@ -215,7 +207,23 @@ const DictPage = () => {
             ? <Tree treeData={categories} showLine showIcon={false} defaultExpandAll draggable={{ icon: false, nodeDraggable: (n) => n.type === 'enum' }}
                 onDrop={onDrop}
                 selectedKeys={selectedCat ? [selectedCat.key] : []}
-                onSelect={(keys, info) => { if (info.node.type !== 'placeholder') setSelectedCat(info.node) }} />
+                onSelect={(keys, info) => { if (info.node.type !== 'placeholder') setSelectedCat(info.node) }}
+                titleRender={(node) => {
+                  if (node.type === 'placeholder') return node.title
+                  const isEnum = node.type === 'enum'
+                  const catName = isEnum ? node.data?.category : (node.data?.catName || node.data?.catCode)
+                  let isBuiltin = false
+                  if (isEnum) {
+                    isBuiltin = allItems.some(i => i.category === node.data?.category && i.isBuiltin)
+                  }
+                  const disp = isEnum ? catName : (node.data?.catName || node.data?.catCode)
+                  return (
+                    <span>
+                      {isEnum ? (isBuiltin ? <Tag color="blue" style={{ fontSize: 10 }}>内置</Tag> : <Tag color="orange" style={{ fontSize: 10 }}>自定义</Tag>) : null}
+                      {disp}
+                    </span>
+                  )
+                }} />
             : <Empty description={initStatus === false ? '未初始化' : '暂无数据'} />
         ) : <Empty description="请选择租户" />}
       </Card>

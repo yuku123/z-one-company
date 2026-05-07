@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Card, Table, Button, Input, Space, Tag, message, Popconfirm, Select } from 'antd'
-import { PlusOutlined, SearchOutlined, ReloadOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
+import { Card, Table, Button, Input, Space, Tag, message, Popconfirm, Select, Tabs, Drawer } from 'antd'
+import { PlusOutlined, SearchOutlined, ReloadOutlined, EditOutlined, DeleteOutlined, HistoryOutlined, RollbackOutlined, DiffOutlined } from '@ant-design/icons'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { configApi } from '@/services/api'
 
 const ConfigList = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 })
@@ -14,11 +15,27 @@ const ConfigList = () => {
   const [selectedGroup, setSelectedGroup] = useState(undefined)
   const [namespaceList, setNamespaceList] = useState([])
   const [groupList, setGroupList] = useState([])
+  const [historyVisible, setHistoryVisible] = useState(false)
+  const [historyConfig, setHistoryConfig] = useState(null)
+  const [historyData, setHistoryData] = useState([])
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [selectedVersion1, setSelectedVersion1] = useState(null)
+  const [selectedVersion2, setSelectedVersion2] = useState(null)
+  const [diffVisible, setDiffVisible] = useState(false)
 
   const fetchNamespaceList = async () => {
     try {
-      const records = await configApi.clusterList()
-      setNamespaceList((records || []).map(item => ({ label: item.name, value: item.name })))
+      const [clusters, nsList] = await Promise.all([
+        configApi.clusterList().catch(() => []),
+        configApi.namespaceList().catch(() => []),
+      ])
+      const clusterNames = (clusters || []).map(i => ({ label: i.name, value: i.name }))
+      const configNames = (nsList || []).map(n => ({ label: n, value: n }))
+      // 合并去重
+      const seen = new Set()
+      const merged = [...clusterNames, ...configNames].filter(i => { if (seen.has(i.value)) return false; seen.add(i.value); return true })
+      setNamespaceList(merged.length > 0 ? merged : [{ label: '默认命名空间', value: 'DEFAULT_NAMESPACE' }])
+      if (merged.length > 0 && !selectedNamespace) setSelectedNamespace(merged[0].value)
     } catch (e) { console.error('获取命名空间失败', e) }
   }
 
@@ -62,7 +79,10 @@ const ConfigList = () => {
   const handleTableChange = (p) => fetchConfigList(p.current, p.pageSize)
   const handleSearch = () => fetchConfigList(1, pagination.pageSize)
 
-  useEffect(() => { fetchConfigList(); fetchNamespaceList(); fetchGroupList() }, [])
+  useEffect(() => { fetchConfigList(); fetchNamespaceList(); fetchGroupList() }, [location.key])
+
+  // also re-fetch when namespace list changes (trigger fetch after tabs load)
+  useEffect(() => { if (namespaceList.length > 0) fetchConfigList() }, [selectedNamespace])
 
   const columns = [
     { title: 'Data ID', dataIndex: 'dataId', key: 'dataId', ellipsis: true },
@@ -89,9 +109,9 @@ const ConfigList = () => {
         extra={<Space><Button icon={<ReloadOutlined />} onClick={() => fetchConfigList(pagination.current, pagination.pageSize)} loading={loading}>刷新</Button>
           <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/config/edit')}>新建配置</Button></Space>}>
         <div style={{ marginBottom: 16 }}>
+          <Tabs activeKey={selectedNamespace} onChange={(key) => { setSelectedNamespace(key); fetchConfigList(1, pagination.pageSize) }}
+            items={namespaceList.map(ns => ({ key: ns.value, label: ns.label }))} />
           <Space size="middle">
-            <Select placeholder="选择命名空间" style={{ width: 200 }} value={selectedNamespace}
-              onChange={setSelectedNamespace} allowClear options={namespaceList} />
             <Select placeholder="选择Group" style={{ width: 200 }} value={selectedGroup}
               onChange={setSelectedGroup} allowClear options={groupList} />
             <Input.Search placeholder="搜索 Data ID..." value={searchText}

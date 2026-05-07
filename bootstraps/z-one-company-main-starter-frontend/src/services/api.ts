@@ -278,6 +278,8 @@ export const configApi = {
   deleteConfig: (data: any) => request.post('/config/delete', data),
   // 获取 Group 列表
   groupList: () => request.get('/config/groupList'),
+  // 获取所有命名空间
+  namespaceList: () => request.get('/config/namespaceList'),
   // 配置变更历史
   historyPage: (params: any) => request.post('/config/history/page', params),
   // Dashboard 统计

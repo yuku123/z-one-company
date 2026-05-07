@@ -24,6 +24,8 @@ const AppPage = () => {
       const saved = localStorage.getItem('z_tenant')
       if (saved && (tenants || []).some(t => t.tenantCode === saved)) {
         setSelectedTenant(saved)
+      } else if (tenants && tenants.length > 0) {
+        setSelectedTenant(tenants[0].tenantCode)
       }
     })()
   }, [])

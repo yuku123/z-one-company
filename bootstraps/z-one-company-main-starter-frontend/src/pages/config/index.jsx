@@ -3,6 +3,9 @@ import Dashboard from './Dashboard'
 import ConfigList from './ConfigList'
 import ConfigEdit from './ConfigEdit'
 import ConfigHistory from './ConfigHistory'
+import cluster from './cluster'
+import ServiceList from './ServiceList'
+import ServiceDetail from './ServiceDetail'
 
 export default function ConfigIndex() {
   return (
@@ -12,6 +15,9 @@ export default function ConfigIndex() {
       <Route path="edit" element={<ConfigEdit />} />
       <Route path="history" element={<ConfigHistory />} />
       <Route path="dashboard" element={<Dashboard />} />
+      <Route path="cluster" element={<cluster />} />
+      <Route path="service" element={<ServiceList />} />
+      <Route path="service/detail" element={<ServiceDetail />} />
     </Routes>
   )
 }

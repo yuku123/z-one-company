@@ -125,6 +125,14 @@ public class ZConfigController{
         return Result.success(pageable);
     }
 
+    /**
+     * 回滚到指定历史版本[Retrieve]操作
+     */
+    @PostMapping("/rollback")
+    public Result<String> rollback(@RequestBody com.zifang.z.config.common.model.config.ZConfigSaveRequest request) {
+        return configService.saveConfig(request);
+    }
+
     @GetMapping("/namespaceList")
     @Operation(summary = "008_获取所有命名空间列表")
     
