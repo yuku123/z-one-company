@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Table, Button, Space, Tag, Card, Input, Select, message } from 'antd'
 import { PlusOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { taskApi } from '../../../services/api'
+import { taskApi } from '@/services/api'
 
 const { Search } = Input
 const { Option } = Select
@@ -108,7 +108,7 @@ export default function TaskList() {
       key: 'action',
       render: (_, record) => (
         <Space size="middle">
-          <Button type="link" icon={<EditOutlined />} onClick={() => navigate(`/task/edit/${record.id}`)}>
+          <Button type="link" icon={<EditOutlined />} onClick={() => navigate(`/task/task/edit/${record.id}`)}>
             编辑
           </Button>
           {record.status === 2 ? (

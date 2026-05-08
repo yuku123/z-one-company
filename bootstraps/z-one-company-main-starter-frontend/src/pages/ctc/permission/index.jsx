@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Card, Tree, Table, Button, Space, Tag, message, Modal, Form, Input, Select, Popconfirm, Typography } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
-import { getPermissionList, createPermission, updatePermission, deletePermission } from '../../../services/api'
+import { getPermissionList, createPermission, updatePermission, deletePermission } from '@/services/api'
 
 const { Text } = Typography
 

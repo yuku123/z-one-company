@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Form, Input, Select, DatePicker, Button, Card, message, Space } from 'antd'
 import { useNavigate, useParams } from 'react-router-dom'
-import { taskApi } from '../../../services/api'
+import { taskApi } from '@/services/api'
 
 const { Option } = Select
 

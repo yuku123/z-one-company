@@ -144,7 +144,6 @@ export const getOrgPage = (params?: any) =>
 export const getOrgListAll = () =>
   authRequest.get('/org/list')
 export const getOrgList = getOrgListAll
-  authRequest.get('/org/list')
 
 // 根据租户编码查组织
 export const getOrgByTenantCode = (tenantCode: string) =>
@@ -173,7 +172,6 @@ export const getDeptPage = (params?: any) =>
 export const getDeptListAll = () =>
   authRequest.get('/dept/list')
 export const getDeptList = getDeptListAll
-  authRequest.get('/dept/list')
 
 export const getDeptByTenantCode = (tenantCode: string) =>
   authRequest.get(`/dept/tenant/${tenantCode}`)
@@ -203,7 +201,6 @@ export const getGroupPage = (params?: any) =>
 export const getGroupListAll = () =>
   authRequest.get('/group/list')
 export const getGroupList = getGroupListAll
-  authRequest.get('/group/list')
 
 export const getGroupByTenantCode = (tenantCode: string) =>
   authRequest.get(`/group/tenant/${tenantCode}`)

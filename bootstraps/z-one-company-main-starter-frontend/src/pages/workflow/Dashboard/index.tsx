@@ -8,7 +8,7 @@ import {
   ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { approvalApi } from '../../../services/api';
+import { approvalApi } from '@/services/api';
 import { DashboardStats, Task } from '../../../types/workflow';
 
 const styles = {

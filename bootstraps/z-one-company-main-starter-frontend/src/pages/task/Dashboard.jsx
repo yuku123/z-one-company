@@ -5,7 +5,7 @@ import {
   ClockCircleOutlined,
   CheckCircleOutlined
 } from '@ant-design/icons'
-import { taskApi } from '../../../services/api'
+import { taskApi } from '@/services/api'
 
 export default function Dashboard() {
   const [stats, setStats] = useState({

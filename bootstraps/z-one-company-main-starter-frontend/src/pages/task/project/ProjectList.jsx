@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Table, Button, Space, Tag, Card, Modal, Form, Input, message } from 'antd'
 import { PlusOutlined, EditOutlined } from '@ant-design/icons'
-import { projectApi } from '../../../services/api'
+import { projectApi } from '@/services/api'
 
 const statusMap = {
   0: { color: 'default', text: '已归档' },
