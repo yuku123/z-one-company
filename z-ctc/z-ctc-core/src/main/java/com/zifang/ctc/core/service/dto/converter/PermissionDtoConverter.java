@@ -15,6 +15,8 @@ public class PermissionDtoConverter {
         if (entity == null) return null;
         PermissionDTO dto = new PermissionDTO();
         BeanUtils.copyProperties(entity, dto);
+        dto.setResourceType(entity.getPermType()); // 字段名不同，需显式映射
+        dto.setSort(entity.getSortOrder());         // 字段名不同，需显式映射
         return dto;
     }
 
@@ -22,6 +24,8 @@ public class PermissionDtoConverter {
         if (dto == null) return null;
         Permission entity = new Permission();
         BeanUtils.copyProperties(dto, entity);
+        entity.setPermType(dto.getResourceType()); // 字段名不同，需显式映射
+        entity.setSortOrder(dto.getSort());         // 字段名不同，需显式映射
         return entity;
     }
 }

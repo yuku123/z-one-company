@@ -34,7 +34,7 @@
 
 ### 3. 权限 (Permission)
 - id, permCode, permName, permType (MENU/BUTTON/API)
-- parentId, path, icon, sortOrder
+- parentId, path, sortOrder
 - status, tenantCode
 - gmtCreate, gmtModified
 

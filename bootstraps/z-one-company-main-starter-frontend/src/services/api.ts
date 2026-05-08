@@ -66,6 +66,9 @@ export const deleteRole = (id: string) =>
 export const getRolePermissions = (roleId: string) =>
   authRequest.get('/permission/role/permissions', { params: { roleId } })
 
+export const assignRolePermissions = (roleId: string | number, permissionIds: (string | number)[]) =>
+  authRequest.post(`/permission/role/${roleId}/permissions`, permissionIds)
+
 // ========== 权限管理 ==========
 export const getPermissionList = async (params?: any) => {
   const res = await authRequest.get('/permission/list', { params })
@@ -307,4 +310,48 @@ export const namingApi = {
   registerInstance: (data: any) => request.post('/naming/registerInstance', data),
   // 注销实例
   deregisterInstance: (data: any) => request.post('/naming/deregisterInstance', data),
+}
+
+// ==================== 任务中心 ====================
+export const taskApi = {
+  // 任务列表（按列表）
+  getTaskListByList: (listId: number) =>
+    request.get('/task/list', { params: { listId } }),
+  // 任务列表（按项目）
+  getTaskListByProject: (projectId: number) =>
+    request.get(`/task/project/${projectId}`),
+  // 任务列表（按负责人）
+  getTaskListByAssignee: (userId: string) =>
+    request.get(`/task/assignee/${userId}`),
+  // 创建任务
+  createTask: (data: any) =>
+    request.post('/task', data),
+  // 移动任务
+  moveTask: (taskId: number, targetListId: number, position: string) =>
+    request.put('/task/move', null, { params: { taskId, targetListId, position } }),
+  // 添加执行者
+  addTaskAssignee: (taskId: number, userId: string) =>
+    request.post('/task/assignees', null, { params: { taskId, userId } }),
+  // 移除执行者
+  removeTaskAssignee: (taskId: number, userId: string) =>
+    request.delete(`/task/assignees/${taskId}/${userId}`),
+  // 完成任务
+  completeTask: (taskId: number) =>
+    request.post(`/task/${taskId}/complete`),
+  // 重新打开任务
+  reopenTask: (taskId: number) =>
+    request.post(`/task/${taskId}/reopen`),
+}
+
+// ==================== 项目管理 ====================
+export const projectApi = {
+  // 获取用户项目列表
+  getProjectListByUser: (userId: string) =>
+    request.get(`/project/user/${userId}`),
+  // 创建项目
+  createProject: (data: any) =>
+    request.post('/project', data),
+  // 归档项目
+  archiveProject: (projectId: number) =>
+    request.put(`/project/${projectId}/archive`),
 }

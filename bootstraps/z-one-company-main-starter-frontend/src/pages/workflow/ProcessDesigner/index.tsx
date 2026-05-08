@@ -160,7 +160,7 @@ const ProcessDesigner: React.FC = () => {
         <div className={styles.toolbarLeft}>
           <Button
             icon={<ArrowLeftOutlined />}
-            onClick={() => navigate('/designer')}
+            onClick={() => navigate('/workflow/processes')}
           >
             返回
           </Button>

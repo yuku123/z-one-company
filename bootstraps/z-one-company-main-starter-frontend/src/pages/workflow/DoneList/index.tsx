@@ -40,7 +40,7 @@ const DoneList: React.FC = () => {
   const fetchDoneList = async (pageNum = 1, pageSize = 10) => {
     try {
       setLoading(true);
-      const result = await approvalApi.getDoneTasks('admin', pageNum, pageSize);
+      const result = await approvalApi.getDoneList('admin', pageNum, pageSize);
       setData(result);
     } catch (error) {
       console.error('获取已办列表失败:', error);
@@ -100,7 +100,7 @@ const DoneList: React.FC = () => {
           <Button
             type="text"
             icon={<EyeOutlined />}
-            onClick={() => navigate(`/approval-center/tasks/${record.id}`)}
+            onClick={() => navigate(`/workflow/task/${record.id}`)}
           >
             查看
           </Button>

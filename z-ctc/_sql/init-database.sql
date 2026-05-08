@@ -61,7 +61,6 @@ CREATE TABLE sys_permission (
     perm_type VARCHAR(32) NOT NULL COMMENT '权限类型：MENU-菜单，BUTTON-按钮，API-接口',
     parent_id BIGINT DEFAULT 0 COMMENT '父权限ID',
     path VARCHAR(256) DEFAULT NULL COMMENT '权限路径',
-    icon VARCHAR(64) DEFAULT NULL COMMENT '图标',
     sort_order INT DEFAULT 0 COMMENT '排序号',
     status TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-启用',
     tenant_id VARCHAR(64) DEFAULT NULL COMMENT '租户ID',

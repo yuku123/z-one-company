@@ -1,36 +1,66 @@
 import { useState, useEffect } from 'react'
-import { Card, Table, Button, Input, Space, Tag, message, Popconfirm, Modal, Form, Select, Tree } from 'antd'
-import { PlusOutlined, SearchOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
+import { Card, Tree, Table, Button, Space, Tag, message, Modal, Form, Input, Select, Popconfirm, Typography } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons'
 import { getPermissionList, createPermission, updatePermission, deletePermission } from '../../../services/api'
+
+const { Text } = Typography
+
+// 类型映射
+const TYPE_MAP = {
+  MENU: { label: '菜单', color: 'blue' },
+  BUTTON: { label: '按钮', color: 'green' },
+  API: { label: 'API', color: 'orange' },
+}
+
+// 扁平列表转树形
+const listToTree = (list) => {
+  const map = {}
+  const roots = []
+  list.forEach(item => {
+    map[item.id] = { ...item, key: item.id, title: item.permName, children: [] }
+  })
+  list.forEach(item => {
+    if (item.parentId && map[item.parentId]) {
+      map[item.parentId].children.push(map[item.id])
+    } else {
+      roots.push(map[item.id])
+    }
+  })
+  return roots
+}
 
 const PermissionManagement = () => {
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState([])
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 10,
-    total: 0,
-  })
-  const [searchText, setSearchText] = useState('')
+  const [rawList, setRawList] = useState([])
+  const [treeData, setTreeData] = useState([])
+  const [expandedKeys, setExpandedKeys] = useState([])
+  const [selectedPerm, setSelectedPerm] = useState(null)
   const [modalVisible, setModalVisible] = useState(false)
-  const [editingPermission, setEditingPermission] = useState(null)
+  const [editingPerm, setEditingPerm] = useState(null)
   const [form] = Form.useForm()
+  const [saving, setSaving] = useState(false)
 
-  const fetchPermissionList = async (page = 1, pageSize = 10) => {
+  // 标准化 API 响应字段名（后端 DTO 用 resourceType，前端代码用 permType/permName）
+  const normalizePerm = (item) => ({
+    ...item,
+    permType: item.resourceType || item.permType,
+    permName: item.permissionName || item.permName,
+    permCode: item.permissionCode || item.permCode,
+    sortOrder: item.sortOrder ?? item.sort,
+  })
+
+  // 加载权限列表
+  const fetchPermissions = async () => {
     setLoading(true)
     try {
-      const res = await getPermissionList({
-        pageNum: page,
-        pageSize: pageSize,
-        keyword: searchText || undefined,
-      })
-      setData(res.data?.records || [])
-      setPagination({
-        current: res.data?.current || 1,
-        pageSize: pageSize,
-        total: res.data?.total || 0,
-      })
-    } catch (error) {
+      const res = await getPermissionList()
+      const list = (res?.data?.records || res || []).map(normalizePerm)
+      setRawList(list)
+      setTreeData(listToTree(list))
+      if (list.length > 0 && !selectedPerm) {
+        setExpandedKeys(list.filter(p => p.parentId === 0 || !p.parentId).map(p => p.id))
+      }
+    } catch (e) {
       message.error('获取权限列表失败')
     } finally {
       setLoading(false)
@@ -38,191 +68,301 @@ const PermissionManagement = () => {
   }
 
   useEffect(() => {
-    fetchPermissionList()
+    fetchPermissions()
   }, [])
 
-  const handleSearch = () => {
-    fetchPermissionList(1, pagination.pageSize)
+  // 选中树节点
+  const handleSelect = (selectedKeys) => {
+    if (selectedKeys.length > 0) {
+      const id = selectedKeys[0]
+      const perm = rawList.find(p => p.id === id)
+      setSelectedPerm(perm || null)
+    } else {
+      setSelectedPerm(null)
+    }
   }
 
-  const handleTableChange = (newPagination) => {
-    fetchPermissionList(newPagination.current, newPagination.pageSize)
-  }
-
+  // 新增
   const handleAdd = () => {
-    setEditingPermission(null)
+    setEditingPerm(null)
     form.resetFields()
+    // 如果选了节点，默认其作为父节点
+    if (selectedPerm) {
+      form.setFieldsValue({ parentId: selectedPerm.id })
+    }
     setModalVisible(true)
   }
 
-  const handleEdit = (record) => {
-    setEditingPermission(record)
-    form.setFieldsValue(record)
+  // 编辑
+  const handleEdit = () => {
+    if (!selectedPerm) return
+    setEditingPerm(selectedPerm)
+    form.setFieldsValue({
+      permissionName: selectedPerm.permName,
+      permissionCode: selectedPerm.permCode,
+      permType: selectedPerm.permType,
+      parentId: selectedPerm.parentId,
+      path: selectedPerm.path,
+      icon: selectedPerm.icon,
+      sortOrder: selectedPerm.sortOrder,
+      status: selectedPerm.status,
+    })
     setModalVisible(true)
   }
 
-  const handleDelete = async (id) => {
+  // 删除（软删）
+  const handleDelete = async () => {
+    if (!selectedPerm) return
     try {
-      await deletePermission(id)
+      await deletePermission(selectedPerm.id)
       message.success('删除成功')
-      fetchPermissionList(pagination.current, pagination.pageSize)
-    } catch (error) {
+      setSelectedPerm(null)
+      fetchPermissions()
+    } catch (e) {
       message.error('删除失败')
     }
   }
 
+  // 提交保存
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields()
-      if (editingPermission) {
-        await updatePermission(editingPermission.id, values)
+      setSaving(true)
+      const payload = {
+        permissionName: values.permissionName,
+        permissionCode: values.permissionCode,
+        resourceType: values.permType,
+        parentId: values.parentId || 0,
+        path: values.path || '',
+        icon: values.icon || '',
+        sort: values.sortOrder ?? 0,
+        status: values.status ?? 1,
+      }
+      if (editingPerm) {
+        await updatePermission(editingPerm.id, payload)
         message.success('更新成功')
       } else {
-        await createPermission(values)
+        await createPermission(payload)
         message.success('创建成功')
       }
       setModalVisible(false)
-      fetchPermissionList(pagination.current, pagination.pageSize)
-    } catch (error) {
-      message.error(error.response?.data?.message || '操作失败')
+      fetchPermissions()
+    } catch (e) {
+      message.error(e.message || '操作失败')
+    } finally {
+      setSaving(false)
     }
   }
 
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: 60,
-    },
-    {
-      title: '权限名称',
-      dataIndex: 'permissionName',
-      key: 'permissionName',
-    },
-    {
-      title: '权限编码',
-      dataIndex: 'permissionCode',
-      key: 'permissionCode',
-    },
-    {
-      title: '权限类型',
-      dataIndex: 'permissionType',
-      key: 'permissionType',
-      render: (type) => {
-        const colorMap = { 'menu': 'blue', 'button': 'green', 'api': 'orange' }
-        return <Tag color={colorMap[type] || 'default'}>{type}</Tag>
-      },
-    },
-    {
-      title: '父级ID',
-      dataIndex: 'parentId',
-      key: 'parentId',
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => (
-        <Tag color={status === 1 ? 'success' : 'default'}>
-          {status === 1 ? '正常' : '停用'}
+  // 渲染树节点
+  const renderTreeNode = (node) => (
+    <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+      <Text>{node.permName}</Text>
+      {TYPE_MAP[node.permType] && (
+        <Tag color={TYPE_MAP[node.permType].color} style={{ margin: 0, fontSize: 10 }}>
+          {TYPE_MAP[node.permType].label}
         </Tag>
-      ),
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime',
-    },
-    {
-      title: '操作',
-      key: 'action',
-      width: 150,
-      render: (_, record) => (
-        <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            编辑
-          </Button>
-          <Popconfirm title="确认删除" description="确定要删除该权限吗？" onConfirm={() => handleDelete(record.id)}>
-            <Button type="link" danger size="small" icon={<DeleteOutlined />}>
-              删除
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ]
+      )}
+    </span>
+  )
+
+  // 选中节点的孩子（用于右侧子节点表格）
+  const childrenOfSelected = selectedPerm
+    ? rawList.filter(p => p.parentId === selectedPerm.id)
+    : []
 
   return (
-    <Card
-      title="权限管理"
-      extra={
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-          新增权限
-        </Button>
-      }
-    >
-      <div style={{ marginBottom: 16 }}>
-        <Space>
-          <Input.Search
-            placeholder="搜索权限名称/编码"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            onSearch={handleSearch}
-            style={{ width: 300 }}
-            allowClear
+    <div style={{ display: 'flex', gap: 16, height: 'calc(100vh - 180px)' }}>
+      {/* 左侧：权限树 */}
+      <div style={{ width: 320, flexShrink: 0 }}>
+        <Card
+          size="small"
+          title="权限列表"
+          extra={
+            <Space size={4}>
+              <Button type="text" size="small" icon={<ReloadOutlined />} onClick={fetchPermissions} />
+              <Button type="text" size="small" icon={<PlusOutlined />} onClick={handleAdd} />
+            </Space>
+          }
+          bodyStyle={{ padding: 8, overflow: 'auto', maxHeight: 'calc(100vh - 230px)' }}
+        >
+          <Tree
+            showLine={{ showLeafIcon: false }}
+            treeData={treeData}
+            expandedKeys={expandedKeys}
+            onExpand={(keys) => setExpandedKeys(keys)}
+            selectedKeys={selectedPerm ? [selectedPerm.id] : []}
+            onSelect={(keys) => handleSelect(keys)}
+            titleRender={(node) => renderTreeNode(node)}
+            blockNode
           />
-          <Button icon={<ReloadOutlined />} onClick={() => fetchPermissionList(pagination.current, pagination.pageSize)}>
-            刷新
-          </Button>
-        </Space>
+        </Card>
       </div>
-      <Table
-        columns={columns}
-        dataSource={data}
-        pagination={{
-          ...pagination,
-          showSizeChanger: true,
-          showTotal: (total) => `共 ${total} 条`,
-        }}
-        loading={loading}
-        onChange={handleTableChange}
-        rowKey="id"
-      />
 
+      {/* 右侧：选中权限详情 + 子节点列表 */}
+      <div style={{ flex: 1, overflow: 'auto' }}>
+        <Card
+          size="small"
+          title={selectedPerm ? `权限详情：${selectedPerm.permName}` : '请选择左侧权限节点'}
+          extra={
+            selectedPerm && (
+              <Space>
+                <Button size="small" icon={<EditOutlined />} onClick={handleEdit}>编辑</Button>
+                <Popconfirm title="确认删除？" description="删除后可在子节点中恢复" onConfirm={handleDelete}>
+                  <Button size="small" danger icon={<DeleteOutlined />}>删除</Button>
+                </Popconfirm>
+              </Space>
+            )
+          }
+          bodyStyle={{ padding: selectedPerm ? 16 : 0 }}
+        >
+          {!selectedPerm && (
+            <div style={{ textAlign: 'center', color: '#999', padding: '60px 0' }}>
+              从左侧树选择一个权限节点查看详情
+            </div>
+          )}
+
+          {selectedPerm && (
+            <>
+              {/* 详情字段 */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 24px', marginBottom: 24 }}>
+                <div>
+                  <Text type="secondary">权限编码</Text>
+                  <div><Text code>{selectedPerm.permCode}</Text></div>
+                </div>
+                <div>
+                  <Text type="secondary">权限类型</Text>
+                  <div>
+                    {TYPE_MAP[selectedPerm.permType] && (
+                      <Tag color={TYPE_MAP[selectedPerm.permType].color}>{TYPE_MAP[selectedPerm.permType].label}</Tag>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <Text type="secondary">路径</Text>
+                  <div><Text>{selectedPerm.path || '-'}</Text></div>
+                </div>
+                <div>
+                  <Text type="secondary">图标</Text>
+                  <div><Text>{selectedPerm.icon || '-'}</Text></div>
+                </div>
+                <div>
+                  <Text type="secondary">排序</Text>
+                  <div><Text>{selectedPerm.sortOrder ?? 0}</Text></div>
+                </div>
+                <div>
+                  <Text type="secondary">状态</Text>
+                  <div>
+                    <Tag color={selectedPerm.status === 1 ? 'success' : 'default'}>
+                      {selectedPerm.status === 1 ? '正常' : '停用'}
+                    </Tag>
+                  </div>
+                </div>
+              </div>
+
+              {/* 子节点表格 */}
+              <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                子权限 ({childrenOfSelected.length})
+              </Text>
+              {childrenOfSelected.length > 0 ? (
+                <Table
+                  size="small"
+                  dataSource={childrenOfSelected}
+                  rowKey="id"
+                  pagination={false}
+                  columns={[
+                    { title: '权限名称', dataIndex: 'permName', key: 'permName' },
+                    { title: '编码', dataIndex: 'permCode', key: 'permCode' },
+                    {
+                      title: '类型', dataIndex: 'permType', key: 'permType',
+                      render: (t) => TYPE_MAP[t] ? <Tag color={TYPE_MAP[t].color}>{TYPE_MAP[t].label}</Tag> : t,
+                    },
+                    { title: '路径', dataIndex: 'path', key: 'path', ellipsis: true },
+                    { title: '排序', dataIndex: 'sortOrder', key: 'sortOrder', width: 60 },
+                  ]}
+                />
+              ) : (
+                <div style={{ textAlign: 'center', color: '#bbb', padding: '16px 0' }}>
+                  暂无子权限
+                </div>
+              )}
+            </>
+          )}
+        </Card>
+      </div>
+
+      {/* 新增/编辑 Modal */}
       <Modal
-        title={editingPermission ? '编辑权限' : '新增权限'}
+        title={editingPerm ? '编辑权限' : '新增权限'}
         open={modalVisible}
         onOk={handleSubmit}
         onCancel={() => setModalVisible(false)}
-        width={600}
+        confirmLoading={saving}
+        width={520}
+        destroyOnClose
       >
-        <Form form={form} layout="vertical">
-          <Form.Item name="permissionName" label="权限名称" rules={[{ required: true, message: '请输入权限名称' }]}>
-            <Input />
+        <Form form={form} layout="vertical" style={{ marginTop: 16 }}>
+          <Form.Item
+            name="permissionName"
+            label="权限名称"
+            rules={[{ required: true, message: '请输入权限名称' }]}
+          >
+            <Input placeholder="如：用户管理" />
           </Form.Item>
-          <Form.Item name="permissionCode" label="权限编码" rules={[{ required: true, message: '请输入权限编码' }]}>
-            <Input disabled={!!editingPermission} />
+
+          <Form.Item
+            name="permissionCode"
+            label="权限编码"
+            rules={[{ required: true, message: '请输入权限编码' }]}
+          >
+            <Input placeholder="如：system:user" disabled={!!editingPerm} />
           </Form.Item>
-          <Form.Item name="permissionType" label="权限类型" rules={[{ required: true, message: '请选择权限类型' }]}>
-            <Select>
-              <Select.Option value="menu">菜单</Select.Option>
-              <Select.Option value="button">按钮</Select.Option>
-              <Select.Option value="api">API</Select.Option>
+
+          <Form.Item
+            name="permType"
+            label="权限类型"
+            rules={[{ required: true, message: '请选择权限类型' }]}
+          >
+            <Select placeholder="选择类型">
+              <Select.Option value="MENU">菜单</Select.Option>
+              <Select.Option value="BUTTON">按钮</Select.Option>
+              <Select.Option value="API">API</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item name="parentId" label="父级ID">
-            <Input type="number" />
+
+          <Form.Item name="parentId" label="父级权限">
+            <Tree
+              treeData={treeData}
+              placeholder="不选则为顶级"
+              allowClear
+              showSearch
+              style={{ width: '100%' }}
+              treeNodeFilterProp="title"
+            />
           </Form.Item>
-          <Form.Item name="status" label="状态" initialValue={1}>
-            <Select>
-              <Select.Option value={1}>正常</Select.Option>
-              <Select.Option value={0}>停用</Select.Option>
-            </Select>
+
+          <Form.Item name="path" label="权限路径">
+            <Input placeholder="如：/system/user" />
           </Form.Item>
+
+          <Form.Item name="icon" label="图标">
+            <Input placeholder="如：UserOutlined" />
+          </Form.Item>
+
+          <div style={{ display: 'flex', gap: 12 }}>
+            <Form.Item name="sortOrder" label="排序" style={{ flex: 1 }}>
+              <Input type="number" placeholder="数字越小越靠前" />
+            </Form.Item>
+            <Form.Item name="status" label="状态" initialValue={1} style={{ flex: 1 }}>
+              <Select>
+                <Select.Option value={1}>正常</Select.Option>
+                <Select.Option value={0}>停用</Select.Option>
+              </Select>
+            </Form.Item>
+          </div>
         </Form>
       </Modal>
-    </Card>
+    </div>
   )
 }
 

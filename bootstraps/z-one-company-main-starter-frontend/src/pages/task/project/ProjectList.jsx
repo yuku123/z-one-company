@@ -1,10 +1,62 @@
-import { Table, Button, Space, Tag, Card } from 'antd'
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { useState, useEffect } from 'react'
+import { Table, Button, Space, Tag, Card, Modal, Form, Input, message } from 'antd'
+import { PlusOutlined, EditOutlined } from '@ant-design/icons'
+import { projectApi } from '../../../services/api'
+
+const statusMap = {
+  0: { color: 'default', text: '已归档' },
+  1: { color: 'green', text: '进行中' }
+}
 
 export default function ProjectList() {
+  const [projects, setProjects] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [form] = Form.useForm()
+
+  const loadProjects = async () => {
+    setLoading(true)
+    try {
+      const userId = localStorage.getItem('userId') || '1'
+      const data = await projectApi.getProjectListByUser(userId)
+      setProjects(data || [])
+    } catch (e) {
+      message.error('加载项目失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadProjects()
+  }, [])
+
+  const handleCreate = async () => {
+    try {
+      const values = await form.validateFields()
+      await projectApi.createProject(values)
+      message.success('创建成功')
+      setModalVisible(false)
+      form.resetFields()
+      loadProjects()
+    } catch (e) {
+      message.error('创建失败')
+    }
+  }
+
+  const handleArchive = async (projectId) => {
+    try {
+      await projectApi.archiveProject(projectId)
+      message.success('归档成功')
+      loadProjects()
+    } catch (e) {
+      message.error('归档失败')
+    }
+  }
+
   const columns = [
     {
-      title: '项目ID',
+      title: 'ID',
       dataIndex: 'id',
       key: 'id',
       width: 80
@@ -17,66 +69,38 @@ export default function ProjectList() {
     {
       title: '项目描述',
       dataIndex: 'description',
-      key: 'description'
-    },
-    {
-      title: '负责人',
-      dataIndex: 'manager',
-      key: 'manager'
+      key: 'description',
+      render: (text) => text || '-'
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
       render: (status) => {
-        const statusMap = {
-          planning: { color: 'gold', text: '规划中' },
-          active: { color: 'green', text: '进行中' },
-          completed: { color: 'blue', text: '已完成' },
-          archived: { color: 'default', text: '已归档' }
-        }
-        const info = statusMap[status] || { color: 'default', text: status }
+        const info = statusMap[status] ?? { color: 'default', text: String(status) }
         return <Tag color={info.color}>{info.text}</Tag>
       }
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime',
-      key: 'createTime'
+      dataIndex: 'createdAt',
+      key: 'createdAt'
     },
     {
       title: '操作',
       key: 'action',
-      render: () => (
+      render: (_, record) => (
         <Space size="middle">
           <Button type="link" icon={<EditOutlined />}>
             编辑
           </Button>
-          <Button type="link" danger icon={<DeleteOutlined />}>
-            删除
-          </Button>
+          {record.status === 1 && (
+            <Button type="link" danger onClick={() => handleArchive(record.id)}>
+              归档
+            </Button>
+          )}
         </Space>
       )
-    }
-  ]
-
-  // 模拟数据
-  const data = [
-    {
-      id: 1,
-      name: 'Z-Task项目',
-      description: '任务管理系统开发',
-      manager: '张三',
-      status: 'active',
-      createTime: '2024-01-01'
-    },
-    {
-      id: 2,
-      name: 'Z-Config项目',
-      description: '配置中心系统开发',
-      manager: '李四',
-      status: 'active',
-      createTime: '2024-02-01'
     }
   ]
 
@@ -84,12 +108,35 @@ export default function ProjectList() {
     <Card
       title="项目管理"
       extra={
-        <Button type="primary" icon={<PlusOutlined />}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => setModalVisible(true)}>
           新建项目
         </Button>
       }
     >
-      <Table columns={columns} dataSource={data} rowKey="id" />
+      <Table
+        columns={columns}
+        dataSource={projects}
+        rowKey="id"
+        loading={loading}
+      />
+
+      <Modal
+        title="新建项目"
+        open={modalVisible}
+        onOk={handleCreate}
+        onCancel={() => { setModalVisible(false); form.resetFields() }}
+        okText="创建"
+        cancelText="取消"
+      >
+        <Form form={form} layout="vertical">
+          <Form.Item name="name" label="项目名称" rules={[{ required: true, message: '请输入项目名称' }]}>
+            <Input placeholder="请输入项目名称" />
+          </Form.Item>
+          <Form.Item name="description" label="项目描述">
+            <Input.TextArea placeholder="请输入项目描述" rows={3} />
+          </Form.Item>
+        </Form>
+      </Modal>
     </Card>
   )
 }

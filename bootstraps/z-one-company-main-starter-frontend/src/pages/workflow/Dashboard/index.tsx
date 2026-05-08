@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
               valueStyle={{ color: '#1677ff' }}
             />
             <div className={styles.statFooter}>
-              <Link to="/approval-center/todo">
+              <Link to="/workflow/todo">
                 去处理 <RightOutlined />
               </Link>
             </div>
@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
               valueStyle={{ color: '#52c41a' }}
             />
             <div className={styles.statFooter}>
-              <Link to="/approval-center/done">
+              <Link to="/workflow/done">
                 查看全部 <RightOutlined />
               </Link>
             </div>
@@ -111,7 +111,7 @@ const Dashboard: React.FC = () => {
               valueStyle={{ color: '#722ed1' }}
             />
             <div className={styles.statFooter}>
-              <Link to="/approval-center/my-processes">
+              <Link to="/workflow/my-processes">
                 查看全部 <RightOutlined />
               </Link>
             </div>
@@ -127,7 +127,7 @@ const Dashboard: React.FC = () => {
             待办任务
           </span>
         }
-        extra={<Link to="/approval-center/todo">查看更多</Link>}
+        extra={<Link to="/workflow/todo">查看更多</Link>}
         loading={loading}
         className={styles.todoCard}
       >
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
                   <Button
                     type="primary"
                     size="small"
-                    onClick={() => navigate(`/approval-center/tasks/${task.id}`)}
+                    onClick={() => navigate(`/workflow/task/${task.id}`)}
                   >
                     处理
                   </Button>,

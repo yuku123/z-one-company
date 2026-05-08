@@ -41,7 +41,7 @@ const TodoList: React.FC = () => {
   const fetchTodoList = async (pageNum = 1, pageSize = 10) => {
     try {
       setLoading(true);
-      const result = await approvalApi.getTodoTasks('admin', pageNum, pageSize);
+      const result = await approvalApi.getTodoList('admin', pageNum, pageSize);
       setData(result);
     } catch (error) {
       console.error('获取待办列表失败:', error);
@@ -157,7 +157,7 @@ const TodoList: React.FC = () => {
             type="primary"
             size="small"
             icon={<CheckCircleOutlined />}
-            onClick={() => navigate(`/approval-center/tasks/${record.id}`)}
+            onClick={() => navigate(`/workflow/task/${record.id}`)}
           >
             审批
           </Button>

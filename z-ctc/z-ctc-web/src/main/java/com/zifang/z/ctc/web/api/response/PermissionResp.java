@@ -9,7 +9,6 @@ public class PermissionResp {
     private String resourceType;
     private Long parentId;
     private String path;
-    private String icon;
     private Integer sort;
     private Integer status;
     private LocalDateTime gmtCreate;
@@ -26,8 +25,6 @@ public class PermissionResp {
     public void setParentId(Long parentId) { this.parentId = parentId; }
     public String getPath() { return path; }
     public void setPath(String path) { this.path = path; }
-    public String getIcon() { return icon; }
-    public void setIcon(String icon) { this.icon = icon; }
     public Integer getSort() { return sort; }
     public void setSort(Integer sort) { this.sort = sort; }
     public Integer getStatus() { return status; }

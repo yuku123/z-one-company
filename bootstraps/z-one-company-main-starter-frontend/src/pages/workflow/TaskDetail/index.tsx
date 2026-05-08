@@ -81,7 +81,7 @@ const TaskDetail: React.FC = () => {
         formData: values.formData,
       });
       message.success('审批操作成功');
-      navigate('/approval-center/todo');
+      navigate('/workflow/todo');
     } catch (error) {
       console.error('审批操作失败:', error);
       message.error('审批操作失败');

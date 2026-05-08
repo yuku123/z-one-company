@@ -91,7 +91,6 @@ CREATE TABLE permission (
     perm_type VARCHAR(20) NOT NULL COMMENT '权限类型：MENU-菜单，BUTTON-按钮，API-API接口',
     parent_id BIGINT DEFAULT 0 COMMENT '父权限ID，0表示顶级',
     path VARCHAR(255) DEFAULT NULL COMMENT '路径（菜单或API路径）',
-    icon VARCHAR(50) DEFAULT NULL COMMENT '图标（仅菜单）',
     sort_order INT DEFAULT 0 COMMENT '排序顺序',
     status TINYINT NOT NULL DEFAULT 1 COMMENT '状态 1-启用 0-禁用',
     tenant_code VARCHAR(64) NOT NULL COMMENT '租户编码',

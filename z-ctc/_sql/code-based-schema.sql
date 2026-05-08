@@ -194,7 +194,6 @@ CREATE TABLE z_ctc_permission (
     perm_type     VARCHAR(32)  NOT NULL COMMENT '权限类型：MENU/BUTTON/API',
     parent_id     BIGINT       DEFAULT 0  COMMENT '父权限ID（树形保留）',
     path          VARCHAR(256) DEFAULT NULL COMMENT '路径',
-    icon          VARCHAR(64)  DEFAULT NULL COMMENT '图标',
     sort_order    INT          DEFAULT 0  COMMENT '排序号',
     status        TINYINT      DEFAULT 1  COMMENT '状态 1-启用 0-禁用',
     tenant_code   VARCHAR(64)  DEFAULT NULL COMMENT '租户编码',
