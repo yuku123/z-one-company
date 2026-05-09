@@ -373,3 +373,22 @@ export const opsApi = {
   addImageBuild: (data) => request.post('/api/image-build', data),
   getBuildLogs: (params) => request.get('/api/image-build/logs', { params }),
 }
+
+// ========== 技能市场 ==========
+export const skillApi = {
+  page: (data: any) => request.post('/api/skill/page', data),
+  getBySkillCode: (skillCode: string) => request.get('/api/skill/get', { params: { skillCode } }),
+  getContent: (skillCode: string) => request.get('/api/skill/content', { params: { skillCode } }),
+  create: (data: any) => request.post('/api/skill', data),
+  update: (data: any) => request.post('/api/skill/update', data),
+  delete: (id: number) => request.post(`/api/skill/${id}/delete`),
+  publish: (skillCode: string) => request.post('/api/skill/publish', { skillCode }),
+  install: (data: any) => request.post('/api/skill/install', data),
+  versions: (skillCode: string) => request.get('/api/skill/versions', { params: { skillCode } }),
+  addVersion: (data: any) => request.post('/api/skill/version', data),
+  categoryTree: () => request.get('/api/skill/category/tree'),
+  createCategory: (data: any) => request.post('/api/skill/category', data),
+  deleteCategory: (id: number) => request.post(`/api/skill/category/${id}/delete`),
+  hot: (limit: number = 10) => request.get('/api/skill/hot', { params: { limit } }),
+  stats: () => request.get('/api/skill/stats'),
+}

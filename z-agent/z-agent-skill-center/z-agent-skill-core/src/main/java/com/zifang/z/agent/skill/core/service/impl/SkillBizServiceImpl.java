@@ -19,7 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -133,6 +135,16 @@ public class SkillBizServiceImpl implements SkillBizService {
         Page<Skill> page = new Page<>(1, limit);
         IPage<Skill> skillPage = skillService.page(page, wrapper);
         return skillPage.getRecords().stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<String, Object> stats() {
+        Map<String, Object> result = new HashMap<>();
+        LambdaQueryWrapper<Skill> wrapper = new LambdaQueryWrapper<>();
+        result.put("total", skillService.count(wrapper));
+        wrapper.eq(Skill::getStatus, "PUBLISHED");
+        result.put("published", skillService.count(wrapper));
+        return result;
     }
 
     @Override
