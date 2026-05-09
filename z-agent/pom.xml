@@ -17,8 +17,6 @@
         <module>z-agent-engine</module>
 
         <module>z-agent-skill-center</module>
-        <module>z-agent-skill-center/z-agent-skill-core</module>
-        <module>z-agent-skill-center/z-agent-skill-starter</module>
     </modules>
 
     <properties>
