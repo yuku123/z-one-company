@@ -115,7 +115,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.7.12</version>
                 <configuration>
-                    <mainClass>com.zifang.z.agent.mcp.starter.stdio.McpStdioServer</mainClass>
+                    <mainClass>com.zifang.z.agent.mcp.service1.stdio.McpStdioServer</mainClass>
                 </configuration>
                 <executions>
                     <execution>

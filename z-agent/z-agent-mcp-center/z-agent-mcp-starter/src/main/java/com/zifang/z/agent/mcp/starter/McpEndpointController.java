@@ -223,7 +223,6 @@ public class McpEndpointController {
         return a;
     }
 
-    @SafeVarargs
     private static <K, V> Map<K, V> mapOf(K k1, V v1, K k2, V v2) {
         Map<K, V> m = new LinkedHashMap<>();
         m.put(k1, v1);
