@@ -1,6 +1,20 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: z-agent-mcp-impl-db
+  datasource:
+    url: jdbc:mysql://rm-bp108uqlgwn712k54ho.mysql.rds.aliyuncs.com:3306/bwg_db?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf-8&allowPublicKeyRetrieval=true
+    username: bwg_root
+    password: bwg_root_pw_123!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 10000
+
+server:
+  port: 8095
+
+logging:
+  level:
+    root: WARN
+    com.zifang: INFO

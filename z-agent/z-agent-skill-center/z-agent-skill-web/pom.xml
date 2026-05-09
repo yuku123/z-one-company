@@ -10,7 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>z-agent-skill-core</artifactId>
+    <artifactId>z-agent-skill-web</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,7 +19,6 @@
     </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>com.zifang</groupId>
             <artifactId>z-boot-web-starter</artifactId>
@@ -36,16 +35,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>com.zifang</groupId>
+            <artifactId>z-agent-skill-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.83</version>
-        </dependency>
-
     </dependencies>
 
 </project>

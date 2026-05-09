@@ -30,8 +30,8 @@ public class McpAutoConfiguration {
     }
 
     @Bean
-    public McpToolRegistrar mcpToolRegistrar(McpRegistry registry) {
-        return new McpToolRegistrar(registry);
+    public McpToolRegistrar mcpToolRegistrar(McpRegistry registry, McpAnnotationToolExecutor executor) {
+        return new McpToolRegistrar(registry, executor);
     }
 
     @Bean

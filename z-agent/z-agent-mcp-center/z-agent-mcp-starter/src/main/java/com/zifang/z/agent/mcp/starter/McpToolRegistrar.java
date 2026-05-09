@@ -20,9 +20,11 @@ public class McpToolRegistrar implements BeanPostProcessor {
     private static final Logger log = LoggerFactory.getLogger(McpToolRegistrar.class);
 
     private final McpRegistry registry;
+    private final McpAnnotationToolExecutor executor;
 
-    public McpToolRegistrar(McpRegistry registry) {
+    public McpToolRegistrar(McpRegistry registry, McpAnnotationToolExecutor executor) {
         this.registry = registry;
+        this.executor = executor;
     }
 
     @Override
@@ -49,6 +51,9 @@ public class McpToolRegistrar implements BeanPostProcessor {
             meta.setInputSchema(inputSchema);
 
             registry.registerOrUpdate(meta);
+
+            // 同步注册到 executor，使 tools/call 可执行
+            executor.register(toolName, bean, method);
 
             log.info("Registered MCP tool: {} (bean={}, method={})", toolName, beanName, method.getName());
         }

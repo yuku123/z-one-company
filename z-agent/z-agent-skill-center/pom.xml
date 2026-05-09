@@ -10,11 +10,69 @@
     </parent>
 
     <artifactId>z-agent-skill-center</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>z-agent-skill-core</module>
+        <module>z-agent-skill-web</module>
+        <module>z-agent-skill-starter</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <z.boot.version>1.0.0-SNAPSHOT</z.boot.version>
+        <z.boot.starter.version>1.0.0-SNAPSHOT</z.boot.starter.version>
+        <z.util.version>1.0.2-SNAPSHOT</z.util.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-boot-dependencies</artifactId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${z.boot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-boot-web-starter</artifactId>
+                <version>${z.boot.starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-boot-datasource-starter</artifactId>
+                <version>${z.boot.starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-util-core</artifactId>
+                <version>${z.util.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-agent-skill-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-agent-skill-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-agent-skill-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
