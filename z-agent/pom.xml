@@ -21,7 +21,6 @@
         <module>z-agent-core</module>
         <module>z-agent-bot</module>
         <module>z-agent-mcp-center</module>
-        <module>z-agent-mcp-web</module>
         <module>z-agent-common</module>
         <module>z-agent-center</module>
         <module>z-agent-engine</module>

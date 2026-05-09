@@ -72,8 +72,8 @@ const ImageBuild = () => {
         request={async (params) => {
           try {
             const res = await opsApi.pageImageBuild({
-              current: params.current || 1,
-              size: params.pageSize || 10,
+              pageNum: params.current || 1,
+              pageSize: params.pageSize || 10,
               imageName: params.imageName,
               appName: params.appName,
               branch: params.branch,

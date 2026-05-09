@@ -86,8 +86,8 @@ const ImageRepo = () => {
         ]}
         request={async (params) => {
           const res = await opsApi.pageImage({
-            current: params.current || 1,
-            size: params.pageSize || 10,
+            pageNum: params.current || 1,
+            pageSize: params.pageSize || 10,
             name: params.name,
           })
           return { data: res.records, total: res.total, success: true }

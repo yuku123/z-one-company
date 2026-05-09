@@ -20,6 +20,7 @@
         <module>z-agent-mcp-impl/z-agent-mcp-impl-asset</module>
         <module>z-agent-mcp-impl/z-agent-mcp-impl-db</module>
         <module>z-agent-mcp-starter</module>
+        <module>z-agent-mcp-web</module>
     </modules>
 
     <properties>

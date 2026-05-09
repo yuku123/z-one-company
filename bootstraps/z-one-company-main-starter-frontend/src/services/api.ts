@@ -365,7 +365,7 @@ export const opsApi = {
   // 镜像版本
   listImageTags: (params) => request.get('/api/image/tags', { params }),
   addImageTag: (data) => request.post('/api/image/tag', data),
-  deleteImageTag: (params) => request.delete('/api/image/tag/delete', { params }),
+  deleteImageTag: (params) => request.post('/api/image/tag/delete', null, { params }),
   // 构建记录
   listImageBuild: (params) => request.get('/api/image-build/list', { params }),
   pageImageBuild: (data) => request.post('/api/image-build/page', data),

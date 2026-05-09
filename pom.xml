@@ -38,7 +38,6 @@
         <module>z-agent</module>
         <module>bootstraps</module>
         <module>z-ops</module>
-        <module>z-agent/z-agent-mcp-center/z-agent-mcp-web</module>
     </modules>
 
     <properties>
