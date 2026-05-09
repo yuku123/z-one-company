@@ -35,6 +35,7 @@
         <module>z-schedule</module>
         <module>z-cache</module>
         <module>z-boot</module>
+        <module>z-agent</module>
         <module>bootstraps</module>
     </modules>
 
