@@ -1,13 +1,10 @@
 -- Z-Task 数据库脚本
 -- 基于 zb-ctc 的 SSO 集成，不单独管理用户登录
-
--- 创建Z-Task数据库
-CREATE DATABASE IF NOT EXISTS z_task CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE z_task;
+-- 注意：所有表都在 oc 库中，使用 z_task_ 前缀
 
 -- 1. 项目表
-DROP TABLE IF EXISTS `z_project`;
-CREATE TABLE IF NOT EXISTS `z_project` (
+DROP TABLE IF EXISTS `z_task_project`;
+CREATE TABLE IF NOT EXISTS `z_task_project` (
                                            `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `name` varchar(100) NOT NULL COMMENT '项目名称',
     `description` varchar(500) DEFAULT NULL COMMENT '项目描述',
@@ -23,8 +20,8 @@ CREATE TABLE IF NOT EXISTS `z_project` (
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='项目表';
 
 -- 2. 任务表
-DROP TABLE IF EXISTS `z_task`;
-CREATE TABLE IF NOT EXISTS `z_task` (
+DROP TABLE IF EXISTS `z_task_task`;
+CREATE TABLE IF NOT EXISTS `z_task_task` (
                                         `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
     `name` varchar(200) NOT NULL COMMENT '任务名称',
     `description` text DEFAULT NULL COMMENT '任务描述',
@@ -115,11 +112,11 @@ INSERT IGNORE INTO `z_user_role` (`user_id`, `role`)
 VALUES (1, 'ROLE_ADMIN');
 
 -- 初始化测试项目
-INSERT IGNORE INTO `z_project` (`id`, `name`, `description`, `manager_id`, `status`)
+INSERT IGNORE INTO `z_task_project` (`id`, `name`, `description`, `manager_id`, `status`)
 VALUES (1, 'Z-Task任务管理系统', '自研任务管理系统开发项目', 1, 1);
 
 -- 初始化测试任务
-INSERT IGNORE INTO `z_task` (`id`, `name`, `description`, `project_id`, `assignee_id`, `status`, `priority`, `creator_id`)
+INSERT IGNORE INTO `z_task_task` (`id`, `name`, `description`, `project_id`, `assignee_id`, `status`, `priority`, `creator_id`)
 VALUES
 (1, '完成前端页面开发', '开发任务管理的前端页面，包括列表、详情、编辑等功能', 1, 1, 2, 3, 1),
 (2, '开发后端API接口', '开发任务管理的后端RESTful API接口', 1, 1, 1, 3, 1);
@@ -127,7 +124,7 @@ VALUES
 -- ============================================
 -- 1. 用户同步表 (来自 zb-ctc)
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_sync_user (
+CREATE TABLE IF NOT EXISTS z_task_sync_user (
     id BIGINT PRIMARY KEY,
     user_id VARCHAR(64) NOT NULL COMMENT 'zb-ctc 用户ID',
     username VARCHAR(50) NOT NULL COMMENT '用户名',
@@ -147,7 +144,7 @@ CREATE TABLE IF NOT EXISTS z_sync_user (
 -- ============================================
 -- 2. 项目表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_project (
+CREATE TABLE IF NOT EXISTS z_task_project (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL COMMENT '项目名称',
     description TEXT COMMENT '项目描述',
@@ -165,7 +162,7 @@ CREATE TABLE IF NOT EXISTS z_project (
 -- ============================================
 -- 3. 项目成员表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_project_member (
+CREATE TABLE IF NOT EXISTS z_task_project_member (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     project_id BIGINT NOT NULL COMMENT '项目ID',
     user_id VARCHAR(64) NOT NULL COMMENT '用户ID(来自zb-ctc)',
@@ -179,7 +176,7 @@ CREATE TABLE IF NOT EXISTS z_project_member (
 -- ============================================
 -- 4. 看板表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_board (
+CREATE TABLE IF NOT EXISTS z_task_board (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL COMMENT '看板名称',
     project_id BIGINT NOT NULL COMMENT '项目ID',
@@ -194,7 +191,7 @@ CREATE TABLE IF NOT EXISTS z_board (
 -- ============================================
 -- 5. 列表表 (看板中的列)
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_task_list (
+CREATE TABLE IF NOT EXISTS z_task_task_list (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     board_id BIGINT NOT NULL COMMENT '看板ID',
     name VARCHAR(100) NOT NULL COMMENT '列表名称',
@@ -209,7 +206,7 @@ CREATE TABLE IF NOT EXISTS z_task_list (
 -- ============================================
 -- 6. 任务表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_task (
+CREATE TABLE IF NOT EXISTS z_task_task (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(200) NOT NULL COMMENT '任务标题',
     description TEXT COMMENT '任务描述(Markdown)',
@@ -235,7 +232,7 @@ CREATE TABLE IF NOT EXISTS z_task (
 -- ============================================
 -- 7. 任务执行者关联表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_task_assignee (
+CREATE TABLE IF NOT EXISTS z_task_task_assignee (
     task_id BIGINT NOT NULL COMMENT '任务ID',
     user_id VARCHAR(64) NOT NULL COMMENT '用户ID(来自zb-ctc)',
     PRIMARY KEY (task_id, user_id),
@@ -245,7 +242,7 @@ CREATE TABLE IF NOT EXISTS z_task_assignee (
 -- ============================================
 -- 8. 标签表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_label (
+CREATE TABLE IF NOT EXISTS z_task_label (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     project_id BIGINT NOT NULL COMMENT '项目ID',
     name VARCHAR(50) NOT NULL COMMENT '标签名称',
@@ -258,7 +255,7 @@ CREATE TABLE IF NOT EXISTS z_label (
 -- ============================================
 -- 9. 任务标签关联表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_task_label (
+CREATE TABLE IF NOT EXISTS z_task_task_label (
     task_id BIGINT NOT NULL COMMENT '任务ID',
     label_id BIGINT NOT NULL COMMENT '标签ID',
     PRIMARY KEY (task_id, label_id)

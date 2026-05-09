@@ -10,11 +10,38 @@
     </parent>
 
     <artifactId>z-ops</artifactId>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <zifang-boot.version>1.0.0</zifang-boot.version>
+        <zifang-util.version>1.0.2-SNAPSHOT</zifang-util.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-boot-web-starter</artifactId>
+                <version>${zifang-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-boot-datasource-starter</artifactId>
+                <version>${zifang-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-util-core</artifactId>
+                <version>${zifang-util.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <module>z-ops-core</module>
+        <module>z-ops-web</module>
+    </modules>
 </project>

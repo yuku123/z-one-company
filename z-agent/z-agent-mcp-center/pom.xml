@@ -12,7 +12,7 @@
     <artifactId>z-agent-mcp-center</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>z-agent-mcp-starter</module>
+        <module>z-agent-mcp-server1</module>
         <module>z-agent-mcp-core</module>
         <module>z-agent-mcp-client</module>
         <module>z-agent-mcp-gw</module>
