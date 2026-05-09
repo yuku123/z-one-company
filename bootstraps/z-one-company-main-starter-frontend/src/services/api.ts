@@ -392,3 +392,19 @@ export const skillApi = {
   hot: (limit: number = 10) => request.get('/api/skill/hot', { params: { limit } }),
   stats: () => request.get('/api/skill/stats'),
 }
+
+// ==================== MCP 管理 ====================
+export const mcpApi = {
+  // Server CRUD
+  list: (tenantCode?: string) => request.get('/api/mcp/server/list', { params: { tenantCode } }),
+  get: (id: number) => request.get(`/api/mcp/server/${id}`),
+  create: (data: any) => request.post('/api/mcp/server', data),
+  update: (data: any) => request.post('/api/mcp/server/update', data),
+  delete: (id: number) => request.post(`/api/mcp/server/${id}/delete`),
+  // Tool proxy
+  listTools: (id: number) => request.post(`/api/mcp/server/${id}/tools/list`),
+  callTool: (id: number, name: string, args?: any) =>
+    request.post(`/api/mcp/server/${id}/tools/call`, { name, arguments: args || {} }),
+  // Test connection
+  test: (id: number) => request.post(`/api/mcp/server/${id}/test`),
+}
