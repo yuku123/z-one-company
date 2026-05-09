@@ -37,6 +37,7 @@
         <module>z-boot</module>
         <module>z-agent</module>
         <module>bootstraps</module>
+        <module>z-ops</module>
     </modules>
 
     <properties>

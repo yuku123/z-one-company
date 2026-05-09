@@ -3,7 +3,6 @@ import styles from './index.module.css';
 import { registerApprovalNodes } from './nodes';
 
 declare const LogicFlow: any;
-const { Control, MiniMap, Menu, DndPanel, SelectionSelect } = LogicFlow.extension;
 
 const nodeTypes = [
   { type: 'start', label: '开始节点', icon: 'https://cdn.jsdelivr.net/gh/LogicFlow/static@latest/docs/static/start.png' },
@@ -34,6 +33,8 @@ const FlowDesigner: React.FC<FlowDesignerProps> = ({
   const initLogicFlow = useCallback(() => {
     if (!containerRef.current) return;
 
+    // LogicFlow.extension 的解构必须放在回调里，不能放模块顶部
+    const { Control, MiniMap, Menu, DndPanel, SelectionSelect } = LogicFlow.extension;
     LogicFlow.use(Control);
     LogicFlow.use(MiniMap);
     LogicFlow.use(Menu);

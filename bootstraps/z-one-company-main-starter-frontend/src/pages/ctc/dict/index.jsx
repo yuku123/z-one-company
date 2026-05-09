@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Card, Tree, Table, Button, Space, Tag, Modal, Form, Input, Select, message, Popconfirm, Empty, InputNumber, Checkbox } from 'antd'
+import { Card, Tree, Table, Button, Space, Tag, Modal, Form, Input, Select, message, Popconfirm, Empty, InputNumber, Checkbox, Dropdown } from 'antd'
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined, ThunderboltOutlined, FieldBinaryOutlined } from '@ant-design/icons'
 import { dictApi, dictCatApi, getTenantList } from '@/services/api'
 
 const DictPage = () => {
   const [loading, setLoading] = useState(false)
   const [tenantOptions, setTenantOptions] = useState([])
-  const [selectedTenant, setSelectedTenant] = useState(null)
+  const [selectedTenant, setSelectedTenant] = useState(() => localStorage.getItem('z_tenant') || null)
   const [categories, setCategories] = useState([]) // category tree data
   const [allItems, setAllItems] = useState([])
   const [selectedCat, setSelectedCat] = useState(null) // selected category node
@@ -14,9 +14,9 @@ const DictPage = () => {
   const [itemModalOpen, setItemModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
   const [catModalOpen, setCatModalOpen] = useState(false)
+  const [catModalMode, setCatModalMode] = useState('cat') // 'cat' | 'enum'
   const [schemaModalOpen, setSchemaModalOpen] = useState(false)
   const [schemaFields, setSchemaFields] = useState([])
-  const [catSchemaCount, setCatSchemaCount] = useState(1)
   const [form] = Form.useForm()
   const [catForm] = Form.useForm()
   const [schemaForm] = Form.useForm()
@@ -37,53 +37,109 @@ const DictPage = () => {
 
   const loadData = async () => {
     setLoading(true)
+    console.log('[dict] loadData called, selectedTenant:', selectedTenant)
     try {
       const [items, cats, hasInit, dbCats] = await Promise.all([
-        dictApi.list(selectedTenant).catch(() => []),
-        dictApi.categories(selectedTenant).catch(() => []),
-        dictApi.hasInit(selectedTenant).catch(() => false),
-        dictCatApi.list(selectedTenant).catch(() => []),
+        dictApi.list(selectedTenant).catch(e => { console.error('[dict] list error', e); return [] }),
+        dictApi.categories(selectedTenant).catch(e => { console.error('[dict] categories error', e); return [] }),
+        dictApi.hasInit(selectedTenant).catch(e => { console.error('[dict] hasInit error', e); return false }),
+        dictCatApi.list(selectedTenant).catch(e => { console.error('[dict] dbCats error', e); return [] }),
       ])
+      console.log('[dict] API results:', { items, cats, hasInit, dbCats })
       setAllItems(items || [])
       setInitStatus(hasInit)
-      // build tree: dbCats define the hierarchy, enums are leaf nodes under their category
-      const roots = (dbCats || []).filter(c => !c.parentCode)
-      const buildTree = (parentCode) => {
-        const children = (dbCats || []).filter(c => c.parentCode === parentCode)
-        const enumsInCat = (cats || []).filter(cat => cat === parentCode).map(cat => ({
-          key: `enum:${cat}`, title: 'enum',
-          type: 'enum', data: { category: cat }, isLeaf: true,
-        }))
-        if (children.length === 0) { return enumsInCat }
-        const subNodes = children.map(c => ({
-          key: `cat:${c.catCode}`, title: 'cat', type: 'category', data: c,
-          children: buildTree(c.catCode),
-        }))
-        return subNodes
+
+      // --- 建立 category 节点 ---
+      const catMap = {}
+      ;(dbCats || []).forEach(c => {
+        // 处理重复 catCode：只保留第一个（根分类优先）
+        if (!catMap[c.catCode]) catMap[c.catCode] = c
+      })
+
+      // --- 建立 category → enum items 的映射 ---
+      // items 的 category 字段（如 "dd", "status"）对应 categories API 返回的分类名
+      const catToEnums = {}
+      ;(items || []).forEach(item => {
+        if (item.category === '__META__') return
+        const parent = item.category
+        if (!catToEnums[parent]) catToEnums[parent] = []
+        catToEnums[parent].push(item)
+      })
+
+      // --- 构建分类骨架（来自 dbCats，提供父子层级）---
+      const dbCatMap = {}   // catCode → dbCat 记录
+      ;(dbCats || []).forEach(c => { dbCatMap[c.catCode] = c })
+
+      // 递归：某 catCode 下的直接子分类
+      const buildDbCatChildren = (parentCode) => {
+        return (dbCats || [])
+          .filter(c => c.parentCode === parentCode)
+          .filter(c => catMap[c.catCode])   // 去重：跳过被覆盖的重复节点
+          .map(c => ({
+            key: `cat:${c.catCode}`,
+            title: c.catName || c.catCode,
+            type: 'category',
+            data: c,
+            children: buildDbCatChildren(c.catCode),
+          }))
       }
-      const treeData = roots.map(r => ({
-        key: `cat:${r.catCode}`, title: 'cat', type: 'category', data: r,
-        children: buildTree(r.catCode),
-      }))
-      const catCodes = new Set((dbCats || []).map(c => c.catCode))
-      const orphanEnumNames = (cats || []).filter(cat => !catCodes.has(cat))
-      const orphanEnums = orphanEnumNames.map(cat => ({
-        key: `enum:${cat}`, title: 'enum', type: 'enum', data: { category: cat }, isLeaf: true,
-      }))
-      if (orphanEnums.length > 0) {
-        treeData.push({ key: '__orphans__', title: <Tag color="orange">未分类</Tag>, type: 'placeholder', children: orphanEnums })
-      }
+
+      // --- 顶级分类节点 = categories API 返回的所有分类名 ---
+      // 每个分类名下挂载该 category 下的所有枚举 items
+      const topLevelNodes = (cats || []).map(catName => {
+        const enums = catToEnums[catName] || []
+        return {
+          key: `cat:${catName}`,
+          title: catName,
+          type: 'category',
+          data: dbCatMap[catName] || { catCode: catName, catName: catName, parentCode: null },
+          children: enums.length > 0 ? enums.map(item => ({
+            key: `enum:${item.category}:${item.dictKey}`,
+            title: item.dictKey,
+            type: 'enum',
+            data: item,
+            isLeaf: true,
+          })) : undefined,
+        }
+      })
+
+      const treeData = topLevelNodes
+      console.log('[dict] treeData:', JSON.stringify(treeData, null, 2))
       setCategories(treeData)
-    } catch (e) { message.error('加载失败') } finally { setLoading(false) }
+    }
+    catch (e) { message.error('加载失败') } finally { setLoading(false) }
   }
 
+  // 初始化租户的元典数据（首次使用时调用）
   const handleInit = async () => {
-    try { await dictApi.init(selectedTenant, ''); message.success('初始化成功'); loadData() }
-    catch (e) { message.error('初始化失败') }
+    try {
+      await dictApi.init(selectedTenant, { tenantCode: selectedTenant })
+      message.success('初始化成功')
+      loadData()
+    } catch (e) { message.error('初始化失败') }
   }
 
+  const openCatModal = (mode = 'cat') => {
+    setCatModalMode(mode)
+    // 先设默认值，再 resetFields（避免值被清掉）
+    if (mode === 'enum' && selectedCat?.type === 'category') {
+      catForm.setFieldsValue({ parentCode: selectedCat.key.replace('cat:', '') })
+    } else {
+      catForm.resetFields()
+    }
+    setCatModalOpen(true)
+  }
+
+  // 分类新增按钮 - 下拉菜单
+  const addCatDropdown = {
+    items: [
+      { key: 'cat', label: '新增子分类', icon: <PlusOutlined />, onClick: () => openCatModal('cat') },
+      { key: 'enum', label: '新增枚举', icon: <PlusOutlined />, onClick: () => openCatModal('enum') },
+    ],
+  }
   // current items for selected enum
-  const currentEnum = selectedCat?.type === 'enum' ? selectedCat.key.replace('enum:', '') : null
+  // key 格式: category:dictKey（如 "status:enabled"）
+  const currentEnum = selectedCat?.type === 'enum' ? selectedCat.key.replace(/^enum:/, '').split(':')[0] : null
   const currentItems = useMemo(() =>
     allItems.filter(i => i.category === currentEnum && i.dictKey !== '__META__'),
     [allItems, currentEnum]
@@ -196,7 +252,9 @@ const DictPage = () => {
         extra={
           <Space size={4}>
             {selectedTenant && initStatus === false && <Button size="small" icon={<ThunderboltOutlined />} onClick={handleInit}>初始化</Button>}
-            <Button size="small" icon={<PlusOutlined />} onClick={() => { setCatModalOpen(true); catForm.resetFields(); setCatSchemaCount(1) }} />
+            <Dropdown menu={addCatDropdown} trigger={['click']}>
+              <Button size="small" icon={<PlusOutlined />} />
+            </Dropdown>
             <Button size="small" icon={<ReloadOutlined />} onClick={loadData} />
           </Space>
         }>
@@ -243,33 +301,109 @@ const DictPage = () => {
         ) : <Empty description="请从左侧选择枚举" />}
       </Card>
 
-      {/* 新增分类弹窗 */}
-      <Modal title="新增分类" open={catModalOpen} width={500}
+      {/* 新增分类/枚举弹窗 */}
+      <Modal
+        title={catModalMode === 'cat' ? '新增子分类' : '新增枚举'}
+        open={catModalOpen}
+        width={560}
         onCancel={() => setCatModalOpen(false)}
-        onOk={() => catForm.submit()} destroyOnClose>
-        <Form form={catForm} layout="vertical" onFinish={async (v) => {
-          try {
-            await dictCatApi.create({ catCode: v.catCode, catName: v.catName, parentCode: v.parentCode || undefined, tenantCode: selectedTenant })
-            message.success('创建成功'); setCatModalOpen(false); loadData()
-          } catch (e) { message.error('创建失败') }
-        }}>
-          <Form.Item name="catCode" label="分类编码" rules={[{ required: true }]}><Input placeholder="如：server_config" /></Form.Item>
-          <Form.Item name="catName" label="分类名称"><Input placeholder="如：服务器配置" /></Form.Item>
-          <Form.Item name="parentCode" label="父分类">
-            <Select allowClear placeholder="留空为顶级">
-              {(categories || []).filter(n => n.type === 'category').map(n => {
-                const code = n.key.replace('cat:', '')
-                return <Select.Option key={code} value={code}>{n.data?.catName || n.data?.catCode || code}</Select.Option>
-              })}
-            </Select>
-          </Form.Item>
+        onOk={() => catForm.submit()}
+        destroyOnHidden
+      >
+        <Form
+          form={catForm}
+          layout="vertical"
+          onFinish={async (v) => {
+            try {
+              if (catModalMode === 'cat') {
+                await dictCatApi.create({ catCode: v.catCode, catName: v.catName, parentCode: v.parentCode || undefined, tenantCode: selectedTenant })
+              } else {
+                // 新增枚举：同时写入 schema
+                const schemaPayload = v.extSchema ? JSON.stringify(v.extSchema) : undefined
+                await dictCatApi.create({
+                  catCode: v.enumCode,
+                  catName: v.enumName,
+                  parentCode: v.parentCode || undefined,
+                  tenantCode: selectedTenant,
+                  extSchema: schemaPayload,
+                })
+              }
+              message.success('创建成功')
+              setCatModalOpen(false)
+              loadData()
+            } catch (e) {
+              message.error('创建失败')
+            }
+          }}
+        >
+          {catModalMode === 'cat' ? (
+            <>
+              <Form.Item name="catCode" label="分类编码" rules={[{ required: true }]}>
+                <Input placeholder="如：server_config" />
+              </Form.Item>
+              <Form.Item name="catName" label="分类名称">
+                <Input placeholder="如：服务器配置" />
+              </Form.Item>
+              <Form.Item name="parentCode" label="父分类">
+                <Select allowClear placeholder="留空为顶级">
+                  {(categories || []).filter(n => n.type === 'category').map(n => {
+                    const code = n.key.replace('cat:', '')
+                    return <Select.Option key={code} value={code}>{n.data?.catName || n.data?.catCode || code}</Select.Option>
+                  })}
+                </Select>
+              </Form.Item>
+            </>
+          ) : (
+            <>
+              <Form.Item name="enumCode" label="枚举编码" rules={[{ required: true }]}>
+                <Input placeholder="如：order_status" />
+              </Form.Item>
+              <Form.Item name="enumName" label="枚举名称" rules={[{ required: true }]}>
+                <Input placeholder="如：订单状态" />
+              </Form.Item>
+              <Form.Item name="parentCode" label="所属分类">
+                <Select allowClear placeholder="选择所属分类（可选）">
+                  {(categories || []).filter(n => n.type === 'category').map(n => {
+                    const code = n.key.replace('cat:', '')
+                    return <Select.Option key={code} value={code}>{n.data?.catName || n.data?.catCode || code}</Select.Option>
+                  })}
+                </Select>
+              </Form.Item>
+              {/* 内联 schema 定义 */}
+              <Form.Item label="字段描述（可选）">
+                <Form.List name="extSchema">
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name }) => (
+                        <Space key={key} size={4} style={{ display: 'flex', marginBottom: 8 }}>
+                          <Form.Item name={[name, 'field']} noStyle><Input placeholder="字段名" style={{ width: 100 }} /></Form.Item>
+                          <Form.Item name={[name, 'label']} noStyle><Input placeholder="显示名" style={{ width: 80 }} /></Form.Item>
+                          <Form.Item name={[name, 'type']} initialValue="text" noStyle>
+                            <Select style={{ width: 70 }}>
+                              <Select.Option value="text">文本</Select.Option>
+                              <Select.Option value="number">数字</Select.Option>
+                            </Select>
+                          </Form.Item>
+                          <Form.Item name={[name, 'required']} valuePropName="checked" initialValue={false} noStyle>
+                            <Checkbox>必填</Checkbox>
+                          </Form.Item>
+                          <Button size="small" danger onClick={() => remove(name)}>删</Button>
+                        </Space>
+                      ))}
+                      <Button type="dashed" size="small" block onClick={() => add({ field: '', label: '', type: 'text', required: false })}>+ 添加字段</Button>
+                    </>
+                  )}
+                </Form.List>
+              </Form.Item>
+            </>
+          )}
         </Form>
       </Modal>
 
       {/* Schema 弹窗 */}
       <Modal title="字段描述定义" open={schemaModalOpen} width={700}
         onCancel={() => setSchemaModalOpen(false)}
-        onOk={handleSchemaSave} destroyOnClose>
+        onOk={handleSchemaSave} destroyOnHidden>
         <Form form={schemaForm} layout="vertical">
           <Table dataSource={schemaFields.map((f, i) => ({ ...f, key: i, idx: i }))} pagination={false} size="small"
             columns={[
@@ -287,7 +421,7 @@ const DictPage = () => {
       {/* 条目编辑弹窗 */}
       <Modal title={editingItem ? '编辑条目' : '新增条目'} open={itemModalOpen} width={600}
         onCancel={() => { setItemModalOpen(false); setEditingItem(null) }}
-        onOk={() => form.submit()} destroyOnClose>
+        onOk={() => form.submit()} destroyOnHidden>
         <Form form={form} layout="vertical" onFinish={async (values) => {
           const extData = {}; catSchema.forEach(sf => { if (values[sf.field] !== undefined) extData[sf.field] = values[sf.field] })
           const payload = { ...values, extData: Object.keys(extData).length > 0 ? JSON.stringify(extData) : undefined }

@@ -352,3 +352,24 @@ export const projectApi = {
   archiveProject: (projectId: number) =>
     request.put(`/project/${projectId}/archive`),
 }
+
+// ==================== 镜像仓库中心 ====================
+export const opsApi = {
+  // 镜像仓库 CRUD
+  listImage: (params) => request.get('/api/image/list', { params }),
+  pageImage: (data) => request.post('/api/image/page', data),
+  getImage: (params) => request.get('/api/image/get', { params }),
+  addImage: (data) => request.post('/api/image', data),
+  updateImage: (data) => request.post('/api/image/update', data),
+  deleteImage: (params) => request.post('/api/image/delete', params),
+  // 镜像版本
+  listImageTags: (params) => request.get('/api/image/tags', { params }),
+  addImageTag: (data) => request.post('/api/image/tag', data),
+  deleteImageTag: (params) => request.delete('/api/image/tag/delete', { params }),
+  // 构建记录
+  listImageBuild: (params) => request.get('/api/image-build/list', { params }),
+  pageImageBuild: (data) => request.post('/api/image-build/page', data),
+  getImageBuild: (params) => request.get('/api/image-build/get', { params }),
+  addImageBuild: (data) => request.post('/api/image-build', data),
+  getBuildLogs: (params) => request.get('/api/image-build/logs', { params }),
+}

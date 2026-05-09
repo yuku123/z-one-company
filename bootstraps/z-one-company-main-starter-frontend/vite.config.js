@@ -16,11 +16,6 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
-    esbuild: {
-      loader: 'tsx',
-      include: /\/src\/.*\.(jsx|tsx|ts)$/,
-      exclude: /node_modules/,
-    },
     server: {
       port: 3000,
       host: '0.0.0.0',

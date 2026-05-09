@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Card, Table, Button, Space, Tag, message, Modal, Form, Input, Tree, Popconfirm, Typography } from 'antd'
-import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined, SaveOutlined } from '@ant-design/icons'
+import { Card, Table, Button, Space, Tag, message, Modal, Form, Input, Tree, Popconfirm, Drawer } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined, SaveOutlined, UnlockOutlined } from '@ant-design/icons'
 import { getRoleList, createRole, updateRole, deleteRole, getRolePermissions, assignRolePermissions, getPermissionList } from '@/services/api'
-
-const { Text } = Typography
 
 const TYPE_MAP = {
   MENU: { label: '菜单', color: 'blue' },
@@ -30,19 +28,20 @@ const listToTree = (list) => {
 const RoleManagement = () => {
   const [loading, setLoading] = useState(false)
   const [roles, setRoles] = useState([])
-  const [selectedRole, setSelectedRole] = useState(null)
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 })
   const [searchText, setSearchText] = useState('')
   const [modalVisible, setModalVisible] = useState(false)
   const [editingRole, setEditingRole] = useState(null)
   const [form] = Form.useForm()
 
-  // 权限分配
+  // 权限抽屉
+  const [permDrawerOpen, setPermDrawerOpen] = useState(false)
   const [permLoading, setPermLoading] = useState(false)
   const [permList, setPermList] = useState([])
   const [permTreeData, setPermTreeData] = useState([])
   const [checkedPermIds, setCheckedPermIds] = useState([])
   const [savingPerm, setSavingPerm] = useState(false)
+  const [currentRole, setCurrentRole] = useState(null)
 
   // 加载角色列表
   const fetchRoles = async (page = 1, pageSize = 10) => {
@@ -59,7 +58,7 @@ const RoleManagement = () => {
     }
   }
 
-  // 标准化 API 响应字段名
+  // 标准化权限字段
   const normalizePerm = (item) => ({
     ...item,
     permType: item.resourceType || item.permType,
@@ -68,7 +67,7 @@ const RoleManagement = () => {
     sortOrder: item.sortOrder ?? item.sort,
   })
 
-  // 加载全部权限（树形）
+  // 加载全部权限树
   const fetchPermTree = async () => {
     setPermLoading(true)
     try {
@@ -83,7 +82,7 @@ const RoleManagement = () => {
     }
   }
 
-  // 加载选中角色的已有权限
+  // 加载角色的已有权限
   const fetchRolePerms = async (roleId) => {
     try {
       const res = await getRolePermissions(roleId)
@@ -99,19 +98,33 @@ const RoleManagement = () => {
     fetchPermTree()
   }, [])
 
-  // 选中角色
-  const handleRoleSelect = (record) => {
-    setSelectedRole(record)
-    fetchRolePerms(record.id)
+  // 打开权限抽屉
+  const openPermDrawer = async (record) => {
+    setCurrentRole(record)
+    setPermDrawerOpen(true)
+    await fetchRolePerms(record.id)
   }
 
-  // 分页/搜索
-  const handleTableChange = (newPagination, filters, sorter) => {
-    fetchRoles(newPagination.current, newPagination.pageSize)
+  // 关闭抽屉
+  const closePermDrawer = () => {
+    setPermDrawerOpen(false)
+    setCurrentRole(null)
+    setCheckedPermIds([])
   }
 
-  const handleSearch = () => {
-    fetchRoles(1, pagination.pageSize)
+  // 保存权限分配
+  const handleSavePerms = async () => {
+    if (!currentRole) return
+    setSavingPerm(true)
+    try {
+      await assignRolePermissions(currentRole.id, checkedPermIds)
+      message.success('权限分配成功')
+      closePermDrawer()
+    } catch (e) {
+      message.error('保存失败')
+    } finally {
+      setSavingPerm(false)
+    }
   }
 
   // 角色 CRUD
@@ -136,7 +149,6 @@ const RoleManagement = () => {
     try {
       await deleteRole(id)
       message.success('删除成功')
-      if (selectedRole?.id === id) setSelectedRole(null)
       fetchRoles(pagination.current, pagination.pageSize)
     } catch (e) {
       message.error('删除失败')
@@ -160,34 +172,14 @@ const RoleManagement = () => {
     }
   }
 
-  // 权限分配
-  const handlePermChange = (checked) => {
-    setCheckedPermIds(checked)
-  }
-
-  const handleSavePerms = async () => {
-    if (!selectedRole) return
-    setSavingPerm(true)
-    try {
-      await assignRolePermissions(selectedRole.id, checkedPermIds)
-      message.success('权限分配成功')
-    } catch (e) {
-      message.error('保存失败')
-    } finally {
-      setSavingPerm(false)
-    }
+  // 分页/搜索
+  const handleTableChange = (newPagination) => {
+    fetchRoles(newPagination.current, newPagination.pageSize)
   }
 
   const columns = [
     { title: 'ID', dataIndex: 'id', key: 'id', width: 60 },
-    {
-      title: '角色名称', dataIndex: 'roleName', key: 'roleName',
-      render: (text, record) => (
-        <a onClick={() => handleRoleSelect(record)} style={{ fontWeight: selectedRole?.id === record.id ? 600 : 400 }}>
-          {text}
-        </a>
-      ),
-    },
+    { title: '角色名称', dataIndex: 'roleName', key: 'roleName' },
     { title: '角色编码', dataIndex: 'roleCode', key: 'roleCode' },
     {
       title: '状态', dataIndex: 'status', key: 'status',
@@ -195,12 +187,13 @@ const RoleManagement = () => {
     },
     { title: '创建时间', dataIndex: 'gmtCreate', key: 'gmtCreate' },
     {
-      title: '操作', key: 'action', width: 120,
+      title: '操作', key: 'action', width: 180,
       render: (_, record) => (
         <Space size={4}>
-          <Button type="text" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          <Button type="text" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)}>编辑</Button>
+          <Button type="text" size="small" icon={<UnlockOutlined />} onClick={() => openPermDrawer(record)}>绑定权限</Button>
           <Popconfirm title="确认删除？" onConfirm={() => handleDelete(record.id)}>
-            <Button type="text" size="small" danger icon={<DeleteOutlined />} />
+            <Button type="text" danger size="small" icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
       ),
@@ -210,7 +203,7 @@ const RoleManagement = () => {
   // 权限树节点渲染
   const renderPermNode = (node) => (
     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-      <Text>{node.permName}</Text>
+      <span>{node.permName}</span>
       {TYPE_MAP[node.permType] && (
         <Tag color={TYPE_MAP[node.permType].color} style={{ margin: 0, fontSize: 10 }}>
           {TYPE_MAP[node.permType].label}
@@ -220,94 +213,41 @@ const RoleManagement = () => {
   )
 
   return (
-    <div style={{ display: 'flex', gap: 16, height: 'calc(100vh - 180px)' }}>
-      {/* 左侧：角色列表 */}
-      <div style={{ width: 500, flexShrink: 0 }}>
-        <Card
-          size="small"
-          title="角色列表"
-          extra={
-            <Space size={4}>
-              <Button type="text" size="small" icon={<ReloadOutlined />} onClick={() => fetchRoles(pagination.current, pagination.pageSize)} />
-              <Button type="text" size="small" icon={<PlusOutlined />} onClick={handleAdd} />
-            </Space>
-          }
-          bodyStyle={{ padding: 0 }}
-        >
-          <div style={{ padding: '0 12px 8px' }}>
-            <Input.Search
-              placeholder="搜索角色名称"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              onSearch={handleSearch}
-              allowClear
-            />
-          </div>
-          <Table
-            size="small"
-            columns={columns}
-            dataSource={roles}
-            loading={loading}
-            rowKey="id"
-            rowClassName={(record) => selectedRole?.id === record.id ? 'ant-table-row-selected' : ''}
-            pagination={{
-              ...pagination,
-              showSizeChanger: true,
-              showTotal: (t) => `共 ${t} 条`,
-            }}
-            onChange={handleTableChange}
-            onRow={(record) => ({
-              onClick: () => handleRoleSelect(record),
-              style: { cursor: 'pointer' },
-            })}
+    <div style={{ padding: 16 }}>
+      <Card
+        size="small"
+        title="角色列表"
+        extra={
+          <Space size={4}>
+            <Button size="small" icon={<ReloadOutlined />} onClick={() => fetchRoles(pagination.current, pagination.pageSize)}>刷新</Button>
+            <Button type="primary" size="small" icon={<PlusOutlined />} onClick={handleAdd}>新增角色</Button>
+          </Space>
+        }
+      >
+        <div style={{ marginBottom: 12 }}>
+          <Input.Search
+            placeholder="搜索角色名称"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onSearch={() => fetchRoles(1, pagination.pageSize)}
+            allowClear
+            style={{ width: 240 }}
           />
-        </Card>
-      </div>
-
-      {/* 右侧：角色权限分配 */}
-      <div style={{ flex: 1, overflow: 'auto' }}>
-        <Card
+        </div>
+        <Table
           size="small"
-          title={selectedRole ? `权限分配：${selectedRole.roleName}` : '请选择左侧角色'}
-          extra={
-            selectedRole && (
-              <Button
-                type="primary"
-                size="small"
-                icon={<SaveOutlined />}
-                loading={savingPerm}
-                onClick={handleSavePerms}
-              >
-                保存分配
-              </Button>
-            )
-          }
-          bodyStyle={{ padding: selectedRole ? 12 : 24 }}
-        >
-          {!selectedRole && (
-            <div style={{ textAlign: 'center', color: '#999', padding: '60px 0' }}>
-              从左侧选择一个角色进行权限分配
-            </div>
-          )}
-          {selectedRole && (
-            <div style={{ color: '#666', fontSize: 12, marginBottom: 12 }}>
-              勾选该角色拥有的权限（支持多选）
-            </div>
-          )}
-          {selectedRole && (
-            <Tree
-              checkable
-              treeData={permTreeData}
-              checkedKeys={checkedPermIds}
-              onCheck={handlePermChange}
-              titleRender={renderPermNode}
-              blockNode
-              loadData={null}
-              height={500}
-            />
-          )}
-        </Card>
-      </div>
+          columns={columns}
+          dataSource={roles}
+          loading={loading}
+          rowKey="id"
+          pagination={{
+            ...pagination,
+            showSizeChanger: true,
+            showTotal: (t) => `共 ${t} 条`,
+          }}
+          onChange={handleTableChange}
+        />
+      </Card>
 
       {/* 新增/编辑角色 Modal */}
       <Modal
@@ -337,13 +277,38 @@ const RoleManagement = () => {
           <Form.Item name="description" label="角色描述">
             <Input.TextArea placeholder="描述角色职责" rows={2} />
           </Form.Item>
-          {!editingRole && (
-            <Form.Item name="status" label="状态" initialValue={1}>
-              <Input type="number" hidden />
-            </Form.Item>
-          )}
         </Form>
       </Modal>
+
+      {/* 权限分配抽屉 */}
+      <Drawer
+        title={currentRole ? `绑定权限：${currentRole.roleName}` : '绑定权限'}
+        open={permDrawerOpen}
+        width={520}
+        onClose={closePermDrawer}
+        extra={
+          <Button type="primary" icon={<SaveOutlined />} loading={savingPerm} onClick={handleSavePerms}>
+            保存
+          </Button>
+        }
+      >
+        {currentRole && (
+          <>
+            <div style={{ color: '#666', fontSize: 12, marginBottom: 12 }}>
+              勾选该角色拥有的权限（支持多选）
+            </div>
+            <Tree
+              checkable
+              treeData={permTreeData}
+              checkedKeys={checkedPermIds}
+              onCheck={setCheckedPermIds}
+              titleRender={renderPermNode}
+              blockNode
+              height={600}
+            />
+          </>
+        )}
+      </Drawer>
     </div>
   )
 }

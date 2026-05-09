@@ -44,6 +44,12 @@ const menuItems = [
     { key: '/config/list', label: '配置列表' },
     { key: '/config/service', label: '服务列表' },
   ]},
+  { key: '/task', icon: <FileTextOutlined />, label: '任务中心', children: [
+    { key: '/task/dashboard', label: '仪表盘' },
+    { key: '/task/task', label: '任务列表' },
+    { key: '/task/project', label: '项目管理' },
+    { key: '/task/user', label: '用户管理' },
+  ]},
   { key: '/ai', icon: <RobotOutlined />, label: '智能中心', children: [
     { key: '/ai/mcp', label: 'MCP管理' },
     { key: '/ai/skill', label: 'SKILL管理' },
@@ -64,12 +70,6 @@ const menuItems = [
     { key: '/ops/channel', label: '渠道注册' },
     { key: '/ops/task', label: '任务排期' },
     { key: '/ops/delivery', label: '交付产物' },
-  ]},
-  { key: '/task', icon: <FileTextOutlined />, label: '任务中心', children: [
-    { key: '/task/dashboard', label: '仪表盘' },
-    { key: '/task/task', label: '任务列表' },
-    { key: '/task/project', label: '项目管理' },
-    { key: '/task/user', label: '用户管理' },
   ]},
   { key: '/workflow', icon: <AuditOutlined />, label: '流程中心', children: [
     { key: '/workflow/dashboard', label: '仪表盘' },
@@ -134,6 +134,8 @@ function App() {
         // 默认加载第一个租户的域
         const first = res[0]
         setSelectedTenant([first.tenantCode, ''])
+        localStorage.setItem('z_tenant', first.tenantCode || '')
+        localStorage.setItem('z_domain', '')
         getDomainByTenantCode(first.tenantCode).then(domains => {
           if (domains && Array.isArray(domains)) {
             setDomainOptions(domains.map(d => ({ value: d.domainCode, label: d.domainName })))
