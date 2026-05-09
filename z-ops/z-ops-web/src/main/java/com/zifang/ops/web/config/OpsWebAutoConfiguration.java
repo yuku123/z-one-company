@@ -6,6 +6,6 @@ import org.springframework.context.annotation.ComponentScan;
 
 @Configuration
 @ComponentScan(basePackages = "com.zifang.ops")
-@MapperScan("com.zifang.ops.core.domain.mapper")
+@MapperScan(basePackages = "com.zifang.ops.core.domain.mapper", sqlSessionFactoryRef = "sqlSessionFactoryConfig")
 public class OpsWebAutoConfiguration {
 }

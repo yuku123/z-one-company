@@ -1,26 +1,34 @@
-package com.zifang.z.agent.mcp.starter;
+package com.zifang.z.agent.mcp.core;
 
-
-import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
- * MCP工具注册中心（线程安全）
+ * MCP 工具注册中心（线程安全，纯 Java，无 Spring 依赖）
+ * 
+ * 可被 Spring 容器管理（@Component），也可独立使用。
  */
-@Component
 public class McpRegistry {
-    // 存储：toolName -> ToolMeta
+
     private final Map<String, ToolMeta> toolMap = new ConcurrentHashMap<>();
 
     /**
-     * 注册工具（内置/第三方）
+     * 注册工具
      */
     public boolean registerTool(ToolMeta toolMeta) {
-        if (toolMap.containsKey(toolMeta.getToolName())) {
-            return false;
-        }
+        if (toolMeta == null || toolMeta.getToolName() == null) return false;
+        if (toolMap.containsKey(toolMeta.getToolName())) return false;
+        toolMeta.setCreateTime(System.currentTimeMillis());
+        toolMap.put(toolMeta.getToolName(), toolMeta);
+        return true;
+    }
+
+    /**
+     * 覆盖注册（存在则更新）
+     */
+    public boolean registerOrUpdate(ToolMeta toolMeta) {
+        if (toolMeta == null || toolMeta.getToolName() == null) return false;
         toolMeta.setCreateTime(System.currentTimeMillis());
         toolMap.put(toolMeta.getToolName(), toolMeta);
         return true;
@@ -31,9 +39,7 @@ public class McpRegistry {
      */
     public boolean unregisterTool(String toolName) {
         ToolMeta meta = toolMap.get(toolName);
-        if (meta == null || "BUILT_IN".equals(meta.getType())) {
-            return false;
-        }
+        if (meta == null || "BUILT_IN".equals(meta.getType())) return false;
         toolMap.remove(toolName);
         return true;
     }
@@ -50,20 +56,28 @@ public class McpRegistry {
      */
     public List<ToolMeta> listTools(String filter) {
         List<ToolMeta> tools = new ArrayList<>(toolMap.values());
-        if (filter == null || filter.isEmpty()) {
-            return tools;
-        }
-        // 按类型过滤（BUILT_IN/THIRD_PARTY）
+        if (filter == null || filter.isEmpty()) return tools;
         return tools.stream()
-                .filter(tool -> filter.equals(tool.getType()))
+                .filter(t -> filter.equals(t.getType()))
                 .collect(Collectors.toList());
     }
 
     /**
-     * 检查工具是否为内置
+     * 检查是否为内置工具
      */
     public boolean isBuiltInTool(String toolName) {
         ToolMeta meta = toolMap.get(toolName);
         return meta != null && "BUILT_IN".equals(meta.getType());
+    }
+
+    /**
+     * 清空所有工具
+     */
+    public void clear() {
+        toolMap.clear();
+    }
+
+    public int size() {
+        return toolMap.size();
     }
 }

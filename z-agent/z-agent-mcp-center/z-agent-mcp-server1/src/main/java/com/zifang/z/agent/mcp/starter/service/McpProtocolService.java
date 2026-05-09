@@ -3,6 +3,8 @@ package com.zifang.z.agent.mcp.starter.service;
 import com.zifang.z.agent.mcp.starter.McpHandler;
 import com.zifang.z.agent.mcp.starter.McpRegistry;
 import com.zifang.z.agent.mcp.starter.ToolMeta;
+import com.zifang.z.agent.mcp.starter.ToolExecutor;
+import com.zifang.z.agent.mcp.starter.BuiltInToolExecutor;
 import com.zifang.z.agent.mcp.starter.protocol.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,9 @@ public class McpProtocolService {
 
     @Autowired
     private McpHandler mcpHandler;
+
+    @Autowired
+    private BuiltInToolExecutor builtInToolExecutor;
 
     /**
      * 处理 MCP 请求
@@ -190,22 +195,30 @@ public class McpProtocolService {
                     "Tool not found: " + toolName);
         }
 
-        // 检查是否为内置工具
-        if (mcpRegistry.isBuiltInTool(toolName)) {
-            return McpResponseV1.error(request.getId(),
-                    McpProtocolConstants.ERROR_INVALID_PARAMS,
-                    "Cannot call built-in tool: " + toolName);
-        }
-
         try {
-            // 调用第三方工具
-            Map<String, Object> result = callThirdPartyTool(toolMeta, arguments, request.getId());
+            Map<String, Object> result;
+
+            // 内置工具：本地执行
+            if (mcpRegistry.isBuiltInTool(toolName)) {
+                result = builtInToolExecutor.execute(toolName, arguments);
+            } else {
+                // 第三方工具：转发到远程服务
+                result = callThirdPartyTool(toolMeta, arguments, request.getId());
+            }
+
             return McpResponseV1.success(request.getId(), result);
         } catch (Exception e) {
             logger.error("Error calling tool: {}", toolName, e);
-            return McpResponseV1.error(request.getId(),
-                    McpProtocolConstants.ERROR_INTERNAL_ERROR,
-                    "Error calling tool: " + e.getMessage());
+            // 返回 MCP 标准错误格式
+            Map<String, Object> errorResult = new HashMap<>();
+            List<Map<String, Object>> content = new ArrayList<>();
+            Map<String, Object> item = new HashMap<>();
+            item.put("type", "text");
+            item.put("text", "Error calling tool '" + toolName + "': " + e.getMessage());
+            content.add(item);
+            errorResult.put("content", content);
+            errorResult.put("isError", true);
+            return McpResponseV1.success(request.getId(), errorResult);
         }
     }
 

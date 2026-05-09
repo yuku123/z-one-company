@@ -17,4 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!-- 纯 Java 模块，无额外依赖 -->
+
 </project>

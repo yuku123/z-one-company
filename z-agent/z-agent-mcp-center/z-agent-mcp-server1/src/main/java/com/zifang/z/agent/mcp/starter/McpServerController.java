@@ -1,5 +1,7 @@
 package com.zifang.z.agent.mcp.starter;
 
+import com.zifang.z.agent.mcp.core.McpRegistry;
+import com.zifang.z.agent.mcp.core.ToolMeta;
 import com.zifang.z.agent.mcp.starter.model.McpError;
 import com.zifang.z.agent.mcp.starter.model.McpRequest;
 import com.zifang.z.agent.mcp.starter.model.McpResponse;
