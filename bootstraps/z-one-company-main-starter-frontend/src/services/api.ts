@@ -391,6 +391,16 @@ export const skillApi = {
   deleteCategory: (id: number) => request.post(`/api/skill/category/${id}/delete`),
   hot: (limit: number = 10) => request.get('/api/skill/hot', { params: { limit } }),
   stats: () => request.get('/api/skill/stats'),
+  // Package support
+  uploadPackage: (skillCode: string, version: string, file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('version', version)
+    return request.post(`/api/skill/${skillCode}/package/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  },
+  downloadPackageUrl: (skillCode: string) => `/api/skill/${skillCode}/package/download`,
 }
 
 // ==================== MCP 管理 ====================

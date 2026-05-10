@@ -207,6 +207,8 @@ public class SkillBizServiceImpl implements SkillBizService {
         if (source.getTags() != null) target.setTags(source.getTags());
         if (source.getIconUrl() != null) target.setIconUrl(source.getIconUrl());
         if (source.getContent() != null) target.setContent(source.getContent());
+        if (source.getPackageType() != null) target.setPackageType(source.getPackageType());
+        if (source.getPackagePath() != null) target.setPackagePath(source.getPackagePath());
         if (source.getStatus() != null) target.setStatus(source.getStatus());
         if (source.getDownloadCount() != null) target.setDownloadCount(source.getDownloadCount());
         if (source.getTenantCode() != null) target.setTenantCode(source.getTenantCode());

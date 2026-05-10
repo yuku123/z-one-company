@@ -20,6 +20,10 @@ public class Skill {
     private String tags;
     private String iconUrl;
     private String content;
+    /** 包类型: TEXT(纯文本内容) / ZIP(压缩包) */
+    private String packageType;
+    /** 压缩包存储路径（仅 ZIP 类型时有效） */
+    private String packagePath;
     private String status;
     private Long downloadCount;
     private String tenantCode;
@@ -105,6 +109,22 @@ public class Skill {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
+    }
+
+    public String getPackagePath() {
+        return packagePath;
+    }
+
+    public void setPackagePath(String packagePath) {
+        this.packagePath = packagePath;
     }
 
     public String getStatus() {

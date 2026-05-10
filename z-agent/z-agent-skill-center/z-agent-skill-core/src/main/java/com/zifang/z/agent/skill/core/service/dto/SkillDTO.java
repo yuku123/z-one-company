@@ -14,6 +14,10 @@ public class SkillDTO {
     private String tags;
     private String iconUrl;
     private String content;
+    /** 包类型: TEXT / ZIP */
+    private String packageType;
+    /** 压缩包路径 */
+    private String packagePath;
     private String status;
     private Long downloadCount;
     private String tenantCode;
@@ -99,6 +103,22 @@ public class SkillDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
+    }
+
+    public String getPackagePath() {
+        return packagePath;
+    }
+
+    public void setPackagePath(String packagePath) {
+        this.packagePath = packagePath;
     }
 
     public String getStatus() {

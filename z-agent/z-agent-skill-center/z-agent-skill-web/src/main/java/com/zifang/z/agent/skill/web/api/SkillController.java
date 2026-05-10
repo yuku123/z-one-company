@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.zifang.util.core.meta.Result;
 import com.zifang.z.agent.skill.core.service.SkillBizService;
 import com.zifang.z.agent.skill.core.service.SkillCategoryBizService;
+import com.zifang.z.agent.skill.core.service.SkillPackageBizService;
 import com.zifang.z.agent.skill.core.service.dto.SkillCategoryDTO;
 import com.zifang.z.agent.skill.core.service.dto.SkillDTO;
 import com.zifang.z.agent.skill.core.service.dto.SkillVersionDTO;
@@ -19,8 +20,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,6 +44,9 @@ public class SkillController {
 
     @Resource
     private SkillCategoryBizService skillCategoryBizService;
+
+    @Resource
+    private SkillPackageBizService skillPackageBizService;
 
     // ==================== 技能接口 ====================
 
@@ -133,6 +145,52 @@ public class SkillController {
     public Result<Map<String, Object>> stats() {
         Map<String, Object> map = skillBizService.stats();
         return Result.success(map);
+    }
+
+    // ==================== 技能包接口 ====================
+
+    @Operation(summary = "上传技能包（zip）")
+    @PostMapping("/{skillCode}/package/upload")
+    public Result<String> uploadPackage(@PathVariable String skillCode,
+                                        @RequestParam String version,
+                                        @RequestParam("file") MultipartFile file) throws IOException {
+        try (InputStream is = file.getInputStream()) {
+            String path = skillPackageBizService.storePackage(skillCode, version, is);
+
+            // 更新技能记录
+            SkillDTO dto = skillBizService.getBySkillCode(skillCode);
+            if (dto != null) {
+                dto.setPackageType("ZIP");
+                dto.setPackagePath(path);
+                skillBizService.update(dto);
+            }
+
+            return Result.success(path);
+        }
+    }
+
+    @Operation(summary = "下载技能包")
+    @GetMapping("/{skillCode}/package/download")
+    public void downloadPackage(@PathVariable String skillCode,
+                                HttpServletResponse response) throws IOException {
+        SkillDTO dto = skillBizService.getBySkillCode(skillCode);
+        if (dto == null || dto.getPackagePath() == null) {
+            response.sendError(404, "Package not found");
+            return;
+        }
+
+        Path zipFile = Paths.get(skillPackageBizService.getPackageFilePath(dto.getPackagePath()));
+        if (!Files.exists(zipFile)) {
+            response.sendError(404, "File not found on disk");
+            return;
+        }
+
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=\"" + URLEncoder.encode(skillCode + ".zip", "UTF-8") + "\"");
+        response.setContentLengthLong(Files.size(zipFile));
+        Files.copy(zipFile, response.getOutputStream());
+        response.flushBuffer();
     }
 
     // ==================== 分类接口 ====================

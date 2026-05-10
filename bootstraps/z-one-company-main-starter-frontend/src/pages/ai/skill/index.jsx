@@ -45,6 +45,8 @@ export default function SkillMarket() {
   const [pubModalOpen, setPubModalOpen] = useState(false)
   const [pubForm] = Form.useForm()
   const [pubLoading, setPubLoading] = useState(false)
+  const [pubMode, setPubMode] = useState('text') // text | zip
+  const [zipFile, setZipFile] = useState(null)
 
   // stats
   const [stats, setStats] = useState({ total: 0, published: 0 })
@@ -128,10 +130,17 @@ export default function SkillMarket() {
     try {
       const values = await pubForm.validateFields()
       setPubLoading(true)
-      await skillApi.create(values)
+      // 创建技能记录
+      const result = await skillApi.create(values)
+      // 如果是 zip 模式，上传包
+      if (pubMode === 'zip' && zipFile) {
+        await skillApi.uploadPackage(values.skillCode, values.version || '1.0.0', zipFile)
+      }
       message.success('技能发布成功！可在市场中搜索到')
       setPubModalOpen(false)
       pubForm.resetFields()
+      setZipFile(null)
+      setPubMode('text')
       loadSkills(1)
       loadStats()
     } catch (e) {
@@ -356,6 +365,16 @@ export default function SkillMarket() {
               </pre>
             </Card>
 
+            {/* Package Download */}
+            {detailSkill?.packageType === 'ZIP' && (
+              <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                <Button type="primary" icon={<DownloadOutlined />} size="large"
+                  href={skillApi.downloadPackageUrl(detailSkill.skillCode)} target="_blank">
+                  下载技能包 (.zip)
+                </Button>
+              </div>
+            )}
+
             {/* Versions */}
             {versions.length > 0 && (
               <Card size="small" title={<span><HistoryOutlined /> 版本历史 ({versions.length})</span>}>
@@ -383,7 +402,7 @@ export default function SkillMarket() {
       <Modal
         title="发布新技能"
         open={pubModalOpen}
-        onCancel={() => { setPubModalOpen(false); pubForm.resetFields() }}
+        onCancel={() => { setPubModalOpen(false); pubForm.resetFields(); setZipFile(null); setPubMode('text') }}
         onOk={handlePublish}
         confirmLoading={pubLoading}
         okText="发布"
@@ -418,9 +437,28 @@ export default function SkillMarket() {
           <Form.Item name="description" label="描述" rules={[{ required: true, message: '请输入技能描述' }]}>
             <TextArea rows={2} placeholder="简要描述这个技能的功能..." />
           </Form.Item>
-          <Form.Item name="content" label="技能内容 (Markdown)" rules={[{ required: true, message: '请输入技能内容' }]}>
-            <TextArea rows={10} placeholder={`# 技能名称\n\n## 功能描述\n\n## 使用方法\n\n## 示例\n`} />
-          </Form.Item>
+
+          {/* 内容模式切换 */}
+          <div style={{ marginBottom: 12 }}>
+            <Button size="small" type={pubMode === 'text' ? 'primary' : 'default'}
+              onClick={() => setPubMode('text')} style={{ marginRight: 8 }}>纯文本</Button>
+            <Button size="small" type={pubMode === 'zip' ? 'primary' : 'default'}
+              onClick={() => setPubMode('zip')} icon={<UploadOutlined />}>上传 ZIP 包</Button>
+          </div>
+
+          {pubMode === 'text' ? (
+            <Form.Item name="content" label="技能内容 (Markdown)" rules={[{ required: true, message: '请输入技能内容' }]}>
+              <TextArea rows={10} placeholder={`# 技能名称\n\n## 功能描述\n\n## 使用方法\n\n## 示例\n`} />
+            </Form.Item>
+          ) : (
+            <Form.Item label="技能包 (ZIP)" required>
+              <input type="file" accept=".zip" onChange={e => setZipFile(e.target.files[0])}
+                style={{ width: '100%' }} />
+              <div style={{ color: '#888', fontSize: 12, marginTop: 4 }}>
+                ZIP 包应包含 SKILL.md（必选）及 references/、templates/、scripts/ 等目录（可选）
+              </div>
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     </div>
