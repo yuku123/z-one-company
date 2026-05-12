@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author zifang
  */
-@TableName("z_task_assignee")
+@TableName("z_task_task_assignee")
 public class TaskAssignee implements Serializable {
 
     private static final long serialVersionUID = 1L;

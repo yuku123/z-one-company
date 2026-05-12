@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  *
  * @author zifang
  */
-@TableName("z_sync_user")
+@TableName("z_task_sync_user")
 public class SyncUser implements Serializable {
 
     private static final long serialVersionUID = 1L;

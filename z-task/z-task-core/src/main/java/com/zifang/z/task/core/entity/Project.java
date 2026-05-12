@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  *
  * @author zifang
  */
-@TableName("z_project")
+@TableName("z_task_project")
 public class Project implements Serializable {
 
     private static final long serialVersionUID = 1L;

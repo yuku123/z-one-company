@@ -9,7 +9,7 @@ import java.io.Serializable;
  *
  * @author zifang
  */
-@TableName("z_task_label")
+@TableName("z_task_task_label")
 public class TaskLabel implements Serializable {
 
     private static final long serialVersionUID = 1L;

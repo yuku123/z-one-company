@@ -4,7 +4,7 @@
 -- ============================================
 -- 1. 用户同步表 (来自 zb-ctc)
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_sync_user (
+CREATE TABLE IF NOT EXISTS z_task_sync_user (
     id BIGINT PRIMARY KEY,
     user_id VARCHAR(64) NOT NULL COMMENT 'zb-ctc 用户ID',
     username VARCHAR(50) NOT NULL COMMENT '用户名',
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS z_sync_user (
 -- ============================================
 -- 2. 项目表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_project (
+CREATE TABLE IF NOT EXISTS z_task_project (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL COMMENT '项目名称',
     description TEXT COMMENT '项目描述',
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS z_project (
 -- ============================================
 -- 3. 项目成员表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_project_member (
+CREATE TABLE IF NOT EXISTS z_task_project_member (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     project_id BIGINT NOT NULL COMMENT '项目ID',
     user_id VARCHAR(64) NOT NULL COMMENT '用户ID(来自zb-ctc)',
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS z_project_member (
 -- ============================================
 -- 4. 看板表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_board (
+CREATE TABLE IF NOT EXISTS z_task_board (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL COMMENT '看板名称',
     project_id BIGINT NOT NULL COMMENT '项目ID',
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS z_board (
 -- ============================================
 -- 5. 列表表 (看板中的列)
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_task_list (
+CREATE TABLE IF NOT EXISTS z_task_task_list (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     board_id BIGINT NOT NULL COMMENT '看板ID',
     name VARCHAR(100) NOT NULL COMMENT '列表名称',
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS z_task_list (
 -- ============================================
 -- 6. 任务表
 -- ============================================
-CREATE TABLE IF NOT EXISTS z_task (
+CREATE TABLE IF NOT EXISTS z_task_task (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(200) NOT NULL COMMENT '任务标题',
     description TEXT COMMENT '任务描述(Markdown)',

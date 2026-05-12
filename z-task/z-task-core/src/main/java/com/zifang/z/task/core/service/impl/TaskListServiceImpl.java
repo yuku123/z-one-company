@@ -10,7 +10,6 @@ import com.zifang.z.task.core.entity.TaskList;
 import com.zifang.z.task.core.mapper.TaskListMapper;
 import com.zifang.z.task.core.service.BoardService;
 import com.zifang.z.task.core.service.ProjectMemberService;
-import com.zifang.z.task.core.service.ProjectService;
 import com.zifang.z.task.core.service.TaskListService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

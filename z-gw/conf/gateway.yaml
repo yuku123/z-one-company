@@ -11,21 +11,45 @@ server:
 
 router:
   routes:
-    # Example routes
-    - id: user-service
-      path: /api/users/**
+    # === 内部服务路由 ===
+    # z-ctc 认证中心
+    - id: ctc-service
+      path: /api/ctc/**
       method: "*"
-      backend: http://localhost:8081
+      backend: http://localhost:8092
       stripPrefix: true
 
-    - id: order-service
-      path: /api/orders/**
+    # z-wf 审批中心
+    - id: wf-service
+      path: /api/wf/**
       method: "*"
-      backend: http://localhost:8082
+      backend: http://localhost:8091
       stripPrefix: true
 
-    - id: product-service
-      path: /api/products/**
+    # z-task 任务中心
+    - id: task-service
+      path: /api/task/**
       method: "*"
-      backend: http://localhost:8083
+      backend: http://localhost:8090
+      stripPrefix: true
+
+    # z-config 配置中心
+    - id: config-service
+      path: /api/config/**
+      method: "*"
+      backend: http://localhost:8848
+      stripPrefix: true
+
+    # z-mist 密钥中心
+    - id: mist-service
+      path: /api/mist/**
+      method: "*"
+      backend: http://localhost:8085
+      stripPrefix: true
+
+    # z-meta 元数据中心
+    - id: meta-service
+      path: /api/meta/**
+      method: "*"
+      backend: http://localhost:8093
       stripPrefix: true

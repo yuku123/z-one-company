@@ -11,9 +11,9 @@ import java.util.List;
 @Mapper
 public interface TaskListMapper extends BaseMapper<TaskList> {
 
-    @Select("SELECT * FROM z_task_list WHERE board_id = #{boardId} AND is_archived = 0 ORDER BY sort_order ASC, id ASC")
+    @Select("SELECT * FROM z_task_task_list WHERE board_id = #{boardId} AND is_archived = 0 ORDER BY sort_order ASC, id ASC")
     List<TaskList> selectByBoardId(@Param("boardId") Long boardId);
 
-    @Select("SELECT MAX(sort_order) FROM z_task_list WHERE board_id = #{boardId}")
+    @Select("SELECT MAX(sort_order) FROM z_task_task_list WHERE board_id = #{boardId}")
     Integer selectMaxSortOrder(@Param("boardId") Long boardId);
 }

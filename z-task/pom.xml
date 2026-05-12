@@ -14,72 +14,54 @@
 
     <modules>
         <module>z-task-core</module>
+        <module>z-task-web</module>
         <module>z-task-starter</module>
-        <module>z-task-common</module>
     </modules>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <java.version>8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>2.7.12</spring-boot.version>
         <mybatis-plus.version>3.5.3</mybatis-plus.version>
         <druid.version>1.2.18</druid.version>
         <knife4j.version>4.1.0</knife4j.version>
+
         <ctc.version>1.0.0-SNAPSHOT</ctc.version>
-        <lombok.version>1.18.20</lombok.version>
+
+        <z.util.version>1.0.2-SNAPSHOT</z.util.version>
+        <z.boot.version>1.0.0-SNAPSHOT</z.boot.version>
+        <z.boot.starter.version>1.0.0-SNAPSHOT</z.boot.starter.version>
+
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot -->
+
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.7.12</version>
-                <type>pom</type>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-boot-dependencies</artifactId>
                 <scope>import</scope>
+                <type>pom</type>
+                <version>${z.boot.version}</version>
             </dependency>
 
-            <!-- 内部模块 -->
             <dependency>
                 <groupId>com.zifang</groupId>
-                <artifactId>z-task-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zifang</groupId>
-                <artifactId>z-task-entity</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zifang</groupId>
-                <artifactId>z-task-mapper</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zifang</groupId>
-                <artifactId>z-task-service</artifactId>
-                <version>${project.version}</version>
+                <artifactId>z-util-all</artifactId>
+                <scope>import</scope>
+                <type>pom</type>
+                <version>${z.util.version}</version>
             </dependency>
 
-            <!-- MyBatis Plus -->
             <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid.version}</version>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-boot-web-starter</artifactId>
+                <version>${z.boot.starter.version}</version>
             </dependency>
 
-            <!-- Knife4j -->
             <dependency>
-                <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
-                <version>${knife4j.version}</version>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-boot-datasource-starter</artifactId>
+                <version>${z.boot.starter.version}</version>
             </dependency>
 
             <!-- CTC SSO -->
@@ -89,17 +71,39 @@
                 <version>${ctc.version}</version>
             </dependency>
 
-            <!-- Lombok -->
+            <!-- 内部模块 -->
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-                <optional>true</optional>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-task-core</artifactId>
+                <version>${project.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-task-web</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zifang</groupId>
+                <artifactId>z-util-core</artifactId>
+                <version>${z.util.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -108,22 +112,20 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.version}</version>
+                    <version>2.7.12</version>
                 </plugin>
             </plugins>
         </pluginManagement>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-
 </project>

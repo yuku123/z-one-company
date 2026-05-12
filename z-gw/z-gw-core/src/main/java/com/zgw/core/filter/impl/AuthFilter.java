@@ -1,6 +1,5 @@
 package com.zgw.core.filter.impl;
 
-import com.zgw.core.circuitbreaker.CircuitBreaker;
 import com.zgw.core.filter.Filter;
 import com.zgw.core.filter.FilterChain;
 import com.zgw.core.server.GatewayContext;
@@ -8,7 +7,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -132,6 +130,10 @@ public class AuthFilter implements Filter {
 
     /**
      * Bearer token authentication
+     * <p>
+     * TODO: 当前为简化实现，直接从 token 提取 userId。
+     * 正式环境应调用 z-ctc 认证服务验证 JWT 签名和有效期，
+     * 或使用共享密钥/公钥验签方案，避免网关与认证中心耦合。
      */
     public static class BearerAuthProvider implements AuthProvider {
         @Override
@@ -200,63 +202,6 @@ public class AuthFilter implements Filter {
 
             return AuthResult.success("api_" + credentials.substring(0, Math.min(8, credentials.length())),
                     new String[]{"API"});
-        }
-    }
-
-    /**
-     * Authentication result
-     */
-
-
-    /**
-     * Functional interface for throwable supplier
-     */
-    @FunctionalInterface
-    public interface ThrowableSupplier<T> {
-        T get() throws Exception;
-    }
-
-    /**
-     * Exception thrown when circuit breaker is open
-     */
-    public static class CircuitBreakerOpenException extends RuntimeException {
-        public CircuitBreakerOpenException(String message) {
-            super(message);
-        }
-    }
-
-    /**
-     * Builder for circuit breaker (delegates to com.zgw.core.circuitbreaker.CircuitBreaker.Builder)
-     */
-    public static class Builder {
-        private final CircuitBreaker.Builder delegate;
-
-        public Builder() {
-            this.delegate = new CircuitBreaker.Builder();
-        }
-
-        public Builder failureThreshold(int threshold) {
-            delegate.failureThreshold(threshold);
-            return this;
-        }
-
-        public Builder successThreshold(int threshold) {
-            delegate.successThreshold(threshold);
-            return this;
-        }
-
-        public Builder timeoutDuration(Duration duration) {
-            delegate.timeoutDuration(duration);
-            return this;
-        }
-
-        public Builder halfOpenMaxCalls(int maxCalls) {
-            delegate.halfOpenMaxCalls(maxCalls);
-            return this;
-        }
-
-        public CircuitBreaker build(String name) {
-            return delegate.build(name);
         }
     }
 }
