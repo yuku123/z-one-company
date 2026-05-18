@@ -5,17 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.zifang</groupId>
-        <artifactId>z-agent</artifactId>
+        <artifactId>z-agent-center</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>z-agent-center</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>z-agent-center-starter</module>
-        <module>z-agent-center-core</module>
-        <module>z-agent-center-web</module>
-    </modules>
+    <artifactId>z-agent-center-web</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
