@@ -418,3 +418,36 @@ export const mcpApi = {
   // Test connection
   test: (id: number) => request.post(`/api/mcp/server/${id}/test`),
 }
+
+// ==================== Agent 应用中心 ====================
+export const agentApi = {
+  // App CRUD
+  appPage: (data: any) => request.post('/api/agent/app/page', data),
+  appGet: (appCode: string) => request.get('/api/agent/app/get', { params: { appCode } }),
+  appCreate: (data: any) => request.post('/api/agent/app', data),
+  appUpdate: (data: any) => request.post('/api/agent/app/update', data),
+  appDelete: (id: number) => request.post(`/api/agent/app/${id}/delete`),
+  appPublish: (appCode: string) => request.post('/api/agent/app/publish', { appCode }),
+  appVersions: (appCode: string) => request.get('/api/agent/app/versions', { params: { appCode } }),
+  appDraftGet: (appCode: string) => request.get('/api/agent/app/draft', { params: { appCode } }),
+  appDraftSave: (data: any) => request.post('/api/agent/app/draft', data),
+
+  // Instance
+  instanceCreate: (data: any) => request.post('/api/agent/instance/create', data),
+  instanceGet: (instanceCode: string) => request.get('/api/agent/instance/get', { params: { instanceCode } }),
+  instanceList: (ownerId: string) => request.get('/api/agent/instance/list', { params: { ownerId } }),
+  instanceStatus: (instanceCode: string, status: string) =>
+    request.post('/api/agent/instance/status', null, { params: { instanceCode, status } }),
+
+  // Share
+  shareCreate: (data: any) => request.post('/api/agent/share/create', data),
+  shareVerify: (shareCode: string) => request.get('/api/agent/share/verify', { params: { shareCode } }),
+  shareList: (instanceCode: string) => request.get('/api/agent/share/list', { params: { instanceCode } }),
+  shareDisable: (shareCode: string) => request.post('/api/agent/share/disable', null, { params: { shareCode } }),
+
+  // Chat
+  chatSend: (data: any) => request.post('/api/agent/chat/send', data),
+  chatHistory: (instanceCode: string, limit?: number) =>
+    request.get('/api/agent/chat/history', { params: { instanceCode, limit: limit || 50 } }),
+  chatClear: (instanceCode: string) => request.post('/api/agent/chat/clear', null, { params: { instanceCode } }),
+}

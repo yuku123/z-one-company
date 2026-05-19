@@ -14,6 +14,7 @@ import ScheduleIndex from './pages/schedule'
 import MistIndex from './pages/mist'
 import MetaIndex from './pages/meta'
 import AiIndex from './pages/ai'
+import AgentSharePage from './pages/ai/agent/share'
 import RdIndex from './pages/rd'
 import ResourceIndex from './pages/resource'
 import OpsIndex from './pages/ops'
@@ -40,6 +41,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="resource/*" element={<ResourceIndex />} />
             <Route path="ops/*" element={<OpsIndex />} />
           </Route>
+          <Route path="/share/:shareCode" element={<AgentSharePage />} />
         </Routes>
       </BrowserRouter>
     </ConfigProvider>
