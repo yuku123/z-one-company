@@ -33,8 +33,8 @@ public class DictCategoryController {
         return Result.success();
     }
 
-    @PostMapping("/{id}/delete")
-    public Result<Void> delete(@PathVariable Long id) {
+    @PostMapping("/delete")
+    public Result<Void> delete(@RequestParam Long id) {
         categoryService.removeById(id);
         return Result.success();
     }

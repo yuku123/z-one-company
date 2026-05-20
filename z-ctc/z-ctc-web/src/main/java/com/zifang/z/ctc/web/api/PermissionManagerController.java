@@ -58,18 +58,18 @@ public class PermissionManagerController {
         return Result.success();
     }
 
-    @PostMapping("/{id}/update")
+    @PostMapping("/update")
     @Operation(summary = "更新权限")
-    public Result<Void> updatePermission(@PathVariable Long id, @RequestBody PermissionReq req) {
+    public Result<Void> updatePermission(@RequestParam Long id, @RequestBody PermissionReq req) {
         Permission permission = toPermissionEntity(req);
         permission.setId(id);
         permissionBizService.update(permission);
         return Result.success();
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping("/delete")
     @Operation(summary = "删除权限")
-    public Result<Void> deletePermission(@PathVariable Long id) {
+    public Result<Void> deletePermission(@RequestParam Long id) {
         permissionBizService.delete(id);
         return Result.success();
     }
@@ -105,25 +105,25 @@ public class PermissionManagerController {
         return Result.success();
     }
 
-    @PostMapping("/role/{id}/update")
+    @PostMapping("/role/update")
     @Operation(summary = "更新角色")
-    public Result<Void> updateRole(@PathVariable Long id, @RequestBody RoleReq req) {
+    public Result<Void> updateRole(@RequestParam Long id, @RequestBody RoleReq req) {
         Role role = toRoleEntity(req);
         role.setId(id);
         roleBizService.update(role);
         return Result.success();
     }
 
-    @PostMapping("/role/{id}/delete")
+    @PostMapping("/role/delete")
     @Operation(summary = "删除角色")
-    public Result<Void> deleteRole(@PathVariable Long id) {
+    public Result<Void> deleteRole(@RequestParam Long id) {
         roleBizService.delete(id);
         return Result.success();
     }
 
-    @PostMapping("/role/{roleId}/permissions")
+    @PostMapping("/role/permissions")
     @Operation(summary = "为角色分配权限")
-    public Result<Void> assignPermissionsToRole(@PathVariable Long roleId, @RequestBody List<Long> permissionIds) {
+    public Result<Void> assignPermissionsToRole(@RequestParam Long roleId, @RequestBody List<Long> permissionIds) {
         roleBizService.assignPermissions(roleId, permissionIds);
         return Result.success();
     }

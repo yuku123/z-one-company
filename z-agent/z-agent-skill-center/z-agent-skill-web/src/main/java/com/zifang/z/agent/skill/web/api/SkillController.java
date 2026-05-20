@@ -95,8 +95,8 @@ public class SkillController {
     }
 
     @Operation(summary = "删除技能")
-    @PostMapping("/{id}/delete")
-    public Result<Void> delete(@PathVariable Long id) {
+    @PostMapping("/delete")
+    public Result<Void> delete(@RequestParam Long id) {
         skillBizService.delete(id);
         return Result.success();
     }
@@ -150,8 +150,8 @@ public class SkillController {
     // ==================== 技能包接口 ====================
 
     @Operation(summary = "上传技能包（zip）")
-    @PostMapping("/{skillCode}/package/upload")
-    public Result<String> uploadPackage(@PathVariable String skillCode,
+    @PostMapping("/package/upload")
+    public Result<String> uploadPackage(@RequestParam String skillCode,
                                         @RequestParam String version,
                                         @RequestParam("file") MultipartFile file) throws IOException {
         try (InputStream is = file.getInputStream()) {
@@ -170,8 +170,8 @@ public class SkillController {
     }
 
     @Operation(summary = "下载技能包")
-    @GetMapping("/{skillCode}/package/download")
-    public void downloadPackage(@PathVariable String skillCode,
+    @GetMapping("/package/download")
+    public void downloadPackage(@RequestParam String skillCode,
                                 HttpServletResponse response) throws IOException {
         SkillDTO dto = skillBizService.getBySkillCode(skillCode);
         if (dto == null || dto.getPackagePath() == null) {
@@ -213,8 +213,8 @@ public class SkillController {
     }
 
     @Operation(summary = "删除分类")
-    @PostMapping("/category/{id}/delete")
-    public Result<Void> deleteCategory(@PathVariable Long id) {
+    @PostMapping("/category/delete")
+    public Result<Void> deleteCategory(@RequestParam Long id) {
         skillCategoryBizService.delete(id);
         return Result.success();
     }

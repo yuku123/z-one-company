@@ -88,9 +88,9 @@ public class SecretController {
     }
 
     @Operation(summary = "获取密钥详情")
-    @GetMapping("/{secretKey}")
+    @GetMapping("/get")
     public Map<String, Object> getSecret(
-            @PathVariable String secretKey,
+            @RequestParam String secretKey,
             @RequestParam(required = false, defaultValue = "DEFAULT_GROUP") String group,
             @RequestParam(required = false, defaultValue = "") String namespace) {
         Map<String, Object> result = new HashMap<>();

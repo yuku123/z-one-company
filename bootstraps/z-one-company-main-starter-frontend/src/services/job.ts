@@ -76,28 +76,28 @@ export interface ScheduleRecord {
 
 export const jobApi = {
   getList: (params?: any) => http.get<PageData<JobInfo>>('/jobinfo/list', params),
-  getById: (id: number) => http.get<JobInfo>(`/jobinfo/${id}`),
+  getById: (id: number) => http.get<JobInfo>('/jobinfo/get', { params: { id } }),
   add: (data: Partial<JobInfo>) => http.post<string>('/jobinfo/add', data),
   update: (data: Partial<JobInfo>) => http.post('/jobinfo/update', data),
-  remove: (id: number) => http.post(`/jobinfo/remove/${id}`),
-  stop: (id: number) => http.post(`/jobinfo/stop/${id}`),
-  start: (id: number) => http.post(`/jobinfo/start/${id}`),
-  trigger: (id: number) => http.post(`/jobinfo/trigger/${id}`),
+  remove: (id: number) => http.post('/jobinfo/remove', null, { params: { id } }),
+  stop: (id: number) => http.post('/jobinfo/stop', null, { params: { id } }),
+  start: (id: number) => http.post('/jobinfo/start', null, { params: { id } }),
+  trigger: (id: number) => http.post('/jobinfo/trigger', null, { params: { id } }),
   nextTriggerTime: (cron: string) => http.get<string[]>('/jobinfo/nextTriggerTime', { cron }),
 }
 
 export const logApi = {
   getList: (params?: any) => http.get<PageData<JobLog>>('/joblog/list', params),
-  getById: (id: number) => http.get<JobLog>(`/joblog/${id}`),
+  getById: (id: number) => http.get<JobLog>('/joblog/get', { params: { id } }),
   clear: (jobId?: number, type?: number) => http.post('/joblog/clear', { jobId, type }),
 }
 
 export const groupApi = {
   getList: () => http.get<JobGroup[]>('/jobgroup/list'),
-  getById: (id: number) => http.get<JobGroup>(`/jobgroup/${id}`),
+  getById: (id: number) => http.get<JobGroup>('/jobgroup/get', { params: { id } }),
   add: (data: Partial<JobGroup>) => http.post('/jobgroup/add', data),
   update: (data: Partial<JobGroup>) => http.post('/jobgroup/update', data),
-  remove: (id: number) => http.post(`/jobgroup/remove/${id}`),
+  remove: (id: number) => http.post('/jobgroup/remove', null, { params: { id } }),
 }
 
 export const dashboardApi = {

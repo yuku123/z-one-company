@@ -38,9 +38,9 @@ public class ClusterController {
         return Result.success();
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping("/delete")
     @Operation(summary = "003_删除集群(命名空间)")
-    public Result<String> delete(@PathVariable Long id) {
+    public Result<String> delete(@RequestParam Long id) {
         clusterService.removeById(id);
         return Result.success();
     }

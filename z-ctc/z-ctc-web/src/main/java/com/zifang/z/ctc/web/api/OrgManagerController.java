@@ -38,8 +38,8 @@ public class OrgManagerController {
     }
 
     @Operation(summary = "根据租户编码查询组织列表")
-    @GetMapping("/tenant/{tenantCode}")
-    public Result<List<OrgResp>> listByTenantCode(@PathVariable String tenantCode) {
+    @GetMapping("/tenant/list")
+    public Result<List<OrgResp>> listByTenantCode(@RequestParam String tenantCode) {
         List<OrgResp> data = orgBizService.listByTenantCode(tenantCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }

@@ -38,29 +38,29 @@ public class DeptManagerController {
     }
 
     @Operation(summary = "根据租户编码查询部门列表")
-    @GetMapping("/tenant/{tenantCode}")
-    public Result<List<DeptResp>> listByTenantCode(@PathVariable String tenantCode) {
+    @GetMapping("/tenant/list")
+    public Result<List<DeptResp>> listByTenantCode(@RequestParam String tenantCode) {
         List<DeptResp> data = deptBizService.listByTenantCode(tenantCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
     @Operation(summary = "根据域编码查询部门列表")
-    @GetMapping("/domain/{domainCode}")
-    public Result<List<DeptResp>> listByDomainCode(@PathVariable String domainCode) {
+    @GetMapping("/domain/list")
+    public Result<List<DeptResp>> listByDomainCode(@RequestParam String domainCode) {
         List<DeptResp> data = deptBizService.listByDomainCode(domainCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
     @Operation(summary = "根据组织编码查询部门列表")
-    @GetMapping("/org/{orgCode}")
-    public Result<List<DeptResp>> listByOrgCode(@PathVariable String orgCode) {
+    @GetMapping("/org/list")
+    public Result<List<DeptResp>> listByOrgCode(@RequestParam String orgCode) {
         List<DeptResp> data = deptBizService.listByOrgCode(orgCode).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }
 
     @Operation(summary = "根据部门编码查询")
-    @GetMapping("/code/{deptCode}")
-    public Result<DeptResp> getByDeptCode(@PathVariable String deptCode) {
+    @GetMapping("/code/get")
+    public Result<DeptResp> getByDeptCode(@RequestParam String deptCode) {
         return Result.success(toResp(deptBizService.getByDeptCode(deptCode)));
     }
 
@@ -83,8 +83,8 @@ public class DeptManagerController {
     }
 
     @Operation(summary = "删除")
-    @PostMapping("/{deptCode}/delete")
-    public Result<Void> delete(@PathVariable String deptCode) {
+    @PostMapping("/delete")
+    public Result<Void> delete(@RequestParam String deptCode) {
         deptBizService.delete(deptCode);
         return Result.success();
     }

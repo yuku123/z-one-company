@@ -5,21 +5,21 @@ export const approvalApi = {
   getDashboardStats: (userId: string) => request.get('/approval-center/dashboard', { params: { userId } }),
   getTodoList: (userId: string, params?: any) => request.get('/approval-center/tasks/todo', { params: { userId, ...params } }),
   getDoneList: ( userId: string, params?: any) => request.get('/approval-center/tasks/done', { params: { userId, ...params } }),
-  getTaskDetail: (taskId: string) => request.get(`/approval-center/tasks/${taskId}`),
-  completeTask: (taskId: string, data: any) => request.post(`/approval-center/tasks/${taskId}/complete`, data),
+  getTaskDetail: (taskId: string) => request.get('/approval-center/tasks/get', { params: { taskId } }),
+  completeTask: (taskId: string, data: any) => request.post('/approval-center/tasks/complete', data, { params: { taskId } }),
   getMyProcesses: (userId: string, params?: any) => request.get('/approval-center/my-processes', { params: { userId, ...params } }),
-  getProcessDetail: (processInstanceId: string) => request.get(`/approval-center/processes/${processInstanceId}`),
+  getProcessDetail: (processInstanceId: string) => request.get('/approval-center/processes/get', { params: { processInstanceId } }),
   startProcess: (data: any) => request.post('/approval-center/processes/start', data),
   getProcessDefinitions: () => request.get('/approval-center/processes/definitions'),
-  deleteProcess: (processInstanceId: string) => request.delete(`/approval-center/processes/${processInstanceId}`),
+  deleteProcess: (processInstanceId: string) => request.post('/approval-center/processes/remove', null, { params: { processInstanceId } }),
 }
 
 export const designerApi = {
   getProcessList: () => request.get('/process/designer/list'),
-  getProcessById: (id: string) => request.get(`/process/designer/${id}`),
+  getProcessById: (id: string) => request.get('/process/designer/get', { params: { id } }),
   saveProcess: (data: any) => request.post('/process/designer/save', data),
-  deployProcess: (id: string) => request.post(`/process/designer/${id}/deploy`),
-  deleteProcess: (id: string) => request.delete(`/process/designer/${id}`),
+  deployProcess: (id: string) => request.post('/process/designer/deploy', null, { params: { id } }),
+  deleteProcess: (id: string) => request.post('/process/designer/remove', null, { params: { id } }),
 }
 
 export const login = (data: { username: string; password: string }) =>
@@ -42,10 +42,10 @@ export const createUser = (data: any) =>
   authRequest.post('/account', data)
 
 export const updateUser = (id: string, data: any) =>
-  authRequest.post(`/account/${id}/update`, data)
+  authRequest.post('/account/update', data, { params: { id } })
 
 export const deleteUser = (id: string) =>
-  authRequest.post(`/account/${id}/delete`, { id })
+  authRequest.post('/account/delete', null, { params: { id } })
 
 // ========== 角色管理 ==========
 export const getRoleList = (params?: any) =>
@@ -58,10 +58,10 @@ export const createRole = (data: any) =>
   authRequest.post('/permission/role', data)
 
 export const updateRole = (id: string, data: any) =>
-  authRequest.post(`/permission/role/${id}/update`, data)
+  authRequest.post('/permission/role/update', data, { params: { id } })
 
 export const deleteRole = (id: string) =>
-  authRequest.post(`/permission/role/${id}/delete`, { id })
+  authRequest.post('/permission/role/delete', null, { params: { id } })
 
 export const getRolePermissions = (roleId: string) =>
   authRequest.get('/permission/role/permissions', { params: { roleId } })
@@ -82,10 +82,10 @@ export const getPermissionById = (id: string) =>
   authRequest.get('/permission/get', { params: { id } })
 
 export const updatePermission = (id: string, data: any) =>
-  authRequest.post(`/permission/${id}/update`, data)
+  authRequest.post('/permission/update', data, { params: { id } })
 
 export const deletePermission = (id: string) =>
-  authRequest.post(`/permission/${id}/delete`, { id })
+  authRequest.post('/permission/delete', null, { params: { id } })
 
 // ========== 审计日志 ==========
 export const getAuditList = (params?: any) =>
@@ -111,7 +111,7 @@ export const updateTenant = (data: any) =>
   authRequest.post('/tenant/update', data)
 
 export const deleteTenant = (tenantCode: string) =>
-  authRequest.post(`/tenant/${tenantCode}/delete`)
+  authRequest.post('/tenant/delete', null, { params: { tenantCode } })
 
 // ========== 域管理 ==========
 export const getDomainPage = (params?: any) =>
@@ -135,7 +135,7 @@ export const updateDomain = (data: any) =>
   authRequest.post('/domain/update', data)
 
 export const deleteDomain = (domainCode: string) =>
-  authRequest.post(`/domain/${domainCode}/delete`)
+  authRequest.post('/domain/delete', null, { params: { domainCode } })
 
 // ========== 组织管理 ==========
 export const getOrgPage = (params?: any) =>
@@ -163,7 +163,7 @@ export const updateOrg = (data: any) =>
   authRequest.post('/org/update', data)
 
 export const deleteOrg = (orgCode: string) =>
-  authRequest.post(`/org/${orgCode}/delete`)
+  authRequest.post('/org/delete', null, { params: { orgCode } })
 
 // ========== 部门管理 ==========
 export const getDeptPage = (params?: any) =>
@@ -192,7 +192,7 @@ export const updateDept = (data: any) =>
   authRequest.post('/dept/update', data)
 
 export const deleteDept = (deptCode: string) =>
-  authRequest.post(`/dept/${deptCode}/delete`)
+  authRequest.post('/dept/delete', null, { params: { deptCode } })
 
 // ========== 组管理 ==========
 export const getGroupPage = (params?: any) =>
@@ -224,14 +224,14 @@ export const updateGroup = (data: any) =>
   authRequest.post('/group/update', data)
 
 export const deleteGroup = (groupCode: string) =>
-  authRequest.post(`/group/${groupCode}/delete`)
+  authRequest.post('/group/delete', null, { params: { groupCode } })
 
 // ==================== 用户-组织关联 ====================
 export const userOrgRelApi = {
   usersByGroup: (groupCode: string) => request.get('/user-org/users-by-group', { params: { groupCode } }),
   usersByDept: (deptCode: string) => request.get('/user-org/users-by-dept', { params: { deptCode } }),
   bind: (data: any) => request.post('/user-org/bind', data),
-  clearUser: (userId: number) => request.delete(`/user-org/user/${userId}`),
+  clearUser: (userId: number) => request.post('/user-org/user/remove', null, { params: { userId } }),
 }
 
 // ==================== 元典字典 ====================
@@ -242,7 +242,7 @@ export const dictApi = {
   init: (tenantCode: string, domainCode: string) => request.post('/dict/init', { tenantCode, domainCode }),
   add: (data: any) => request.post('/dict', data),
   update: (data: any) => request.post('/dict/update', data),
-  delete: (id: number) => request.post(`/dict/${id}/delete`),
+  delete: (id: number) => request.post('/dict/delete', null, { params: { id } }),
   reorder: (data: any[]) => request.post('/dict/reorder', data),
 }
 
@@ -252,12 +252,12 @@ export const appApi = {
   list: (params?: any) => request.get('/app/list', { params }),
   create: (data: any) => request.post('/app', data),
   update: (data: any) => request.post('/app/update', data),
-  delete: (id: number) => request.post(`/app/${id}/delete`),
+  delete: (id: number) => request.post('/app/delete', null, { params: { id } }),
   // Menu CRUD
   menuList: (appCode: string) => request.get('/app/menu/list', { params: { appCode } }),
   createMenu: (data: any) => request.post('/app/menu', data),
   updateMenu: (data: any) => request.post('/app/menu/update', data),
-  deleteMenu: (id: number) => request.post(`/app/menu/${id}/delete`),
+  deleteMenu: (id: number) => request.post('/app/menu/delete', null, { params: { id } }),
 }
 
 // ==================== 字典分类 ====================
@@ -265,7 +265,7 @@ export const dictCatApi = {
   list: (tenantCode: string) => request.get('/dict-category/list', { params: { tenantCode } }),
   create: (data: any) => request.post('/dict-category', data),
   update: (data: any) => request.post('/dict-category/update', data),
-  delete: (id: number) => request.post(`/dict-category/${id}/delete`),
+  delete: (id: number) => request.post('/dict-category/delete', null, { params: { id } }),
 }
 
 // ==================== Config 配置中心 ====================
@@ -289,7 +289,7 @@ export const configApi = {
   // 集群新增/更新
   clusterSave: (data: any) => request.post('/cluster/save', data),
   // 集群删除
-  clusterDelete: (id: number) => request.post(`/cluster/${id}/delete`),
+  clusterDelete: (id: number) => request.post('/cluster/delete', null, { params: { id } }),
 }
 
 // ==================== Naming 服务注册发现 ====================
@@ -316,10 +316,10 @@ export const taskApi = {
     request.get('/task/list', { params: { listId } }),
   // 任务列表（按项目）
   getTaskListByProject: (projectId: number) =>
-    request.get(`/task/project/${projectId}`),
+    request.get('/task/project/list', { params: { projectId } }),
   // 任务列表（按负责人）
   getTaskListByAssignee: (userId: string) =>
-    request.get(`/task/assignee/${userId}`),
+    request.get('/task/assignee/list', { params: { userId } }),
   // 创建任务
   createTask: (data: any) =>
     request.post('/task', data),
@@ -331,26 +331,26 @@ export const taskApi = {
     request.post('/task/assignees', null, { params: { taskId, userId } }),
   // 移除执行者
   removeTaskAssignee: (taskId: number, userId: string) =>
-    request.delete(`/task/assignees/${taskId}/${userId}`),
+    request.post('/task/assignees/remove', null, { params: { taskId, userId } }),
   // 完成任务
   completeTask: (taskId: number) =>
-    request.post(`/task/${taskId}/complete`),
+    request.post('/task/complete', null, { params: { taskId } }),
   // 重新打开任务
   reopenTask: (taskId: number) =>
-    request.post(`/task/${taskId}/reopen`),
+    request.post('/task/reopen', null, { params: { taskId } }),
 }
 
 // ==================== 项目管理 ====================
 export const projectApi = {
   // 获取用户项目列表
   getProjectListByUser: (userId: string) =>
-    request.get(`/project/user/${userId}`),
+    request.get('/project/user/list', { params: { userId } }),
   // 创建项目
   createProject: (data: any) =>
     request.post('/project', data),
   // 归档项目
   archiveProject: (projectId: number) =>
-    request.put(`/project/${projectId}/archive`),
+    request.put('/project/archive', null, { params: { projectId } }),
 }
 
 // ==================== 镜像仓库中心 ====================
@@ -381,14 +381,14 @@ export const skillApi = {
   getContent: (skillCode: string) => request.get('/api/skill/content', { params: { skillCode } }),
   create: (data: any) => request.post('/api/skill', data),
   update: (data: any) => request.post('/api/skill/update', data),
-  delete: (id: number) => request.post(`/api/skill/${id}/delete`),
+  delete: (id: number) => request.post('/api/skill/delete', null, { params: { id } }),
   publish: (skillCode: string) => request.post('/api/skill/publish', { skillCode }),
   install: (data: any) => request.post('/api/skill/install', data),
   versions: (skillCode: string) => request.get('/api/skill/versions', { params: { skillCode } }),
   addVersion: (data: any) => request.post('/api/skill/version', data),
   categoryTree: () => request.get('/api/skill/category/tree'),
   createCategory: (data: any) => request.post('/api/skill/category', data),
-  deleteCategory: (id: number) => request.post(`/api/skill/category/${id}/delete`),
+  deleteCategory: (id: number) => request.post('/api/skill/category/delete', null, { params: { id } }),
   hot: (limit: number = 10) => request.get('/api/skill/hot', { params: { limit } }),
   stats: () => request.get('/api/skill/stats'),
   // Package support
@@ -396,27 +396,28 @@ export const skillApi = {
     const formData = new FormData()
     formData.append('file', file)
     formData.append('version', version)
-    return request.post(`/api/skill/${skillCode}/package/upload`, formData, {
+    return request.post('/api/skill/package/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      params: { skillCode },
     })
   },
-  downloadPackageUrl: (skillCode: string) => `/api/skill/${skillCode}/package/download`,
+  downloadPackageUrl: (skillCode: string) => `/api/skill/package/download?skillCode=${skillCode}`,
 }
 
 // ==================== MCP 管理 ====================
 export const mcpApi = {
   // Server CRUD
   list: (tenantCode?: string) => request.get('/api/mcp/server/list', { params: { tenantCode } }),
-  get: (id: number) => request.get(`/api/mcp/server/${id}`),
+  get: (id: number) => request.get('/api/mcp/server/get', { params: { id } }),
   create: (data: any) => request.post('/api/mcp/server', data),
   update: (data: any) => request.post('/api/mcp/server/update', data),
-  delete: (id: number) => request.post(`/api/mcp/server/${id}/delete`),
+  delete: (id: number) => request.post('/api/mcp/server/delete', null, { params: { id } }),
   // Tool proxy
-  listTools: (id: number) => request.post(`/api/mcp/server/${id}/tools/list`),
+  listTools: (id: number) => request.post('/api/mcp/server/tools/list', null, { params: { id } }),
   callTool: (id: number, name: string, args?: any) =>
-    request.post(`/api/mcp/server/${id}/tools/call`, { name, arguments: args || {} }),
+    request.post('/api/mcp/server/tools/call', { name, arguments: args || {} }, { params: { id } }),
   // Test connection
-  test: (id: number) => request.post(`/api/mcp/server/${id}/test`),
+  test: (id: number) => request.post('/api/mcp/server/test', null, { params: { id } }),
 }
 
 // ==================== Agent 应用中心 ====================
@@ -426,7 +427,7 @@ export const agentApi = {
   appGet: (appCode: string) => request.get('/api/agent/app/get', { params: { appCode } }),
   appCreate: (data: any) => request.post('/api/agent/app', data),
   appUpdate: (data: any) => request.post('/api/agent/app/update', data),
-  appDelete: (id: number) => request.post(`/api/agent/app/${id}/delete`),
+  appDelete: (id: number) => request.post('/api/agent/app/delete', null, { params: { id } }),
   appPublish: (appCode: string) => request.post('/api/agent/app/publish', { appCode }),
   appVersions: (appCode: string) => request.get('/api/agent/app/versions', { params: { appCode } }),
   appDraftGet: (appCode: string) => request.get('/api/agent/app/draft', { params: { appCode } }),
