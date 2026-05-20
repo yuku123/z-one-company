@@ -1,10 +1,18 @@
 package com.zifang.z.agent.center.core.agent.share.service;
 
+import com.zifang.z.agent.center.core.agent.share.dto.AgentShareDto;
+import com.zifang.z.agent.center.core.agent.share.dto.AgentShareReq;
 import com.zifang.z.agent.center.core.agent.share.entity.AgentShare;
 
 import java.util.List;
 
 public interface AgentShareService {
+
+    AgentShareDto createResp(AgentShareReq req);
+
+    AgentShareDto verifyResp(String shareCode);
+
+    List<AgentShareDto> listRespByInstance(String instanceCode);
 
     AgentShare getByShareCode(String shareCode);
 

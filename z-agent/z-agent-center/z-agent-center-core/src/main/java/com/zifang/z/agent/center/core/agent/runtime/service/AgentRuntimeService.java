@@ -2,12 +2,15 @@ package com.zifang.z.agent.center.core.agent.runtime.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zifang.z.agent.center.core.agent.conversation.dto.ChatDto;
+import com.zifang.z.agent.center.core.agent.conversation.dto.AgentChatReq;
 import com.zifang.z.agent.center.core.agent.instance.entity.AgentInstance;
 import com.zifang.z.agent.center.core.agent.instance.service.AgentInstanceService;
 import com.zifang.z.agent.center.core.agent.conversation.service.AgentConversationService;
 import com.zifang.z.agent.center.core.app.entity.AgentApp;
 import com.zifang.z.agent.center.core.app.service.AgentAppService;
 import com.zifang.z.agent.center.core.agent.conversation.entity.AgentConversation;
+import org.springframework.beans.BeanUtils;
 import okhttp3.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,9 +45,17 @@ public class AgentRuntimeService {
 
     // 内存缓存会话上下文（生产环境应使用Redis）
     private final Map<String, List<ChatMessage>> conversationHistoryMap = new ConcurrentHashMap<>();
+    private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
-     * 对话入口
+     * 对话入口 - 返回DTO
+     */
+    public ChatDto chatResp(String instanceCode, String userMessage, String userId, String userName) {
+        return toDto(chat(instanceCode, userMessage, userId, userName));
+    }
+
+    /**
+     * 对话入口 - 返回Entity
      */
     public AgentConversation chat(String instanceCode, String userMessage, String userId, String userName) {
         long startTime = System.currentTimeMillis();
@@ -177,5 +189,13 @@ public class AgentRuntimeService {
             this.role = role;
             this.content = content;
         }
+    }
+
+    private ChatDto toDto(AgentConversation c) {
+        if (c == null) return null;
+        ChatDto dto = new ChatDto();
+        BeanUtils.copyProperties(c, dto);
+        dto.setGmtCreate(c.getGmtCreate() != null ? c.getGmtCreate().format(DF) : null);
+        return dto;
     }
 }

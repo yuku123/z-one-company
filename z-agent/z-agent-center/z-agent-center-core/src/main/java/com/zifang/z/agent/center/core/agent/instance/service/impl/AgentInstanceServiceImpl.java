@@ -2,19 +2,42 @@ package com.zifang.z.agent.center.core.agent.instance.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zifang.z.agent.center.core.agent.instance.dto.AgentInstanceDto;
 import com.zifang.z.agent.center.core.agent.instance.entity.AgentInstance;
 import com.zifang.z.agent.center.core.agent.instance.mapper.AgentInstanceMapper;
 import com.zifang.z.agent.center.core.agent.instance.service.AgentInstanceService;
-import org.apache.commons.lang3.StringUtils;
+import com.zifang.z.agent.center.core.agent.instance.dto.AgentInstanceDto;
+import com.zifang.z.agent.center.core.agent.instance.dto.AgentInstanceReq;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AgentInstanceServiceImpl extends ServiceImpl<AgentInstanceMapper, AgentInstance> implements AgentInstanceService {
+
+    private static final DateTimeFormatter DF = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    @Override
+    public AgentInstanceDto createResp(AgentInstanceReq req) {
+        AgentInstance instance = createFromApp(req.getAppCode(), req.getUserId(), req.getUserName());
+        return toDto(instance);
+    }
+
+    @Override
+    public AgentInstanceDto getRespByInstanceCode(String instanceCode) {
+        return toDto(getByInstanceCode(instanceCode));
+    }
+
+    @Override
+    public List<AgentInstanceDto> listRespByOwner(String ownerId) {
+        return listByOwner(ownerId).stream().map(this::toDto).collect(Collectors.toList());
+    }
 
     @Override
     public AgentInstance getByInstanceCode(String instanceCode) {
@@ -69,5 +92,13 @@ public class AgentInstanceServiceImpl extends ServiceImpl<AgentInstanceMapper, A
             instance.setGmtModified(LocalDateTime.now());
             this.updateById(instance);
         }
+    }
+
+    private AgentInstanceDto toDto(AgentInstance instance) {
+        if (instance == null) return null;
+        AgentInstanceDto dto = new AgentInstanceDto();
+        BeanUtils.copyProperties(instance, dto);
+        dto.setLastVisitTime(instance.getLastVisitTime() != null ? instance.getLastVisitTime().format(DF) : null);
+        return dto;
     }
 }
