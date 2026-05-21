@@ -1,5 +1,7 @@
 package com.zifang.z.agent.mcp.starter;
 
+import com.zifang.z.agent.mcp.core.McpRegistry;
+import com.zifang.z.agent.mcp.core.ToolMeta;
 import org.junit.Before;
 import org.junit.Test;
 

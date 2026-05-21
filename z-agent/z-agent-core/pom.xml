@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.zifang</groupId>
         <artifactId>z-agent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>z-agent-core</artifactId>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.zifang</groupId>
             <artifactId>z-agent-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            1.0.0-SNAPSHOT
         </dependency>
         <!-- LangChain4j核心：文档处理、分块、嵌入 -->
         <dependency>

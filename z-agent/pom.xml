@@ -31,6 +31,9 @@
         <!-- Agent 引擎 (核心逻辑) -->
         <module>z-agent-engine</module>
         
+        <!-- Agent Skill 管理 -->
+        <module>z-agent-skill-center</module>
+        
         <!-- MCP 中心 (可选) -->
         <module>z-agent-mcp-center</module>
     </modules>
