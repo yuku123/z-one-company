@@ -8,13 +8,8 @@ import com.zifang.z.config.common.connect.message.NormalResponse;
 import com.zifang.z.config.common.model.PollResponse;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.zifang.z.config.common.connect.CommandType.NORMAL_RESPONSE;
 
 public class ClintBusinessHandler extends ChannelInboundHandlerAdapter {
     private final Logger log = LoggerFactory.getLogger(this.getClass());

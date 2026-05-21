@@ -74,7 +74,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.7.12</version>
                 <configuration>
-                    <mainClass>com.zifang.z.agent.mcp.impl.db.Application</mainClass>
+                    <mainClass>com.zifang.agent.mcp.impl.db.Application</mainClass>
                 </configuration>
                 <executions>
                     <execution>

@@ -76,7 +76,7 @@ public class LlmConfigService {
 
     public List<LlmModelDto> listModelsByProvider(String providerCode) {
         LambdaQueryWrapper<LlmModel> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(LlmProvider::getEnabled, 1);
+        wrapper.eq(LlmModel::getEnabled, 1);
         wrapper.eq(StringUtils.hasText(providerCode), LlmModel::getProviderCode, providerCode);
         return modelMapper.selectList(wrapper).stream()
                 .map(this::toModelDto)
@@ -95,7 +95,9 @@ public class LlmConfigService {
         }
         wrapper.orderByDesc(LlmModel::getGmtCreate);
         Page<LlmModel> result = modelMapper.selectPage(page, wrapper);
-        return result.convert(this::toModelDto);
+        Page<LlmModelDto> dtoPage = new Page<>(result.getCurrent(), result.getSize(), result.getTotal());
+        dtoPage.setRecords(result.getRecords().stream().map(this::toModelDto).collect(Collectors.toList()));
+        return dtoPage;
     }
 
     public LlmModelDto getModel(String modelCode) {

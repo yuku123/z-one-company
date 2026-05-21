@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.zifang.z</groupId>
+        <groupId>com.zifang</groupId>
         <artifactId>z-agent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,7 +16,7 @@
 
     <modules>
         <module>z-agent-llm-center-core</module>
-        <module>z-agent-llm-center-web</module>
-        <module>z-agent-llm-center-starter</module>
+        <!-- <module>z-agent-llm-center-web</module> -->
+        <!-- <module>z-agent-llm-center-starter</module> -->
     </modules>
 </project>
