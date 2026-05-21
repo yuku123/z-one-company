@@ -35,8 +35,8 @@ public class JobInfoController {
     /**
      * 获取单个任务
      */
-    @GetMapping("/{id}")
-    public ReturnT<JobInfo> getById(@PathVariable int id) {
+    @GetMapping("/get")
+    public ReturnT<JobInfo> getById(@RequestParam int id) {
         JobInfo jobInfo = jobInfoService.getById(id);
         if (jobInfo == null) {
             return ReturnT.fail("任务不存在");
@@ -63,32 +63,32 @@ public class JobInfoController {
     /**
      * 删除任务
      */
-    @PostMapping("/remove/{id}")
-    public ReturnT<String> remove(@PathVariable int id) {
+    @PostMapping("/remove")
+    public ReturnT<String> remove(@RequestParam int id) {
         return jobInfoService.delete(id);
     }
 
     /**
      * 停止任务
      */
-    @PostMapping("/stop/{id}")
-    public ReturnT<String> stop(@PathVariable int id) {
+    @PostMapping("/stop")
+    public ReturnT<String> stop(@RequestParam int id) {
         return jobInfoService.stop(id);
     }
 
     /**
      * 启动任务
      */
-    @PostMapping("/start/{id}")
-    public ReturnT<String> start(@PathVariable int id) {
+    @PostMapping("/start")
+    public ReturnT<String> start(@RequestParam int id) {
         return jobInfoService.start(id);
     }
 
     /**
      * 触发任务执行
      */
-    @PostMapping("/trigger/{id}")
-    public ReturnT<String> trigger(@PathVariable int id) {
+    @PostMapping("/trigger")
+    public ReturnT<String> trigger(@RequestParam int id) {
         return jobInfoService.trigger(id);
     }
 

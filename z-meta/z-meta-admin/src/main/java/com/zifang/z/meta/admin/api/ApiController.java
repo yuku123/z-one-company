@@ -57,15 +57,15 @@ public class ApiController {
     }
 
     @Operation(summary = "获取接口详情")
-    @GetMapping("/{id}")
-    public Result<ZApi> getById(@Parameter(description = "接口ID") @PathVariable Long id) {
+    @GetMapping("/get")
+    public Result<ZApi> getById(@Parameter(description = "接口ID") @RequestParam Long id) {
         ZApi api = apiService.getById(id);
         return Result.success(api);
     }
 
     @Operation(summary = "根据应用ID获取接口列表")
-    @GetMapping("/app/{appId}")
-    public Result<List<ZApi>> listByAppId(@Parameter(description = "应用ID") @PathVariable Long appId) {
+    @GetMapping("/app/list")
+    public Result<List<ZApi>> listByAppId(@Parameter(description = "应用ID") @RequestParam Long appId) {
         List<ZApi> apis = apiService.listByAppId(appId);
         return Result.success(apis);
     }

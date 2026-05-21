@@ -59,8 +59,8 @@ public class DictController {
     }
 
     @Operation(summary = "获取字典类型详情")
-    @GetMapping("/type/{id}")
-    public Result<ZDictType> getDictTypeById(@Parameter(description = "字典类型ID") @PathVariable Long id) {
+    @GetMapping("/type/get")
+    public Result<ZDictType> getDictTypeById(@Parameter(description = "字典类型ID") @RequestParam Long id) {
         ZDictType dictType = dictService.getById(id);
         return Result.success(dictType);
     }
@@ -95,15 +95,15 @@ public class DictController {
     // ==================== 字典项 ====================
 
     @Operation(summary = "根据字典ID获取字典项列表")
-    @GetMapping("/item/{dictId}")
-    public Result<List<ZDictItem>> listDictItem(@Parameter(description = "字典类型ID") @PathVariable Long dictId) {
+    @GetMapping("/item/list")
+    public Result<List<ZDictItem>> listDictItem(@Parameter(description = "字典类型ID") @RequestParam Long dictId) {
         List<ZDictItem> items = dictService.listByDictId(dictId);
         return Result.success(items);
     }
 
     @Operation(summary = "根据字典编码获取字典项列表")
-    @GetMapping("/items/{dictCode}")
-    public Result<List<ZDictItem>> listDictItemByCode(@Parameter(description = "字典编码") @PathVariable String dictCode) {
+    @GetMapping("/items/get")
+    public Result<List<ZDictItem>> listDictItemByCode(@Parameter(description = "字典编码") @RequestParam String dictCode) {
         List<ZDictItem> items = dictService.listByDictCode(dictCode);
         return Result.success(items);
     }

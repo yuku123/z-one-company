@@ -53,8 +53,8 @@ public class ApplicationController {
     }
 
     @Operation(summary = "获取应用详情")
-    @GetMapping("/{id}")
-    public Result<ZApplication> getById(@Parameter(description = "应用ID") @PathVariable Long id) {
+    @GetMapping("/get")
+    public Result<ZApplication> getById(@Parameter(description = "应用ID") @RequestParam Long id) {
         ZApplication application = applicationService.getById(id);
         return Result.success(application);
     }

@@ -202,11 +202,11 @@ public class ApprovalCenterController {
 
     // ==================== 4. 任务详情 ====================
 
-    @GetMapping("/tasks/{taskId}")
+    @GetMapping("/tasks/get")
     @Operation(summary = "004_获取任务详情")
     
     public Result<TaskDetailVO> getTaskDetail(
-            @Parameter(description = "任务ID") @PathVariable String taskId) {
+            @Parameter(description = "任务ID") @RequestParam String taskId) {
 
         Task task = taskService.createTaskQuery()
                 .taskId(taskId)
@@ -278,11 +278,11 @@ public class ApprovalCenterController {
 
     // ==================== 5. 完成任务/审批 ====================
 
-    @PostMapping("/tasks/{taskId}/complete")
+    @PostMapping("/tasks/complete")
     @Operation(summary = "005_完成任务审批")
     
     public Result<String> completeTask(
-            @Parameter(description = "任务ID") @PathVariable String taskId,
+            @Parameter(description = "任务ID") @RequestParam String taskId,
             @RequestBody ApprovalRequestDTO request) {
 
         Task task = taskService.createTaskQuery()
@@ -415,11 +415,11 @@ public class ApprovalCenterController {
 
     // ==================== 7. 获取流程详情 ====================
 
-    @GetMapping("/processes/{processInstanceId}")
+    @GetMapping("/processes/get")
     @Operation(summary = "007_获取流程实例详情")
     
     public Result<ProcessDetailVO> getProcessDetail(
-            @Parameter(description = "流程实例ID") @PathVariable String processInstanceId) {
+            @Parameter(description = "流程实例ID") @RequestParam String processInstanceId) {
 
         // 先从运行时查询
         ProcessInstance runtimeInstance = runtimeService.createProcessInstanceQuery()

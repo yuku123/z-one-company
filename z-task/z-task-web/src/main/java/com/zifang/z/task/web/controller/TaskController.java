@@ -30,14 +30,14 @@ public class TaskController {
     }
 
     @Operation(summary = "任务列表（按项目）")
-    @GetMapping("/project/{projectId}")
-    public Result<List<Task>> listByProject(@PathVariable Long projectId) {
+    @GetMapping("/project/list")
+    public Result<List<Task>> listByProject(@RequestParam Long projectId) {
         return Result.success(taskService.getTasksByProject(projectId));
     }
 
     @Operation(summary = "任务列表（按负责人）")
-    @GetMapping("/assignee/{userId}")
-    public Result<List<Task>> listByAssignee(@PathVariable String userId) {
+    @GetMapping("/assignee/list")
+    public Result<List<Task>> listByAssignee(@RequestParam String userId) {
         return Result.success(taskService.getTasksByAssignee(userId));
     }
 
@@ -57,31 +57,31 @@ public class TaskController {
     }
 
     @Operation(summary = "添加执行者")
-    @PostMapping("/{taskId}/assignees")
-    public Result<Boolean> addAssignee(@PathVariable Long taskId,
+    @PostMapping("/assignees/add")
+    public Result<Boolean> addAssignee(@RequestParam Long taskId,
                                        @RequestParam String userId,
                                        @RequestHeader(value = "X-User-Id", required = false) String operatorId) {
         return Result.success(taskService.addAssignee(taskId, userId, operatorId));
     }
 
     @Operation(summary = "移除执行者")
-    @DeleteMapping("/{taskId}/assignees/{userId}")
-    public Result<Boolean> removeAssignee(@PathVariable Long taskId,
-                                         @PathVariable String userId,
+    @PostMapping("/assignees/remove")
+    public Result<Boolean> removeAssignee(@RequestParam Long taskId,
+                                         @RequestParam String userId,
                                          @RequestHeader(value = "X-User-Id", required = false) String operatorId) {
         return Result.success(taskService.removeAssignee(taskId, userId, operatorId));
     }
 
     @Operation(summary = "完成任务")
-    @PostMapping("/{taskId}/complete")
-    public Result<Boolean> complete(@PathVariable Long taskId,
+    @PostMapping("/complete")
+    public Result<Boolean> complete(@RequestParam Long taskId,
                                     @RequestHeader(value = "X-User-Id", required = false) String userId) {
         return Result.success(taskService.completeTask(taskId, userId));
     }
 
     @Operation(summary = "重新打开任务")
-    @PostMapping("/{taskId}/reopen")
-    public Result<Boolean> reopen(@PathVariable Long taskId,
+    @PostMapping("/reopen")
+    public Result<Boolean> reopen(@RequestParam Long taskId,
                                   @RequestHeader(value = "X-User-Id", required = false) String userId) {
         return Result.success(taskService.reopenTask(taskId, userId));
     }

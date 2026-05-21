@@ -22,8 +22,8 @@ public class ProjectController {
     private ProjectBizService projectBizService;
 
     @Operation(summary = "获取用户项目列表")
-    @GetMapping("/user/{userId}")
-    public Result<List<ProjectResp>> listByUser(@PathVariable String userId) {
+    @GetMapping("/user/list")
+    public Result<List<ProjectResp>> listByUser(@RequestParam String userId) {
         List<ProjectResp> data = projectBizService.listByUser(userId).stream().map(this::toResp).collect(Collectors.toList());
         return Result.success(data);
     }

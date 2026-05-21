@@ -54,8 +54,8 @@ public class TenantController {
     }
 
     @Operation(summary = "获取租户详情")
-    @GetMapping("/{id}")
-    public Result<ZTenant> getById(@Parameter(description = "租户ID") @PathVariable Long id) {
+    @GetMapping("/get")
+    public Result<ZTenant> getById(@Parameter(description = "租户ID") @RequestParam Long id) {
         ZTenant tenant = tenantService.getById(id);
         return Result.success(tenant);
     }
