@@ -4,40 +4,35 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.zifang</groupId>
+    <parent>
+        <groupId>com.zifang.z</groupId>
+        <artifactId>z-one-company</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.zifang.z</groupId>
     <artifactId>z-agent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <repositories>
-        <repository>
-            <id>github</id>
-            <url>https://maven.pkg.github.com/yuku123/z-util</url>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-    </repositories>
+    <name>Z-Agent</name>
+    <description>Agent 智能中心 - 包含 Agent 应用、LLM 模型管理、LLM Gateway</description>
 
     <modules>
-        <module>z-agent-core</module>
-        <module>z-agent-bot</module>
-        <module>z-agent-mcp-center</module>
-        <module>z-agent-common</module>
+        <!-- Agent 核心应用 (已有) -->
         <module>z-agent-center</module>
+        
+        <!-- LLM 模型管理中心 -->
+        <module>z-agent-llm-center</module>
+        
+        <!-- LLM Gateway (用量记录) -->
+        <module>z-agent-llm-gateway</module>
+        
+        <!-- Agent 引擎 (核心逻辑) -->
         <module>z-agent-engine</module>
-
-        <module>z-agent-skill-center</module>
+        
+        <!-- MCP 中心 (可选) -->
+        <module>z-agent-mcp-center</module>
     </modules>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <dependencyManagement>
-    </dependencyManagement>
-
-    <dependencies>
-    </dependencies>
-
 </project>

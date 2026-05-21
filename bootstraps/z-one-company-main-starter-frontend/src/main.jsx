@@ -14,6 +14,11 @@ import ScheduleIndex from './pages/schedule'
 import MistIndex from './pages/mist'
 import MetaIndex from './pages/meta'
 import AiIndex from './pages/ai'
+import AgentAppList from './pages/ai/agent/app'
+import AgentAppConfig from './pages/ai/agent/config'
+import LlmProvider from './pages/ai/llm/provider'
+import LlmModel from './pages/ai/llm/model'
+import UsageDashboard from './pages/ai/usage'
 import AgentSharePage from './pages/ai/agent/share'
 import RdIndex from './pages/rd'
 import ResourceIndex from './pages/resource'
@@ -36,7 +41,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="schedule/*" element={<ScheduleIndex />} />
             <Route path="mist/*" element={<MistIndex />} />
             <Route path="meta/*" element={<MetaIndex />} />
-            <Route path="ai/*" element={<AiIndex />} />
+            <Route path="ai" element={<AiIndex />}>
+              <Route index element={<Navigate to="/ai/agent/app" replace />} />
+              <Route path="agent/app" element={<AgentAppList />} />
+              <Route path="agent/config" element={<AgentAppConfig />} />
+              <Route path="llm/provider" element={<LlmProvider />} />
+              <Route path="llm/model" element={<LlmModel />} />
+              <Route path="usage" element={<UsageDashboard />} />
+            </Route>
             <Route path="rd/*" element={<RdIndex />} />
             <Route path="resource/*" element={<ResourceIndex />} />
             <Route path="ops/*" element={<OpsIndex />} />
