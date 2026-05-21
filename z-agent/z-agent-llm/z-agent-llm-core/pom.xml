@@ -51,8 +51,8 @@
         <!-- z-boot-starter -->
         <dependency>
             <groupId>com.zifang</groupId>
-            <artifactId>z-boot-starter</artifactId>
-            <version>${project.version}</version>
+            <artifactId>z-boot-base</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
